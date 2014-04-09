@@ -8,31 +8,41 @@ href: www.example.com/drds
 id: drds
 doc: A list of DRDs.
 "
-  describe Representor do
-    it 'can instantiate object, getting a representor' do
-      rhash = YAML.load(base_rep)
-      Representor.new(rhash).class.to_s.should == 'Crichton::Representor'
-    end
-    
-    it 'given a representor object, I can reference its .doc' do
-      rhash = YAML.load(base_rep)
-      Representor.new(rhash).doc.should == 'A list of DRDs.'
-    end
-    
-    it 'given a representor objct, I can reference its .identifier' do
-      rhash = YAML.load(base_rep)
-      puts Representor.new(rhash).identifier
-      Representor.new(rhash).identifier.should == 'http://www.example.com/drds'
-    end
+  semantic_elements = "---
+semantics:
+  total_count:
+    doc: The total count of DRDs.
+    type: semantic
+    profile: http://alps.io/schema.org/Integer
+    sample: 1
+    value: 2
+  uptime:
+    value: 76ms
+  brackreference: 
+    value: 886396728    
+"
 
-    it 'given a representor object, I can see the underlying hash with .inspect' do
+  describe Representor do
+    context 'when I instantiate Representor' do
       rhash = YAML.load(base_rep)
-      Representor.new(rhash).inspect.should == rhash
+      subject { Representor.new(rhash) }
+      it { should be_an_instance_of Crichton::Representor}
+      its(:doc) { should == 'A list of DRDs.' }
+      its(:identifier) { should == 'http://www.example.com/drds' }
+      its(:inspect) { should == rhash }
+      its(:to_s) { should == base_rep }
     end
     
-    it 'given a representor object, I can see the underlying hash as yaml with .to_s' do
-      rhash = YAML.load(base_rep)
-      Representor.new(rhash).to_s.should == base_rep
-    end    
+    context 'when the representor_hash has semantics' do
+      context '.attribute' do
+        semelements = YAML.load(semantic_elements)
+        rhash = YAML.load(base_rep).merge(semelements)
+        subject { Representor.new(rhash).attributes }
+        ['total_count', 'uptime', 'brackreference'].each do |key|
+          its([key]) { should == semelements['semantics'][key]['value'] }
+        end
+      end
+    end       
+    
   end
 end

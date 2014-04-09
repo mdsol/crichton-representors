@@ -13,7 +13,6 @@ module Crichton
     end
     
     def identifier
-      puts @representor
       "%s://%s" % [@representor["protocol"],@representor["href"]]
     end
     
@@ -25,6 +24,9 @@ module Crichton
       YAML.dump(@representor)
     end
     
+    def attributes
+      Hash[@representor["semantics"].map {|k,v| [k, v['value']] } ]
+    end
   end
 end
 
