@@ -27,6 +27,10 @@ module Crichton
     def attributes
       Hash[@representor["semantics"].map {|k,v| [k, v['value']] } ]
     end
+    
+    def embedded
+      @representor["embedded"].lazy.map { |embed|  Representor.new(embed) }
+    end
   end
 end
 

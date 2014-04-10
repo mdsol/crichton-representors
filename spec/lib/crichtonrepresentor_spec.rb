@@ -27,7 +27,7 @@ semantics:
       rhash = YAML.load(base_rep)
       subject { Representor.new(rhash) }
       it { should be_an_instance_of Crichton::Representor}
-      its(:doc) { should == 'A list of DRDs.' }
+      its(:doc) { should == rhash["doc"] }
       its(:identifier) { should == 'http://www.example.com/drds' }
       its(:inspect) { should == rhash }
       its(:to_s) { should == base_rep }
@@ -41,6 +41,19 @@ semantics:
         ['total_count', 'uptime', 'brackreference'].each do |key|
           its([key]) { should == semelements['semantics'][key]['value'] }
         end
+      end
+    end       
+    
+    context 'when the representor_hash has embedded resources' do
+      context '.embedded' do
+        semelements = YAML.load(semantic_elements)
+        combinedhash = YAML.load(base_rep).merge(semelements)
+        rhash = combinedhash.clone
+        rhash['embedded'] = [combinedhash]*3
+        subject { Representor.new(rhash).embedded }
+        its(:count) { should == 3 }
+        its("first.doc") { should == combinedhash["doc"] }
+        its("first.inspect") { should == combinedhash }
       end
     end       
     
