@@ -3,7 +3,6 @@ require 'yaml'
 require 'uri'
 
 module Crichton
-
   describe Representor do
     before do
       @base_representor = {
@@ -21,15 +20,15 @@ module Crichton
             profile: 'http://alps.io/schema.org/Integer',
             sample: 1,
             value: 2
-            },
+          },
           uptime: {
             value: '76ms'
-            },
+          },
           brackreference: {
             value: 886396728    
-            }
           }
         }
+      }
     end
     let(:representor_hash) { @representor_hash || @base_representor }
     let(:subject) { Representor.new(representor_hash) }  
@@ -77,13 +76,12 @@ module Crichton
       describe '#attribute' do
         it 'returns a hash of attributes associated with the represented resource' do
           @representor_hash =  @base_representor.merge(@semantic_elements)
-          attributes = subject.attributes
           semantic_elements_present =  %w(total_count uptime brackreference).all? do |key|
-            attributes[key.to_sym] == @semantic_elements[:semantics][key.to_sym][:value]
+            subject.attributes[key.to_sym] == @semantic_elements[:semantics][key.to_sym][:value]
           end
           semantic_elements_present.should be_true
-        end
-      end
+         end
+       end
       
       describe '#embedded' do
         before do
@@ -97,10 +95,8 @@ module Crichton
         end
         
         it 'returns a Representor objects that has its data' do
-          embedded_objects = subject.embedded.all? do |embed|
-            embed.doc == @representor_hash[:doc]
-          end
-          embedded_objects.should be_true
+          embedded_objects_valid = subject.embedded.all? { |embed| embed.doc == representor_hash[:doc] }
+          embedded_objects_valid.should be_true
         end
         
         it 'returns the all the Representors' do

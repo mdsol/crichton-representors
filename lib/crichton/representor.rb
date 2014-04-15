@@ -19,8 +19,10 @@ module Crichton
       @doc ||= doc
     end
     
+    # The URI for the object
+    #
     # @note If the URI can't be made from the provided information it constructs one fromt the Ruby ID
-    # @return [String] the URI for the object
+    # @return [String]
     def identifier
       uri = @representor_hash[:href] || self.object_id
       protocol = @representor_hash[:protocol] || (uri == self.object_id ? 'ruby_id' : 'http')
@@ -48,6 +50,11 @@ module Crichton
       embedded_elements = @representor_hash[:embedded] || []
       @embedded ||= embedded_elements.lazy.map { |embed|  Representor.new(embed) }
     end
+    
+    def meta_links
+      @meta_links ||= {}
+    end
+    
   end
 end
 
