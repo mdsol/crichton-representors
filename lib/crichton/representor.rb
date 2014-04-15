@@ -6,16 +6,16 @@ module Crichton
   # Manages the respresentation of hypermedia messages for different media-types.
   class Representor
     
-    #@param representor_hash [Hash]
+    # @param representor_hash [Hash] the abstract representor hash defining a resource
     def initialize(representor_hash = nil)
       @representor_hash = representor_hash || {}
     end
     
-    # Returns the document hint for the representor
+    # Returns the documentfor the representor
     #
     # @return [String] the document for the representor
     def doc
-      doc = @representor_hash[:doc] || ""
+      doc = @representor_hash[:doc] || ''
       @doc ||= doc
     end
     
@@ -23,7 +23,7 @@ module Crichton
     # @return [String] the URI for the object
     def identifier
       uri = @representor_hash[:href] || self.object_id
-      protocol = @representor_hash[:protocol] || (uri == self.object_id ? "ruby_id" : 'http')
+      protocol = @representor_hash[:protocol] || (uri == self.object_id ? 'ruby_id' : 'http')
       @identifier ||= "%s://%s" % [protocol, uri]
     end
     
@@ -34,7 +34,7 @@ module Crichton
     
     # @return [String] the yaml representation of the object 
     def to_yaml
-      @to_s ||= YAML.dump(@representor_hash)
+      @to_yaml ||= YAML.dump(@representor_hash)
     end
     
     # @return [Hash] the resource attributes inferred from representor[:semantics]
