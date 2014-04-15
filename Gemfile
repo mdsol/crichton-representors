@@ -5,6 +5,7 @@ gem 'debugger',      '~> 1.6.6'
 gem 'yard',          '~> 0.8.7'
 gem 'redcarpet',     '~> 3.1.1'
 gem 'awesome_print', '~> 1.2.0'
+gem 'enumerable-lazy'
 
 group :development, :test do
   gem 'pry'
