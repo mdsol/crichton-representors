@@ -54,7 +54,6 @@ module Crichton
     def meta_links
       @meta_links ||= {}
     end
-    
   end
 end
 

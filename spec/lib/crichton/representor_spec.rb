@@ -10,7 +10,7 @@ module Crichton
         href: 'www.example.com/drds',
         id: 'drds',
         doc: 'A list of DRDs.'
-        }
+      }
 
       @semantic_elements = {
         semantics: {
