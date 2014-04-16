@@ -1,5 +1,5 @@
 require 'yaml'
-require 'enumerable/lazy'
+require 'enumerable/lazy' if RUBY_VERSION < '2.0'
 
 module Crichton
   ##
