@@ -1,4 +1,5 @@
 # Crichton Representors
+[![Build Status](https://travis-ci.org/mdsol/crichton-representors.svg)](https://travis-ci.org/mdsol/crichton-representors)
 [Crichton][] Representors is a library to simplify Hypermedia message representation. It has the knowledge of Hypermedia 
 media-types from the Ancients!
 
