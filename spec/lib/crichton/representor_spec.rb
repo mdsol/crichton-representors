@@ -29,6 +29,37 @@ module Crichton
           }
         }
       }
+      
+      @transition_elements = {
+        transitions: {
+          self: {
+            doc: 'Returns a list of DRDs.',
+            rt: 'drds',
+            type: 'safe',
+            href: 'some.example.com/list'
+          },
+          search: {
+            doc: 'Returns a list of DRDs that satisfy the search term.',
+            rt: 'drds',
+            type: 'safe',
+            href: '/',
+            descriptors: {
+              name: {
+                doc: "Name to search",
+                profile: "http://alps.io/schema.org/Text",
+                sample: "drdname",
+                options: {list: ['one', 'two']}
+              },
+              status: {
+                doc: "How is the DRD.",
+                profile: "http://alps.io/schema.org/Text",
+                sample: "renegade",
+                options: {list: ['renegade', 'compliant'], id: 'status_list'}
+              }
+            }
+          }
+        }
+      }
     end
     let(:representor_hash) { @representor_hash || @base_representor }
     let(:subject) { Representor.new(representor_hash) }  
@@ -77,7 +108,7 @@ module Crichton
         it 'returns a hash of attributes associated with the represented resource' do
           @representor_hash =  @base_representor.merge(@semantic_elements)
           semantic_elements_present =  %w(total_count uptime brackreference).all? do |key|
-            subject.attributes[key.to_sym] == @semantic_elements[:semantics][key.to_sym][:value]
+            subject.properties[key.to_sym] == @semantic_elements[:semantics][key.to_sym][:value]
           end
           semantic_elements_present.should be_true
          end
@@ -108,6 +139,33 @@ module Crichton
           subject.embedded.count.should == 0
         end
       end
+      
+      describe '#transitions' do
+        it 'returns all transitions' do
+          @representor_hash =  @base_representor.merge(@transition_elements)
+          subject.transitions.count.should == 2
+          subject.transitions.all? { |trans| trans.instance_of?(Crichton::Transition) }
+        end
+      end
+      
+      describe '#meta_links' do
+        it 'should return a list of transitions representing those links' do
+          @base_representor[:links] = {
+            self: 'DRDs#drds/create',
+            help: 'Forms/create'
+          }
+          subject.meta_links.count.should == 2
+          subject.meta_links.all? { |trans| trans.instance_of?(Crichton::Transition) }
+        end
+      end
+      
+      describe '#datalists' do
+        it 'returns all #transitions#paramters + #transitions#attributes | field.datalist? == True' do
+          @representor_hash =  @base_representor.merge(@transition_elements)
+          subject.datalists.first.as_hash.should == {renegade: "renegade", compliant: "compliant"}
+        end
+      end
+      
     end       
   end
 end

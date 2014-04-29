@@ -40,9 +40,9 @@ module Crichton
     end
     
     # @return [Hash] the resource attributes inferred from representor[:semantics]
-    def attributes
+    def properties
       attributes = @representor_hash[:semantics] || {}
-      @attributes ||= Hash[ attributes.map { |k,v| [ k, v[:value]] } ]
+      @properties ||= Hash[ attributes.map { |k,v| [ k, v[:value]] } ]
     end
     
     # @return [Enumerable] who's elements are all <Crichton:Representor> objects
@@ -51,8 +51,32 @@ module Crichton
       @embedded ||= embedded_elements.lazy.map { |embed|  Representor.new(embed) }
     end
     
+    # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
-      @meta_links ||= {}
+      links = @representor_hash[:links] || []
+      simple_link_to_link = ->(hash) { hash.map { |k,v| { k => {href: v } } } }
+      @meta_links ||= get_transitions(simple_link_to_link.(links))
+    end
+    
+    # @return [Array] who's elements are all <Crichton:Transition> objects    
+    def transitions
+      transitions = @representor_hash[:transitions] || []
+      @transitions ||= get_transitions(transitions.map { |k, v| {k => v} })
+    end
+
+    # @return [Array] who's elements are all <Crichton:Option> objects    
+    def datalists
+      attributes = transitions.map { |transition| transition.attributes }
+      parameters = transitions.map { |transition| transition.parameters }
+      fields = [attributes, parameters].flatten
+      options = fields.map { |field| field.options }
+      @datalists = options.select { |o| o.datalist? }
+    end
+    
+    private
+    
+    def get_transitions(hash)  
+      hash.map { |h| Crichton::Transition.new(h) }
     end
   end
 end
