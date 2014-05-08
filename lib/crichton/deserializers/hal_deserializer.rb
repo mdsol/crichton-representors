@@ -9,7 +9,7 @@ module Crichton
     end
 
     def deserialize
-      representor = Representor.new
+      representor = Golem.new
       deserialize_properties(representor, @json)
       representor
     end

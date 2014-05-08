@@ -26,7 +26,7 @@ describe Crichton::HalDeserializer do
     context "A HAL document with properties" do
       let(:properties_hash) { {"who" => "he", "when" => "yesterday"} }
       let(:document) { properties_hash.to_json }
-      it "creates a representor with the properties of the HAL document" do
+      it "creates a golem with the properties of the HAL document" do
         expect(deserializer.deserialize.properties).to eq(properties_hash)
       end
     end

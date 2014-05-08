@@ -1,7 +1,7 @@
 module Crichton
   ##
   # Manages the respresentation of hypermedia messages for different media-types.
-  class Representor
+  class Golem
 
     attr_reader :properties
     def initialize
