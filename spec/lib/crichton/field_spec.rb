@@ -26,7 +26,7 @@ module Crichton
     
       describe '#to_hash' do
         it 'returns its constructor hash' do
-          subject.to_hash.should == @field_hash
+          subject.to_hash.should == field_hash
         end
       end
     
@@ -53,7 +53,7 @@ module Crichton
         
         it 'has a list interface even when a hash' do
           @field_hash[:total_count][:options] = {hash: {foo: 'bar', ninja: 'cow'}}
-          subject.options.as_list.should == @field_hash[:total_count][:options][:hash].keys
+          subject.options.as_list.should == field_hash[:total_count][:options][:hash].keys
         end
         
         it 'has a hash interface even when a list' do
@@ -65,6 +65,17 @@ module Crichton
           @field_hash[:total_count][:options] = {external: {source: 'foo', target: 'bar'}}
           subject.options.as_hash.should == {source: 'foo', target: 'bar'}
         end
+        
+        it 'should default with a sensible id' do
+           @field_hash[:total_count][:options] = {external: {source: 'foo', target: 'bar'}}
+           subject.options.id.should == 'total_count_options'       
+        end
+        
+        it 'should give back a passed in id' do
+          @field_hash[:total_count][:options] = {list: ['bar', 'cow'], id: 'fortunes grace'}
+          subject.options.id.should == 'fortunes grace'
+        end
+        
       end
       
       describe '#validators' do

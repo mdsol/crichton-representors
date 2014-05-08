@@ -104,7 +104,7 @@ module Crichton
         end
       end        
 
-      describe '#attribute' do
+      describe '#properties' do
         it 'returns a hash of attributes associated with the represented resource' do
           @representor_hash =  @base_representor.merge(@semantic_elements)
           semantic_elements_present =  %w(total_count uptime brackreference).all? do |key|
@@ -144,7 +144,8 @@ module Crichton
         it 'returns all transitions' do
           @representor_hash =  @base_representor.merge(@transition_elements)
           subject.transitions.count.should == 2
-          subject.transitions.all? { |trans| trans.instance_of?(Crichton::Transition) }
+          has_transitions = subject.transitions.all? { |trans| trans.instance_of?(Crichton::Transition) }
+          has_transitions.should == true
         end
       end
       
@@ -155,14 +156,16 @@ module Crichton
             help: 'Forms/create'
           }
           subject.meta_links.count.should == 2
-          subject.meta_links.all? { |trans| trans.instance_of?(Crichton::Transition) }
+          has_meta_link = subject.meta_links.all? { |trans| trans.instance_of?(Crichton::Transition) }
+          has_meta_link.should == true
         end
       end
       
       describe '#datalists' do
         it 'returns all #transitions#paramters + #transitions#attributes | field.datalist? == True' do
           @representor_hash =  @base_representor.merge(@transition_elements)
-          subject.datalists.first.as_hash.should == {renegade: "renegade", compliant: "compliant"}
+          has_data_list = subject.datalists.first.as_hash.should == {renegade: "renegade", compliant: "compliant"}
+          has_data_list.should == true
         end
       end
       

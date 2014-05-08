@@ -2,47 +2,43 @@ require 'yaml'
 
 module Crichton
   ##
-  # Manages the respresentation of hypermedia messages for different media-types.
+  # Manages the respresentation of representation of
+  # field options for a hypermedia message.
   class Options
   
+    TYPE_KEYS = %w(external hash list)
+    DEFAULT_TYPE = :list
+    ID_KEY = :id
+    ID_TEMPLATE = "%s_options"
+    
     # @param [Hash] the abstract representation of Field Options
     def initialize(options_hash = {}, field_name='')
       @options_hash = options_hash
+      @field_name = field_name
     end
   
     # @return [String] delineating the Options type
     def type
-      if @options_hash.has_key?(:external)
-        :external
-      elsif @options_hash.has_key?(:hash)
-        :hash
-      else
-        :list     
-      end
+      type = TYPE_KEYS.select { |key| @options_hash.has_key?(key.to_sym) }
+      type[0].to_sym || DEFAULT_TYPE 
     end
     
     # @return [Bool] indicating whether the Options can be treated as a datalist
     def datalist?
-      type == :external or @options_hash.has_key?(:id)
+      type == :external or @options_hash.has_key?(ID_KEY)
     end
     
     # @return [String] representing a unique id for the options
     def id
-      if @options_hash.has_key?(:id)
-        @options_hash[:id]
-      else
-        "%s_options" % field_name
-      end
+        @options_hash[ID_KEY] || ID_TEMPLATE % @field_name
     end
     
     # @return [Hash] version of the Options
     def as_hash
       if type == :list
         Hash[@options_hash[:list].map {|x| [x.to_sym, x]}]
-      elsif type == :hash
-        @options_hash[:hash]
       else
-        @options_hash[:external]
+        @options_hash[type]
       end
     end    
     

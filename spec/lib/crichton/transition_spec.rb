@@ -57,20 +57,6 @@ module Crichton
         end
       end
       
-      describe '#uri' do
-        it 'returns the link to the related resource' do
-        end
-      end    
-      describe '#templated_uri' do
-        it 'returns the link to the related resource templated by #parameters' do
-        end
-      end 
-      
-      describe '#templated?' do
-        it 'returns true if #templated_uri != uri' do
-        end
-      end 
-      
       describe '#interface_method?' do
         it 'returns the uniform interface method' do
           subject.interface_method.should == 'GET'
@@ -114,8 +100,18 @@ module Crichton
           @representor_hash = @search_transition
           subject.templated_uri.should == '/?{name}'
         end
-      end            
-      
+      end
+        
+      describe '#templated?' do
+        it 'returns true if #templated_uri != uri' do
+          @representor_hash = @search_transition
+          subject.templated?.should == true
+        end
+        it 'returns false if #templated_uri == uri' do
+          @representor_hash = @self_transition
+          subject.templated?.should == false
+        end
+      end       
     end    
   end
 end
