@@ -11,7 +11,7 @@ module Crichton
     # Defined in the class itself.
     class << self
       def create(format, document)
-        serializer = serializers_mapping[format]
+        serializer = serializers_mapping(format)
         if serializer
           return serializer.new(document)
         else
@@ -20,13 +20,18 @@ module Crichton
       end
 
       private
-      def serializers_mapping
-        {
-          #A Hale document is a valid Hal document, use hal deserializer till hale's is ready.
-          "application/vnd.hale+json" => Crichton::HalDeserializer,
-          "application/hal+json" => Crichton::HalDeserializer
-        }
+
+      def serializers_mapping(format)
+        case format
+        #A Hale document is a valid Hal document, use hal deserializer till hale's is ready.
+        when /application\/vnd.hale\+json/
+          Crichton::HalDeserializer
+        when /application\/hal\+json/
+          Crichton::HalDeserializer
+        end
       end
+
     end
   end
+
 end
