@@ -13,9 +13,16 @@ SimpleCov.start
 Debugger.start
 Bundler.setup
 
-require 'crichton_representors'
+require 'crichton-representors'
 
 Dir["#{SPEC_DIR}/support/*.rb"].each { |f| require f }
+
+$fixtures_path = File.dirname(__FILE__) + '/fixtures/'
+
+def fixture(filename)
+  File.read(File.join($fixtures_path, filename))
+end
+
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true

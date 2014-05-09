@@ -1,7 +1,7 @@
 # Used to prevent the class/module from being loaded more than once
 unless defined?(::Crichton::Representor::VERSION)
   module Crichton
-    class Representor
+    module Representor
       class VERSION
         MAJOR = 0
         MINOR = 0
