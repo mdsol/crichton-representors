@@ -162,7 +162,7 @@ module Crichton
       end
       
       describe '#datalists' do
-        it 'returns all #transitions#paramters + #transitions#attributes | field.datalist? == True' do
+        it 'returns all paramters and attributes that are members of a datalist' do
           @representor_hash =  @base_representor.merge(@transition_elements)
           has_data_list = subject.datalists.first.as_hash.should == {renegade: "renegade", compliant: "compliant"}
         end
