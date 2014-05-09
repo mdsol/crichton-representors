@@ -5,6 +5,18 @@ module Crichton
   ##
   # Manages the respresentation of hypermedia messages for different media-types.
   class Representor
+    DOC_KEY = :doc
+    LINK_KEY = :href
+    PROTOCOL_KEY = :protocol
+    SEMANTIC_KEY = :semantics
+    EMBEDDED_KEY = :embedded
+    META_KEY = :links
+    TRANSITION_KEY = :transitions
+    VALUE_KEY = :value
+    UNKNOWN_PROTOCOL = 'ruby_id'
+    DEFAULT_PROTOCOL = 'http'
+    PROTOCOL_TEMPLATE = "%s://%s"
+    
     
     # @param representor_hash [Hash] the abstract representor hash defining a resource
     def initialize(representor_hash = nil)
@@ -15,8 +27,7 @@ module Crichton
     #
     # @return [String] the document for the representor
     def doc
-      doc = @representor_hash[:doc] || ''
-      @doc ||= doc
+      @doc ||= @representor_hash[DOC_KEY] || ''
     end
     
     # The URI for the object
@@ -24,9 +35,11 @@ module Crichton
     # @note If the URI can't be made from the provided information it constructs one fromt the Ruby ID
     # @return [String]
     def identifier
-      uri = @representor_hash[:href] || self.object_id
-      protocol = @representor_hash[:protocol] || (uri == self.object_id ? 'ruby_id' : 'http')
-      @identifier ||= "%s://%s" % [protocol, uri]
+      @identifier ||= begin
+        uri = @representor_hash[LINK_KEY] || self.object_id
+        protocol = @representor_hash[PROTOCOL_KEY] || (uri == self.object_id ? UNKNOWN_PROTOCOL : DEFAULT_PROTOCOL)
+        PROTOCOL_TEMPLATE % [protocol, uri]
+      end
     end
     
     # @return [Hash] The hash representation of the object
@@ -40,19 +53,43 @@ module Crichton
     end
     
     # @return [Hash] the resource attributes inferred from representor[:semantics]
-    def attributes
-      attributes = @representor_hash[:semantics] || {}
-      @attributes ||= Hash[ attributes.map { |k,v| [ k, v[:value]] } ]
+    def properties
+      @properties ||= Hash[(@representor_hash[SEMANTIC_KEY] || {}).map { |k, v| [ k, v[VALUE_KEY]] }]
     end
     
     # @return [Enumerable] who's elements are all <Crichton:Representor> objects
     def embedded
-      embedded_elements = @representor_hash[:embedded] || []
-      @embedded ||= embedded_elements.lazy.map { |embed|  Representor.new(embed) }
+      @embedded ||= (@representor_hash[EMBEDDED_KEY] || []).lazy.map { |embed|  Representor.new(embed) }
     end
     
+    # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
-      @meta_links ||= {}
+      @meta_links ||= get_transitions((@representor_hash[META_KEY] || []).map { |k, v| { k => { href: v } } })
+    end
+    
+    # @return [Array] who's elements are all <Crichton:Transition> objects    
+    def transitions
+      @transitions ||= begin
+        transitions = (@representor_hash[TRANSITION_KEY] || []).map { |k, v| {k => v} }
+        get_transitions(transitions)
+      end
+    end
+
+    # @return [Array] who's elements are all <Crichton:Option> objects    
+    def datalists
+      @datalists ||= begin
+        attributes = transitions.map { |transition| transition.attributes }
+        parameters = transitions.map { |transition| transition.parameters }
+        fields = [attributes, parameters].flatten
+        options = fields.map { |field| field.options }
+        options.select { |o| o.datalist? }
+      end
+    end
+    
+    private
+    
+    def get_transitions(hash)  
+      hash.map { |h| Crichton::Transition.new(h) }
     end
   end
 end
