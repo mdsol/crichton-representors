@@ -143,9 +143,9 @@ module Crichton
       describe '#transitions' do
         it 'returns all transitions' do
           @representor_hash =  @base_representor.merge(@transition_elements)
-          subject.transitions.count.should == 2
-          has_transitions = subject.transitions.all? { |trans| trans.instance_of?(Crichton::Transition) }
-          has_transitions.should == true
+          subject.transitions.should have(2).items
+          has_transitions = subject.transitions.all? { |trans| trans.instance_of?(Transition) }
+          has_transitions.should be_true
         end
       end
       
@@ -155,9 +155,9 @@ module Crichton
             self: 'DRDs#drds/create',
             help: 'Forms/create'
           }
-          subject.meta_links.count.should == 2
-          has_meta_link = subject.meta_links.all? { |trans| trans.instance_of?(Crichton::Transition) }
-          has_meta_link.should == true
+          subject.meta_links.should have(2).items
+          has_meta_link = subject.meta_links.all? { |trans| trans.instance_of?(Transition) }
+          has_meta_link.should be_true
         end
       end
       
@@ -165,10 +165,8 @@ module Crichton
         it 'returns all #transitions#paramters + #transitions#attributes | field.datalist? == True' do
           @representor_hash =  @base_representor.merge(@transition_elements)
           has_data_list = subject.datalists.first.as_hash.should == {renegade: "renegade", compliant: "compliant"}
-          has_data_list.should == true
         end
       end
-      
     end       
   end
 end

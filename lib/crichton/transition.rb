@@ -4,7 +4,6 @@ module Crichton
   ##
   # Manages the respresentation of link elements for hypermedia messages.
   class Transition
-  
     REL_KEY = :rel
     HREF_KEY = :href
     LINKS_KEY = :links
@@ -13,15 +12,17 @@ module Crichton
     DEFAULT_METHOD = 'GET'
     PARAMETER_FIELDS = 'url'
     ATTRIBUTE_FIELDS = 'attribute'
-    URL_TEMPLATE = "%s?%s"
+    URL_TEMPLATE = "%s{?%s}"
   
-    #  Hash <- {rel: {link_property: property_name}}
+    # @example
+    #   hash =  {rel: {link_property: property_name}}
+    #   Transition.new(hash)
     #  It must only have one key/vale pair where the value is a hash
     #  Must contain at least the property :href
     # @param [Hash] the abstract representor hash defining a transition
     def initialize(transition_hash)
-      rel = transition_hash.first[0]
-      @transition_hash = transition_hash[rel].clone
+      rel = transition_hash.keys.first
+      @transition_hash = transition_hash[rel].dup
       @transition_hash[REL_KEY] = rel
     end
     
@@ -39,10 +40,10 @@ module Crichton
     # TODO: Figure out how to scope differently
     # @return [String] The URI for the object templated against #parameters
     def templated_uri
-      if parameters.empty?
-        @templated_uri ||= uri
+      @templated_uri ||= if parameters.empty?
+        uri
       else
-        @templated_uri ||= URL_TEMPLATE % [uri, parameters.map { |p| "{%s}" % p.name }.join("&")]
+        URL_TEMPLATE % [uri, parameters.map { |p| p.name }.join(",")]
       end
     end
     
@@ -53,9 +54,7 @@ module Crichton
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
       meta_links = @transition_hash[LINKS_KEY] || []
-      meta_links.map do |link_key, link_href|
-        Transition.new( { link_key => { href: link_href } } )
-      end
+      meta_links.map { |link_key, link_href| Transition.new( { link_key => { href: link_href } } ) }
     end
     
     # @return [String] representing the Uniform Interface Method
@@ -91,6 +90,5 @@ module Crichton
       fields = @transition_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@transition_hash): []     
       filtered_fields(fields, field_type)
     end
-    
   end
 end
