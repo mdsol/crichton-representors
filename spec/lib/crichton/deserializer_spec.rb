@@ -20,6 +20,13 @@ describe Crichton::Deserializer do
       end
     end
 
+    context 'Requesting Hale JSON and some encoding' do
+      let(:format) {'application/vnd.hale+json encoding=UTF8'}
+      it 'returns a HalDeserializer' do
+        expect(deserializer).to be_instance_of(Crichton::HalDeserializer)
+      end
+    end
+
     context 'Requesting an unknown format' do
       let(:format) {'application/i_make_no_sense_to_crichton'}
       it 'raises an exception' do

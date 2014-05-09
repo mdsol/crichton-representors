@@ -20,7 +20,8 @@ module Crichton
       end
 
       private
-
+      # If a client send directly a Content-Type it may have encodings or other things so we want
+      # to be more flexible
       def serializers_mapping(format)
         case format
         #A Hale document is a valid Hal document, use hal deserializer till hale's is ready.
