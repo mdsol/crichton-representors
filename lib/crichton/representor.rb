@@ -54,34 +54,24 @@ module Crichton
     
     # @return [Hash] the resource attributes inferred from representor[:semantics]
     def properties
-      @properties ||= begin
-        attributes = @representor_hash[SEMANTIC_KEY] || {}
-        Hash[ attributes.map { |k,v| [ k, v[VALUE_KEY]] } ]
-      end
+      @properties ||= Hash[(@representor_hash[SEMANTIC_KEY] || {}).map { |k, v| [ k, v[VALUE_KEY]] }]
     end
     
     # @return [Enumerable] who's elements are all <Crichton:Representor> objects
     def embedded
-      @embedded ||= begin
-        embedded_elements = @representor_hash[EMBEDDED_KEY] || []
-        embedded_elements.lazy.map { |embed|  Representor.new(embed) }
-      end
+      @embedded ||= (@representor_hash[EMBEDDED_KEY] || []).lazy.map { |embed|  Representor.new(embed) }
     end
     
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
-      @meta_links ||= begin
-        links = @representor_hash[META_KEY] || []
-        links = links.map { |k,v| { k => {href: v } } }
-        get_transitions(links)
-      end
+      @meta_links ||= get_transitions((@representor_hash[META_KEY] || []).map { |k, v| { k => { href: v } } })
     end
     
     # @return [Array] who's elements are all <Crichton:Transition> objects    
     def transitions
       @transitions ||= begin
-        transitions = @representor_hash[TRANSITION_KEY] || []
-        get_transitions(transitions.map { |k, v| {k => v} })
+        transitions = (@representor_hash[TRANSITION_KEY] || []).map { |k, v| {k => v} }
+        get_transitions(transitions)
       end
     end
 

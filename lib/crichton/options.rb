@@ -19,8 +19,8 @@ module Crichton
     # @return [String] delineating the Options type
     def type
       @type ||= begin
-        type = TYPE_KEYS.select { |key| @options_hash.has_key?(key.to_sym) }
-        type[0].to_sym || DEFAULT_TYPE 
+        type_keys = TYPE_KEYS.detect { |key| @options_hash.has_key?(key.to_sym) }
+        type_keys || DEFAULT_TYPE
       end
     end
     

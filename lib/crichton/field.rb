@@ -33,11 +33,7 @@ module Crichton
     
     # @return [Hash] The hash representation of the object
     def to_hash
-      representor_hash = @field_hash.reject {|k, v| k == NAME_KEY }
-      @to_hash ||= begin
-        representor_hash = @field_hash.reject {|k,v| k == NAME_KEY }
-        { @field_hash[NAME_KEY] => representor_hash }
-      end
+      @to_hash ||= { @field_hash[NAME_KEY] => @field_hash.reject {|k,v| k == NAME_KEY } }
     end
     
     # @return [String] the yaml representation of the object 
@@ -47,13 +43,10 @@ module Crichton
     
     # @return [Array] who's elements are all [Hash] objects
     def validators
-      @validators ||= begin
-        validators_normalized = []
-        if @field_hash.has_key?(VALIDATORS_KEY)
-          validators_normalized = @field_hash[VALIDATORS_KEY].map do |hs| 
-            hs.instance_of?(Symbol) ? {hs => hs} : hs
-          end
-        end
+      @validators ||= if @field_hash.has_key?(VALIDATORS_KEY)
+        @field_hash[VALIDATORS_KEY].map { |h| h.instance_of?(Symbol) ? {h => h} : h }
+      else
+        []
       end
     end
     

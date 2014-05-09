@@ -106,6 +106,7 @@ module Crichton
           @representor_hash = @search_transition
           subject.templated?.should be_true
         end
+        
         it 'returns false if #templated_uri == uri' do
           @representor_hash = @self_transition
           subject.templated?.should be_false

@@ -12,7 +12,7 @@ module Crichton
           profile: 'http://alps.io/schema.org/Integer',
           sample: 1,
           value: 2
-        },
+        }
       }
     end
     
@@ -38,7 +38,7 @@ module Crichton
       
       %w(value default description type data_type).map(&:to_sym).each do |key|
         describe "\##{key}" do
-          it "it should return it's hash value" do
+          it "returns it's hash value" do
            subject.send(key).should == field_hash.first[1][key]
           end
         end
@@ -51,27 +51,27 @@ module Crichton
         end
         
         it 'has a list interface even when a hash' do
-          @field_hash[:total_count][:options] = {hash: {foo: 'bar', ninja: 'cow'}}
+          @field_hash[:total_count][:options] = { hash: {foo: 'bar', ninja: 'cow'} }
           subject.options.as_list.should == field_hash[:total_count][:options][:hash].keys
         end
         
         it 'has a hash interface even when a list' do
-          @field_hash[:total_count][:options] = {list: ['bar', 'cow']}
+          @field_hash[:total_count][:options] = { list: ['bar', 'cow'] }
           subject.options.as_hash.should == {bar: 'bar', cow: 'cow'}
         end
         
         it 'has a hash interface when external' do
-          @field_hash[:total_count][:options] = {external: {source: 'foo', target: 'bar'}}
+          @field_hash[:total_count][:options] = { external: {source: 'foo', target: 'bar'} }
           subject.options.as_hash.should == {source: 'foo', target: 'bar'}
         end
         
         it 'defaults to a sensible id' do
-           @field_hash[:total_count][:options] = {external: {source: 'foo', target: 'bar'}}
+           @field_hash[:total_count][:options] = { external: {source: 'foo', target: 'bar'} }
            subject.options.id.should == 'total_count_options'       
         end
         
         it 'gives back a passed in id' do
-          @field_hash[:total_count][:options] = {list: ['bar', 'cow'], id: 'fortunes grace'}
+          @field_hash[:total_count][:options] = { list: ['bar', 'cow'], id: 'fortunes grace' }
           subject.options.id.should == 'fortunes grace'
         end
         

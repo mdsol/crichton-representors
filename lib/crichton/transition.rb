@@ -1,5 +1,3 @@
-
-
 module Crichton
   ##
   # Manages the respresentation of link elements for hypermedia messages.
@@ -53,8 +51,9 @@ module Crichton
     
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
-      meta_links = @transition_hash[LINKS_KEY] || []
-      meta_links.map { |link_key, link_href| Transition.new( { link_key => { href: link_href } } ) }
+      meta_links ||= (@transition_hash[LINKS_KEY] || []).map do |link_key, link_href| 
+        Transition.new( { link_key => { href: link_href } } ) 
+      end
     end
     
     # @return [String] representing the Uniform Interface Method
