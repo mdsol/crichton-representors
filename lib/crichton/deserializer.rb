@@ -29,6 +29,9 @@ module Crichton
           Crichton::HalDeserializer
         when /application\/hal\+json/
           Crichton::HalDeserializer
+        #It should read all properties nicely
+        when /application\/json/
+          Crichton::HalDeserializer
         end
       end
 

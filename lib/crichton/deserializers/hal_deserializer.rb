@@ -4,6 +4,7 @@ module Crichton
 
   # Deserializes the HAL format. For examples of how this format looks like check the files under
   # spec/fixtures/hal
+  # TODO: support Curies http://www.w3.org/TR/2010/NOTE-curie-20101216/
   class HalDeserializer
 
     # Can be initialized with a json document(string) or an already parsed hash

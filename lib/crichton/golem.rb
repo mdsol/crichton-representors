@@ -32,6 +32,7 @@ module Crichton
     end
 
     # Properties are available directly on the object for a shorthand of the probably most used data
+    # TODO: If we are gonna use this then we need to inherit from BasicObject
     def method_missing(method, *args, &block)
       if @properties.has_key?(method.to_s)
         @properties[method.to_s]
