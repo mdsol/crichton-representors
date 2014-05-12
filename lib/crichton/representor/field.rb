@@ -1,4 +1,5 @@
 require 'yaml'
+require 'crichton/representor/options'
 
 module Crichton
   ##
@@ -52,7 +53,7 @@ module Crichton
     
     # @return [Array] who's elements are all Crichton::Options objects
     def options
-      @options ||= Crichton::Options.new(@field_hash[OPTIONS_KEY], name)
+      @options ||= Options.new(@field_hash[OPTIONS_KEY], name)
     end
     
     # @returns the value of the field
