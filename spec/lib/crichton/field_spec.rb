@@ -40,7 +40,7 @@ module Crichton
         %w(value default description type data_type).map(&:to_sym).each do |key|
           describe "\##{key}" do
             it "returns it's hash value" do
-             subject.send(key).should == field_hash.first[1][key]
+             subject.send(key).should == field_hash[:total_count][key]
             end
           end
         end
@@ -58,16 +58,16 @@ module Crichton
         
           it 'has a hash interface even when a list' do
             @field_hash[:total_count][:options] = { list: ['bar', 'cow'] }
-            subject.options.as_hash.should == {bar: 'bar', cow: 'cow'}
+            subject.options.as_hash.should == { bar: 'bar', cow: 'cow' }
           end
         
           it 'has a hash interface when external' do
-            @field_hash[:total_count][:options] = { external: {source: 'foo', target: 'bar'} }
-            subject.options.as_hash.should == {source: 'foo', target: 'bar'}
+            @field_hash[:total_count][:options] = { external: { source: 'foo', target: 'bar' } }
+            subject.options.as_hash.should == { source: 'foo', target: 'bar' }
           end
         
           it 'defaults to a sensible id' do
-             @field_hash[:total_count][:options] = { external: {source: 'foo', target: 'bar'} }
+             @field_hash[:total_count][:options] = { external: { source: 'foo', target: 'bar' } }
              subject.options.id.should == 'total_count_options'       
           end
         

@@ -1,1 +1,1 @@
-require 'crichton/representor'
+require 'crichton/representors/representor'

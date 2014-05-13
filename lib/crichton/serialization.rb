@@ -7,9 +7,6 @@ module Crichton
 
       TOP_LEVEL_MEDIA = %w(application text)
 
-
-
-
       def known_serializers
         @known_serializers ||= begin
           serializers = Serialization.constants.select {|c| Serialization.const_get(c).is_a? Class}
@@ -25,12 +22,11 @@ module Crichton
       end
       
       def to_media_type(media_type, options={})
-        options = options.merge({ called_media: media_type } )
-        build(media_type, options).to_media_type(options)
+        build(media_type).to_media_type(options)
       end
       
-      def build(media_type, options)
-        known_serializers[media_type].new(self, options)
+      def build(media_type)
+        known_serializers[media_type].new(self, media_type)
       end
       
       def construed_media_types(formats, media_types)

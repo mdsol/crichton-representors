@@ -15,13 +15,13 @@ module Crichton
           @formats
         end
                 
-        def initialize(representor, options = { called_media: 'hal+json' })
-          @options = options
+        def initialize(representor, media_type = 'hal+json', options = {})
+          @media_type = media_type
           @serialization = serialize(representor)
         end
         
         def to_media_type(options)
-          @serialization
+          @serialization.(options)
         end
                 
         def as_media_type(options)
@@ -35,7 +35,7 @@ module Crichton
           embedded_links, embedded_hals = get_embedded_elements(representor)
           links = (representor.transitions.map { |link| construct_links(link) })+embedded_links
           links = links != [] ? { _links: links.reduce({}, :merge) } : {}
-          base_hash.merge(links.merge(embedded_hals))
+          ->(options) { base_hash.merge(links.merge(embedded_hals.(options))) }
         end
         
         def get_semantics(representor)
@@ -48,10 +48,10 @@ module Crichton
               embedded = representor.embedded
               links = embedded.map { |k, v| get_embedded_links(k, v) }
               _embedded = embedded.map { |k, v| get_embedded_objects(k, v) }
-              embedded_hals = @options.has_key?(:link_only) ? {} : { _embedded: _embedded.reduce({}, :merge) }
+              embedded_hals = ->(options) { options.has_key?(:link_only) ? {} : { _embedded: _embedded.reduce({}, :merge) } }
               [links, embedded_hals]
             else
-              [[], {}]
+              [[], ->(o) { {} }]
             end
           end
         end
@@ -63,7 +63,7 @@ module Crichton
         end
         
         def get_embedded_objects(key, embedded)
-          { key =>  embedded.to_a.map { |embed| embed.to_media_type(@options[:called_media], options=@options) } }
+          { key =>  embedded.to_a.map { |embed| embed.to_media_type(@media_type) } }
         end
                 
         def construct_links(transition)

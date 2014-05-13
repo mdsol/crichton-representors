@@ -14,11 +14,11 @@ module Crichton
             href: 'some.example.com/list'
           }
         }
-        @search_transition = {
-          search: { #create
+        @create_transition = {
+          create: { #create
             doc: 'Returns a list of DRDs that satisfy the search term.',
             rt: 'drds',
-            type: 'safe',
+            type: 'unsafe',
             method: 'post',
             href: '/',
             links: {
@@ -66,7 +66,7 @@ module Crichton
       
         describe '#parameters' do
           it 'returns a list of fields representing the link parameters' do
-            @representor_hash = @search_transition
+            @representor_hash = @create_transition
             field = subject.parameters.first
             field.should be_an_instance_of(Field)
           end
@@ -74,7 +74,7 @@ module Crichton
       
         describe '#attributes' do
           it 'returns a list of fields representing the link attributes' do
-            @representor_hash = @search_transition
+            @representor_hash = @create_transition
             field = subject.attributes.first
             field.should be_an_instance_of(Field)
           end
@@ -82,7 +82,7 @@ module Crichton
 
         describe '#meta_links' do
           it 'returns a list of Transitions' do
-            @representor_hash = @search_transition
+            @representor_hash = @create_transition
             links = subject.meta_links.all? { |item| item.instance_of?(Transition) }
             links.should be_true
           end
@@ -90,25 +90,25 @@ module Crichton
       
         describe '#uri' do
           it 'returns the bare link' do
-            @representor_hash = @search_transition
+            @representor_hash = @create_transition
             subject.uri.should == '/'
           end
         end
       
         describe '#templated_uri' do
           it 'returns the link parameterized' do
-            @representor_hash = @search_transition
+            @representor_hash = @create_transition
             subject.templated_uri.should == '/{?name}'
           end
         end
         
         describe '#templated?' do
-          it 'returns true if #templated_uri != uri' do
-            @representor_hash = @search_transition
+          it 'returns true when #templated_uri is different than uri' do
+            @representor_hash = @create_transition
             subject.templated?.should be_true
           end
         
-          it 'returns false if #templated_uri == uri' do
+          it 'returns false when #templated_uri is the same as uri' do
             @representor_hash = @self_transition
             subject.templated?.should be_false
           end
