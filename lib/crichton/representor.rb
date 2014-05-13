@@ -1,6 +1,6 @@
 require 'yaml'
-require 'crichton/representor/field'
-require 'crichton/representor/transition'
+require 'crichton/representors/field'
+require 'crichton/representors/transition'
 require 'crichton/serialization'
 require 'enumerable/lazy' if RUBY_VERSION < '2.0'
 
@@ -8,6 +8,7 @@ module Crichton
   ##
   # Manages the respresentation of hypermedia messages for different media-types.
   module Representors
+
     class Representor
       include Serialization
       
@@ -33,7 +34,7 @@ module Crichton
       #
       # @return [String] the document for the representor
       def doc
-        @doc ||= @representor_hash[DOC_KEY] || ''
+        @representor_hash[DOC_KEY] || ''
       end
     
       # The URI for the object
@@ -50,7 +51,7 @@ module Crichton
     
       # @return [Hash] The hash representation of the object
       def to_hash
-        @to_hash ||= @representor_hash
+        @representor_hash
       end
     
       # @return [String] the yaml representation of the object 
@@ -59,28 +60,28 @@ module Crichton
       end
     
       # @return [Hash] the resource attributes inferred from representor[:semantics]
-      def properties
-        @properties ||= Hash[(@representor_hash[SEMANTIC_KEY] || {}).map { |k, v| [ k, v[VALUE_KEY]] }]
+      def attributes
+        @attributes ||= Hash[(@representor_hash[SEMANTIC_KEY] || {}).map { |k, v| [ k, v[VALUE_KEY]] }]
       end
     
       # @return [Enumerable] who's elements are all <Crichton:Representor> objects
       def embedded
         @embedded ||= begin
           embeds = (@representor_hash[EMBEDDED_KEY] || [])
-          Hash[embeds.map { |k, v| [ k, v.lazy.map { |embed|  Representor.new(embed) } ] } ]
+          Hash[embeds.map { |k, v| [k, v.lazy.map { |embed|  Representor.new(embed) }] } ]
         end
       end
     
       # @return [Array] who's elements are all <Crichton:Transition> objects
       def meta_links
-        @meta_links ||= get_transitions((@representor_hash[META_KEY] || []).map { |k, v| { k => { href: v } } })
+        @meta_links ||= map_transitions((@representor_hash[META_KEY] || {}).map { |k, v| { k => { href: v } } })
       end
     
       # @return [Array] who's elements are all <Crichton:Transition> objects    
       def transitions
         @transitions ||= begin
           transitions = (@representor_hash[TRANSITION_KEY] || []).map { |k, v| {k => v} }
-          get_transitions(transitions)
+          map_transitions(transitions)
         end
       end
 
@@ -97,8 +98,8 @@ module Crichton
     
       private
     
-      def get_transitions(hash)  
-        hash.map { |h| Transition.new(h) }
+      def map_transitions(transitions)  
+        transitions.map { |transition| Transition.new(transition) }
       end
     end
   end

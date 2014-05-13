@@ -1,5 +1,5 @@
 require 'yaml'
-require 'crichton/representor/options'
+require 'crichton/representors/options'
 
 module Crichton
   ##

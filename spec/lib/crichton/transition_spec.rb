@@ -15,7 +15,7 @@ module Crichton
           }
         }
         @search_transition = {
-          search: {
+          search: { #create
             doc: 'Returns a list of DRDs that satisfy the search term.',
             rt: 'drds',
             type: 'safe',

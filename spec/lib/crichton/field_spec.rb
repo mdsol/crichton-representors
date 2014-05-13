@@ -33,7 +33,7 @@ module Crichton
     
         describe '#name' do
           it 'returns the key when requesting the name' do
-            subject.name.should == field_hash.keys.first
+            expect(field_hash.keys).to include(subject.name)
           end
         end
       

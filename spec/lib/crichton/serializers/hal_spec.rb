@@ -122,7 +122,7 @@ module Crichton
         }
     
         @non_contrived = {}
-        @media = 'hal+json'
+        @media = 'application/hal+json'
         
         def assert_serialization(subject, object, options={})
           subject.to_media_type(@media, options).should == object
@@ -295,3 +295,23 @@ module Crichton
     end
   end
 end
+
+# shared_example
+#   it 'returns the serialized object'
+#     expects(subject.to_media_type(@media, options)).to eq(object)
+#   end
+# end
+# 
+# describe '#to_media_type'
+#   context 'when document has self link'
+#     before do
+#       @representor_hash = {...}
+#       @expected_hash = {...}
+#     end
+#     
+#     it_behaves_like 'a serialized object'
+#   end
+# end
+
+
+

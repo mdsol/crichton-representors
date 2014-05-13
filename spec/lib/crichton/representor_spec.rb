@@ -22,11 +22,8 @@ module Crichton
               sample: 1,
               value: 2
             },
-            uptime: {
-              value: '76ms'
-            },
-            brackreference: {
-              value: 886396728    
+            reference: {
+              value: 'Fort::4652'
             }
           }
         }
@@ -108,8 +105,9 @@ module Crichton
         describe '#properties' do
           it 'returns a hash of attributes associated with the represented resource' do
             @representor_hash =  @base_representor.merge(@semantic_elements)
-            semantic_elements_present =  %w(total_count uptime brackreference).all? do |key|
-              subject.properties[key.to_sym] == @semantic_elements[:semantics][key.to_sym][:value]
+            semantic_elements_present =  %w(total_count reference).all? do |key|
+              print subject.attributes
+              subject.attributes[key.to_sym] == @semantic_elements[:semantics][key.to_sym][:value]
             end
             semantic_elements_present.should be_true
            end

@@ -1,5 +1,3 @@
-require 'yaml'
-
 module Crichton
   ##
   # Manages the respresentation of representation of
