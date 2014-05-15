@@ -48,18 +48,18 @@ module Crichton
     
     describe '.new' do
       it 'returns a Crichton::Transition instance' do
-        subject.should be_an_instance_of(Transition)
+        expect(subject).to be_an_instance_of(Transition)
       end
       
       describe '#rel' do
         it 'returns the transition key' do
-          subject.rel.should == :self
+          expect(subject.rel).to eq(:self)
         end
       end
       
       describe '#interface_method' do
         it 'returns the uniform interface method' do
-          subject.interface_method.should == 'GET'
+          expect(subject.interface_method).to eq('GET')
         end
       end
       
@@ -67,7 +67,7 @@ module Crichton
         it 'returns a list of fields representing the link parameters' do
           @representor_hash = @search_transition
           field = subject.parameters.first
-          field.should be_an_instance_of(Field)
+          expect(field).to be_an_instance_of(Field)
         end
       end
       
@@ -75,7 +75,7 @@ module Crichton
         it 'returns a list of fields representing the link attributes' do
           @representor_hash = @search_transition
           field = subject.attributes.first
-          field.should be_an_instance_of(Field)
+          expect(field).to be_an_instance_of(Field)
         end
       end           
 
@@ -83,33 +83,33 @@ module Crichton
         it 'returns a list of Transitions' do
           @representor_hash = @search_transition
           links = subject.meta_links.all? { |item| item.instance_of?(Transition) }
-          links.should be_true
+          expect(links).to be_true
         end
       end
       
       describe '#uri' do
         it 'returns the bare link' do
           @representor_hash = @search_transition
-          subject.uri.should == '/'
+          expect(subject.uri).to eq('/')
         end
       end
       
       describe '#templated_uri' do
         it 'returns the link parameterized' do
           @representor_hash = @search_transition
-          subject.templated_uri.should == '/{?name}'
+          expect(subject.templated_uri).to eq('/{?name}')
         end
       end
         
       describe '#templated?' do
         it 'returns true if #templated_uri != uri' do
           @representor_hash = @search_transition
-          subject.templated?.should be_true
+          expect(subject.templated?).to be_true
         end
         
         it 'returns false if #templated_uri == uri' do
           @representor_hash = @self_transition
-          subject.templated?.should be_false
+          expect(subject.templated?).to be_false
         end
       end       
     end    
