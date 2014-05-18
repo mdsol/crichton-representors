@@ -25,11 +25,11 @@ module Crichton
             value: '76ms'
           },
           brackreference: {
-            value: 886396728    
+            value: 886396728
           }
         }
       }
-      
+
       @transition_elements = {
         transitions: {
           self: {
@@ -62,13 +62,13 @@ module Crichton
       }
     end
     let(:representor_hash) { @representor_hash || @base_representor }
-    let(:subject) { Representor.new(representor_hash) }  
-     
+    let(:subject) { Representor.new(representor_hash) }
+
     describe '.new' do
       it 'returns a Crichton::Representor instance' do
         expect(subject).to be_an_instance_of(Crichton::Representor)
       end
-  
+
       it 'returns a Crichton::Representor instance with a nil argument' do
         expect(Representor.new).to be_an_instance_of(Crichton::Representor)
       end
@@ -79,30 +79,30 @@ module Crichton
           expect(subject.doc).to eq(representor_hash[:doc])
         end
       end
-      
+
       describe '#identifier' do
         it 'when given an href returns a url' do
           @representor_hash = {protocol: 'http', href: 'www.example.com/drds'}
           expect(subject.identifier).to match(URI::regexp)
         end
-        
+
         it 'when not given an href it returns ruby reference' do
           @representor_hash = {}
           expect(subject.identifier).to eq("ruby_id://%s" % subject.object_id)
         end
-      end     
+      end
 
       describe '#to_hash' do
         it 'returns a hash that it can be reconstructed with' do
           expect(Representor.new(subject.to_hash).to_hash).to eq(@base_representor)
         end
-      end  
+      end
 
       describe '#to_yaml' do
         it 'returns a yaml file that represents its internal hash' do
           expect(YAML.load(subject.to_yaml)).to eq(@base_representor)
         end
-      end        
+      end
 
       describe '#properties' do
         it 'returns a hash of attributes associated with the represented resource' do
@@ -113,33 +113,33 @@ module Crichton
           expect(semantic_elements_present).to be_true
          end
        end
-      
+
       describe '#embedded' do
         before do
           @count = 3
           @representor_hash = @base_representor.merge(@semantic_elements)
           @representor_hash[:embedded] = [@representor_hash.clone]*@count
         end
-        
+
         it 'returns a set of Representor objects' do
           expect(subject.embedded.first).to be_an_instance_of(Crichton::Representor)
         end
-        
+
         it 'returns a Representor objects that has its data' do
           embedded_objects_valid = subject.embedded.all? { |embed| embed.doc == representor_hash[:doc] }
           expect(embedded_objects_valid).to be_true
         end
-        
+
         it 'returns the all the Representors' do
           expect(subject.embedded.count).to eq(@count)
         end
-        
+
         it 'doesn\'t blow up even if nothing is embedded' do
           @representor_hash = @base_representor
           expect(subject.embedded.count).to eq(0)
         end
       end
-      
+
       describe '#transitions' do
         it 'returns all transitions' do
           @representor_hash =  @base_representor.merge(@transition_elements)
@@ -148,7 +148,7 @@ module Crichton
           expect(has_transitions).to be_true
         end
       end
-      
+
       describe '#meta_links' do
         it 'should return a list of transitions representing those links' do
           @base_representor[:links] = {
@@ -160,13 +160,13 @@ module Crichton
           expect(has_meta_link).to be_true
         end
       end
-      
+
       describe '#datalists' do
         it 'returns all paramters and attributes that are members of a datalist' do
           @representor_hash =  @base_representor.merge(@transition_elements)
           has_data_list = expect(subject.datalists.first.as_hash).to eq({renegade: "renegade", compliant: "compliant"})
         end
       end
-    end       
+    end
   end
 end

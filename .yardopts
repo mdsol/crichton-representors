@@ -1,5 +1,5 @@
 --title Crichton Representors Documentation
---verbose 
---no-private 
+--verbose
+--no-private
 --output-dir ./yardoc
 'lib/**/*.rb' - '*.md'
