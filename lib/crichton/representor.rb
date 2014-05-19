@@ -59,7 +59,19 @@ module Crichton
 
     # @return [Enumerable] who's elements are all <Crichton:Representor> objects
     def embedded
-      @embedded ||= (@representor_hash[EMBEDDED_KEY] || []).lazy.map { |embed|  Representor.new(embed) }
+      @embedded ||= begin
+        embedded_representors = (@representor_hash[EMBEDDED_KEY] || {}).map do |name, values|
+          if values.is_a?(Array)
+            several_representors = values.map do |value|
+              Representor.new(value)
+            end
+            [name, several_representors]
+          else
+            [name, Representor.new(values)]
+          end
+        end
+        Hash[embedded_representors]
+      end
     end
 
     # @return [Array] who's elements are all <Crichton:Transition> objects

@@ -4,7 +4,7 @@ describe Crichton::HalDeserializer do
   subject(:deserializer) {Crichton::HalDeserializer.new(document)}
   let(:semantics_field) {deserializer.to_representor.properties}
   let(:transitions_field) {deserializer.to_representor.transitions}
-  let(:embedded_field) {deserializer.to_hash.embedded }
+  let(:embedded_field) {deserializer.to_representor.embedded }
 
   it "initializes with a JSON document" do
     expect(Crichton::HalDeserializer.new({}.to_json)).to be_instance_of (Crichton::HalDeserializer)
@@ -59,7 +59,7 @@ describe Crichton::HalDeserializer do
         expect(transitions_field.first.href).to eq(transition_href)
       end
       it 'does not return any embedded resource' do
-        expect(embedded_field).to be_nil
+        expect(embedded_field).to be_empty
       end
 
     end
@@ -68,6 +68,7 @@ describe Crichton::HalDeserializer do
       let(:semantics) { { 'title' => 'The Neverending Story'}}
       let(:transition_rel) { 'author'}
       let(:transition_href) { '/mike'}
+      let(:embedded_book) { {'content' => 'A...'} }
       let(:document) do
         {
           'title' => 'The Neverending Story',
@@ -75,18 +76,46 @@ describe Crichton::HalDeserializer do
             transition_rel => {'href' => transition_href}
           },
           '_embedded' => {
-            'content' => 'A ...'
+            'embedded_book' => embedded_book
           }
         }
       end
-      it 'return a hash with all the attributes of the document' do
+      it 'Returns a hash with all the attributes of the document' do
         expect(semantics_field).to eq(semantics)
       end
-      it 'Create a transition with the link' do
+      it 'Creates a transition with the link' do
         expect(transitions_field.first.rel).to eq(transition_rel)
         expect(transitions_field.first.href).to eq(transition_href)
       end
 
+      it 'Creates an embedded resource with its data' do
+        expect(embedded_field['embedded_book'].properties).to eq(embedded_book)
+      end
+    end
+
+
+    context 'Document with an embedded collection' do
+      let(:embedded_book1) { {'content' => 'A...'} }
+      let(:embedded_book2) { {'content' => 'When...'} }
+      let(:embedded_book3) { {'content' => 'Once upon...'} }
+      let(:embedded_books) { [ embedded_book1, embedded_book2, embedded_book3 ] }
+      let(:document) do
+        {
+          '_embedded' => {
+            'embedded_books' => [ embedded_book1, embedded_book2, embedded_book3 ]
+          }
+        }
+      end
+
+      it 'Creates three embedded resources' do
+        expect(embedded_field['embedded_books'].count).to eq(embedded_books.size)
+      end
+
+      it 'Creates embedded resources with its data' do
+        embedded_books.each_with_index do |item, index|
+          expect(embedded_field['embedded_books'][index].properties).to eq(item)
+        end
+      end
     end
 
     context 'Document with only a self link and a title' do

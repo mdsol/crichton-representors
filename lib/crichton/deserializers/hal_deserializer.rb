@@ -25,7 +25,7 @@ module Crichton
       @builder = Representors::RepresentorBuilder.new
       deserialize_properties
       deserialize_links
-      #  deserialize_embedded(representor, @json)
+      deserialize_embedded
       @builder.to_representor_hash
     end
 
@@ -50,7 +50,7 @@ module Crichton
     # links are under '_links' in the original document. Links always have a key (its name) but
     # the value can be a hash with its properties or an array with several links.
     def deserialize_links
-      links = @json["_links"] || {}
+      links = @json[LINKS_KEY] || {}
       links.each do |link_rel, link_values|
         raise DeserializationError, "CURIE support not implemented for HAL" if link_rel.eql?(CURIE_KEY)
         if link_values.is_a?(Array)
@@ -65,24 +65,23 @@ module Crichton
         end
       end
     end
-=begin
     # embedded resources are under '_embedded' in the original document, similarly to links they can
     # contain an array or a single embedded resource. An embedded resource is a full document so
     # we create a new HalDeserializer for each.
-    def deserialize_embedded(representor, json)
-       embedded = json["_embedded"] || {}
-       embedded.each do |name, value|
-         if value.is_a?(Array)
-           resources = value.map do |one_embedded_resource|
-             HalDeserializer.new(one_embedded_resource).deserialize
-           end
-           representor.create_embedded(name, resources)
-         else
-           new_representor = HalDeserializer.new(value).deserialize
-           representor.create_embedded(name, new_representor)
-         end
-       end
+    def deserialize_embedded
+      embedded = @json[EMBEDDED_KEY] || {}
+      embedded.each do |name, value|
+        if value.is_a?(Array)
+          resources = value.map do |one_embedded_resource|
+            HalDeserializer.new(one_embedded_resource).to_hash
+          end
+          @builder.add_embedded(name, resources)
+        else
+          resource_hash = HalDeserializer.new(value).to_hash
+          @builder.add_embedded(name, resource_hash)
+        end
+      end
     end
-=end
+
   end
 end

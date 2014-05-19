@@ -10,7 +10,7 @@ module Crichton
       def initialize
         @attributes = {}
         @transitions = []
-    #    @embedded_resources = []
+        @embedded_resources = {}
       end
 
       # Returns a hash usable by the representor class
@@ -21,6 +21,9 @@ module Crichton
         end
         if !@transitions.empty?
           representor_hash.transitions = @transitions
+        end
+        if !@embedded_resources.empty?
+          representor_hash.embedded = @embedded_resources
         end
         representor_hash
       end
@@ -48,12 +51,10 @@ module Crichton
           link_values
         end
       end
-=begin
 
-      def create_embedded(name, embedded_resource)
+      def add_embedded(name, embedded_resource)
         @embedded_resources[name] = embedded_resource
       end
-=end
 
     end
   end

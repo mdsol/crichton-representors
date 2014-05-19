@@ -37,6 +37,20 @@ RSpec.shared_examples_for 'one transition added' do
   it 'the members of the transitions has a rel' do
     expect(transitions_field.first[:rel]).to eq(transition_name)
   end
+end
+
+RSpec.shared_examples_for 'one embedded added' do
+  it 'creates a transition key at the top level of the output' do
+    expect(builder.to_representor_hash.has_key?(Crichton::Representors::RepresentorHash::EMBEDDED_KEY)).to be_true
+  end
+
+  it 'adds a hash under "embedded" ' do
+    expect(embedded_field).to be_instance_of(Hash)
+  end
+
+  it 'creates an embedded resource inside its own hash' do
+    expect(embedded_field[embedded_name]).to eq(embedded_value)
+  end
 
 end
 
@@ -45,6 +59,7 @@ RSpec.describe Crichton::Representors::RepresentorBuilder do
   subject(:builder) {Crichton::Representors::RepresentorBuilder.new}
   let(:semantic_field) {builder.to_representor_hash.attributes}
   let(:transitions_field) {builder.to_representor_hash.transitions}
+  let(:embedded_field) {builder.to_representor_hash.embedded}
 
   context 'empty builder' do
     it "returns an empty hash" do
@@ -150,5 +165,20 @@ RSpec.describe Crichton::Representors::RepresentorBuilder do
 
     it_behaves_like 'one transition added'
   end
+
+
+  describe '#add_embedded' do
+    let(:embedded_name) {'trusmis'}
+    let(:embedded_value) {  { 'data' => 'here'}}
+
+    context 'Added an embedded' do
+      before do
+        builder.add_embedded(embedded_name, embedded_value)
+      end
+
+      it_behaves_like 'one embedded added'
+    end
+  end
+
 
 end
