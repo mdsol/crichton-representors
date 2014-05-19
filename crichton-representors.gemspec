@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.description = <<-DESC
     Crichton Representors is a library to simplify Hypermedia message representation.
   DESC
-  
+
   s.add_dependency('enumerable-lazy', '~> 0.0.1') if RUBY_VERSION < '2.0'
   s.add_dependency('rake')
 end
