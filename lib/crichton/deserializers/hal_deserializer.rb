@@ -10,6 +10,7 @@ module Crichton
     LINKS_KEY = '_links'
     EMBEDDED_KEY = '_embedded'
     CURIE_KEY = 'curies'
+    HREF = 'href'
 
     # Can be initialized with a json document(string) or an already parsed hash
     # @params document or hash
@@ -39,11 +40,10 @@ module Crichton
     # Properties are normal JSON keys in the HAL document. Create properties in the resulting object
     def deserialize_properties
       # links and embedded are not properties but keywords of HAL, skipping them.
-      property_names = @json.keys.select do |key|
-        (key != LINKS_KEY) && (key != EMBEDDED_KEY)
-      end
-      property_names.each do |property_name|
-        @builder.add_attribute(property_name, @json[property_name])
+      @json.keys.each do |property_name|
+        if (property_name != LINKS_KEY) && (property_name != EMBEDDED_KEY)
+          @builder.add_attribute(property_name, @json[property_name])
+        end
       end
     end
 
@@ -54,12 +54,12 @@ module Crichton
       links.each do |link_rel, link_values|
         raise DeserializationError, "CURIE support not implemented for HAL" if link_rel.eql?(CURIE_KEY)
         if link_values.is_a?(Array)
-          if link_values.map{|link| link['href']}.any?(&:nil?)
+          if link_values.map{|link| link[HREF]}.any?(&:nil?)
             raise DeserializationError, 'All links must contain the href attribute'
           end
           @builder.add_transition_array(link_rel, link_values)
         else
-          href = link_values.delete('href')
+          href = link_values.delete(HREF)
           raise DeserializationError, 'All links must contain the href attribute' unless href
           @builder.add_transition(link_rel, href, link_values )
         end

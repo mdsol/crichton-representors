@@ -20,10 +20,6 @@ module Crichton
     # @param [Hash] the abstract representor hash defining a transition
     def initialize(transition_hash)
       @transition_hash = transition_hash
-
-    #  rel = transition_hash.keys.first
-    #  @transition_hash = transition_hash[rel].dup
-    #  @transition_hash[REL_KEY] = rel
     end
 
     # @return [String] The name of the Relationship
