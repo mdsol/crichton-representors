@@ -1,5 +1,5 @@
 $LOAD_PATH.unshift('lib')
-require 'crichton/representor/version'
+require 'crichton/representors/version'
 
 Gem::Specification.new do |s|
   s.name = 'crichton-representors'
