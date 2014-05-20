@@ -31,18 +31,20 @@ module Crichton
       }
 
       @transition_elements = {
-        transitions: {
-          self: {
+        transitions: [
+          {
             doc: 'Returns a list of DRDs.',
             rt: 'drds',
             type: 'safe',
-            href: 'some.example.com/list'
+            href: 'some.example.com/list',
+            rel: 'self'
           },
-          search: {
+          {
             doc: 'Returns a list of DRDs that satisfy the search term.',
             rt: 'drds',
             type: 'safe',
             href: '/',
+            rel: 'search',
             descriptors: {
               name: {
                 doc: "Name to search",
@@ -58,7 +60,7 @@ module Crichton
               }
             }
           }
-        }
+        ]
       }
     end
     let(:representor_hash) { @representor_hash || @base_representor }
@@ -115,23 +117,24 @@ module Crichton
        end
 
       describe '#embedded' do
+        let(:embedded_resource) {'embedded_resource'}
         before do
           @count = 3
           @representor_hash = @base_representor.merge(@semantic_elements)
-          @representor_hash[:embedded] = [@representor_hash.clone]*@count
+          @representor_hash[:embedded] = { embedded_resource => [@representor_hash.clone]*@count}
         end
 
         it 'returns a set of Representor objects' do
-          expect(subject.embedded.first).to be_an_instance_of(Crichton::Representor)
+          expect(subject.embedded[embedded_resource].first).to be_an_instance_of(Crichton::Representor)
         end
 
         it 'returns a Representor objects that has its data' do
-          embedded_objects_valid = subject.embedded.all? { |embed| embed.doc == representor_hash[:doc] }
+          embedded_objects_valid = subject.embedded[embedded_resource].all? { |embed| embed.doc == representor_hash[:doc] }
           expect(embedded_objects_valid).to be_true
         end
 
         it 'returns the all the Representors' do
-          expect(subject.embedded.count).to eq(@count)
+          expect(subject.embedded[embedded_resource].count).to eq(@count)
         end
 
         it 'doesn\'t blow up even if nothing is embedded' do

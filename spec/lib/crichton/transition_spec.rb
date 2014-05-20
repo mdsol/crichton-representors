@@ -6,20 +6,19 @@ module Crichton
   describe Transition do
     before do
       @self_transition = {
-        self: {
           doc: 'Returns a list of DRDs.',
           rt: 'drds',
           type: 'safe',
-          href: 'some.example.com/list'
-        }
+          href: 'some.example.com/list',
+          rel: 'self'
       }
       @search_transition = {
-        search: {
           doc: 'Returns a list of DRDs that satisfy the search term.',
           rt: 'drds',
           type: 'safe',
           method: 'post',
           href: '/',
+          rel: 'search',
           links: {
             self: 'DRDs#drds/create',
             help: 'Forms/create'
@@ -39,7 +38,6 @@ module Crichton
               options: { list: ['renegade', 'compliant'], id: 'status_list' }
               }
             }
-          }
         }
     end
 
@@ -53,7 +51,7 @@ module Crichton
 
       describe '#rel' do
         it 'returns the transition key' do
-          expect(subject.rel).to eq(:self)
+          expect(subject.rel).to eq('self')
         end
       end
 

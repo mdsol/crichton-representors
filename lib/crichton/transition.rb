@@ -19,9 +19,7 @@ module Crichton
     #  Must contain at least the property :href
     # @param [Hash] the abstract representor hash defining a transition
     def initialize(transition_hash)
-      rel = transition_hash.keys.first
-      @transition_hash = transition_hash[rel].dup
-      @transition_hash[REL_KEY] = rel
+      @transition_hash = transition_hash
     end
 
     # @return [String] The name of the Relationship
@@ -34,6 +32,11 @@ module Crichton
       @transition_hash[HREF_KEY]
     end
 
+    # @param [String] key on the transitions hash to retrieve
+    # @return [String] with the value of the key
+    def [](key)
+      @transition_hash[key]
+    end
 
     # TODO: Figure out how to scope differently
     # @return [String] The URI for the object templated against #parameters

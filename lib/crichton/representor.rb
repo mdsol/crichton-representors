@@ -59,19 +59,32 @@ module Crichton
 
     # @return [Enumerable] who's elements are all <Crichton:Representor> objects
     def embedded
-      @embedded ||= (@representor_hash[EMBEDDED_KEY] || []).lazy.map { |embed|  Representor.new(embed) }
+      @embedded ||= begin
+        embedded_representors = (@representor_hash[EMBEDDED_KEY] || {}).map do |name, values|
+          if values.is_a?(Array)
+            several_representors = values.map do |value|
+              Representor.new(value)
+            end
+            [name, several_representors]
+          else
+            [name, Representor.new(values)]
+          end
+        end
+        Hash[embedded_representors]
+      end
     end
 
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
-      @meta_links ||= get_transitions((@representor_hash[META_KEY] || []).map { |k, v| { k => { href: v } } })
+      @meta_links ||= (@representor_hash[META_KEY] || []).map do |k, v|
+        Crichton::Transition.new( { k => { href: v } } )
+      end
     end
 
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def transitions
-      @transitions ||= begin
-        transitions = (@representor_hash[TRANSITION_KEY] || []).map { |k, v| {k => v} }
-        get_transitions(transitions)
+      @transitions ||= (@representor_hash[TRANSITION_KEY] || []).map do |hash|
+        Crichton::Transition.new(hash)
       end
     end
 
@@ -86,11 +99,6 @@ module Crichton
       end
     end
 
-    private
-
-    def get_transitions(hash)
-      hash.map { |h| Crichton::Transition.new(h) }
-    end
   end
 end
 
