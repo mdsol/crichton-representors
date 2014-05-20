@@ -1,6 +1,6 @@
 require 'yaml'
 
-module Crichton
+module Representors
   ##
   # Manages the respresentation of representation of
   # field options for a hypermedia message.

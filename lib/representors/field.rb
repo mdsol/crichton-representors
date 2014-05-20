@@ -1,6 +1,6 @@
 require 'yaml'
 
-module Crichton
+module Representors
   ##
   # Manages the respresentation of hypermedia fields for different media-types.
   class Field
@@ -50,9 +50,9 @@ module Crichton
       end
     end
 
-    # @return [Array] who's elements are all Crichton::Options objects
+    # @return [Array] who's elements are all Representors::Options objects
     def options
-      @options ||= Crichton::Options.new(@field_hash[OPTIONS_KEY], name)
+      @options ||= Representors::Options.new(@field_hash[OPTIONS_KEY], name)
     end
 
     # @returns the value of the field

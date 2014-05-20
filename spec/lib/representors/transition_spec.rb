@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'yaml'
 require 'uri'
 
-module Crichton
+module Representors
   describe Transition do
     before do
       @self_transition = {
@@ -45,7 +45,7 @@ module Crichton
     let(:subject) { Transition.new(representor_hash) }
 
     describe '.new' do
-      it 'returns a Crichton::Transition instance' do
+      it 'returns a Representors::Transition instance' do
         expect(subject).to be_an_instance_of(Transition)
       end
 

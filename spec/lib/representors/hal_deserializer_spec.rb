@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe Crichton::HalDeserializer do
-  subject(:deserializer) {Crichton::HalDeserializer.new(document)}
+describe Representors::HalDeserializer do
+  subject(:deserializer) {Representors::HalDeserializer.new(document)}
   let(:semantics_field) {deserializer.to_representor.properties}
   let(:transitions_field) {deserializer.to_representor.transitions}
   let(:embedded_field) {deserializer.to_representor.embedded }
 
   it "initializes with a JSON document" do
-    expect(Crichton::HalDeserializer.new({}.to_json)).to be_instance_of (Crichton::HalDeserializer)
+    expect(Representors::HalDeserializer.new({}.to_json)).to be_instance_of (Representors::HalDeserializer)
   end
 
   describe "#to_representor" do
@@ -177,7 +177,7 @@ describe Crichton::HalDeserializer do
       end
 
       it 'raises a DeserializationError' do
-        expect{transitions_field}.to raise_error(Crichton::DeserializationError, "All links must contain the href attribute")
+        expect{transitions_field}.to raise_error(Representors::DeserializationError, "All links must contain the href attribute")
       end
     end
 
@@ -192,7 +192,7 @@ describe Crichton::HalDeserializer do
       end
 
       it 'raises a DeserializationError' do
-        expect{transitions_field}.to raise_error(Crichton::DeserializationError, "All links must contain the href attribute")
+        expect{transitions_field}.to raise_error(Representors::DeserializationError, "All links must contain the href attribute")
       end
     end
 
@@ -206,10 +206,9 @@ describe Crichton::HalDeserializer do
       end
 
       it 'raises a DeserializationError' do
-        expect{transitions_field}.to raise_error(Crichton::DeserializationError, "CURIE support not implemented for HAL")
+        expect{transitions_field}.to raise_error(Representors::DeserializationError, "CURIE support not implemented for HAL")
       end
     end
-
 
   end
 end

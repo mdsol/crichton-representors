@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'yaml'
 require 'uri'
 
-module Crichton
+module Representors
   describe Representor do
     before do
       @base_representor = {
@@ -67,12 +67,12 @@ module Crichton
     let(:subject) { Representor.new(representor_hash) }
 
     describe '.new' do
-      it 'returns a Crichton::Representor instance' do
-        expect(subject).to be_an_instance_of(Crichton::Representor)
+      it 'returns a Representors::Representor instance' do
+        expect(subject).to be_an_instance_of(Representors::Representor)
       end
 
-      it 'returns a Crichton::Representor instance with a nil argument' do
-        expect(Representor.new).to be_an_instance_of(Crichton::Representor)
+      it 'returns a Representors::Representor instance with a nil argument' do
+        expect(Representor.new).to be_an_instance_of(Representors::Representor)
       end
 
       describe '#doc' do
@@ -125,7 +125,7 @@ module Crichton
         end
 
         it 'returns a set of Representor objects' do
-          expect(subject.embedded[embedded_resource].first).to be_an_instance_of(Crichton::Representor)
+          expect(subject.embedded[embedded_resource].first).to be_an_instance_of(Representors::Representor)
         end
 
         it 'returns a Representor objects that has its data' do

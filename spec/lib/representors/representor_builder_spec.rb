@@ -3,7 +3,7 @@ require 'spec_helper'
 
 RSpec.shared_examples_for 'one attribute added' do
   it 'creates a semantic key at the top level of the output' do
-    expect(builder.to_representor_hash.has_key?(Crichton::Representors::RepresentorHash::SEMANTICS_KEY)).to be_true
+    expect(builder.to_representor_hash.has_key?(Representors::RepresentorHash::SEMANTICS_KEY)).to be_true
   end
 
   it 'adds the attribute name as a key under "semantic" in the output hash' do
@@ -24,7 +24,7 @@ end
 
 RSpec.shared_examples_for 'one transition added' do
   it 'creates a transition key at the top level of the output' do
-    expect(builder.to_representor_hash.has_key?(Crichton::Representors::RepresentorHash::TRANSITIONS_KEY)).to be_true
+    expect(builder.to_representor_hash.has_key?(Representors::RepresentorHash::TRANSITIONS_KEY)).to be_true
   end
 
   it 'adds an array under "transitions" ' do
@@ -41,7 +41,7 @@ end
 
 RSpec.shared_examples_for 'one embedded added' do
   it 'creates a transition key at the top level of the output' do
-    expect(builder.to_representor_hash.has_key?(Crichton::Representors::RepresentorHash::EMBEDDED_KEY)).to be_true
+    expect(builder.to_representor_hash.has_key?(Representors::RepresentorHash::EMBEDDED_KEY)).to be_true
   end
 
   it 'adds a hash under "embedded" ' do
@@ -55,8 +55,8 @@ RSpec.shared_examples_for 'one embedded added' do
 end
 
 
-RSpec.describe Crichton::Representors::RepresentorBuilder do
-  subject(:builder) {Crichton::Representors::RepresentorBuilder.new}
+RSpec.describe Representors::RepresentorBuilder do
+  subject(:builder) {Representors::RepresentorBuilder.new}
   let(:semantic_field) {builder.to_representor_hash.attributes}
   let(:transitions_field) {builder.to_representor_hash.transitions}
   let(:embedded_field) {builder.to_representor_hash.embedded}

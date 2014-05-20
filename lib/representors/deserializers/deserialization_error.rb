@@ -1,5 +1,5 @@
 # General error when there is a problem with any deserialization.
-module Crichton
+module Representors
   class DeserializationError < StandardError
   end
 end
