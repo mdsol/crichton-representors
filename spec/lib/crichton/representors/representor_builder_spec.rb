@@ -160,7 +160,7 @@ RSpec.describe Crichton::Representors::RepresentorBuilder do
     end
 
     it 'creates two elements under transitions' do
-      expect(transitions_field.size).to eq(2)
+      expect(transitions_field).to have(2).items
     end
 
     it_behaves_like 'one transition added'

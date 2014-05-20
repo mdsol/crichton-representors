@@ -6,6 +6,7 @@ module Crichton
     # In the present implementation it will create a hash of a specific format to
     # Initialize the Representor with, this will create classess with it.
     class RepresentorBuilder
+      HREF_KEY = 'href'
 
       def initialize
         @attributes = {}
@@ -47,7 +48,7 @@ module Crichton
       def add_transition_array(rel, array_of_hashes)
         @transitions += array_of_hashes.map do |link_values|
           link_values[:rel] = rel
-          link_values[:href] = link_values.delete('href')
+          link_values[:href] = link_values.delete(HREF_KEY)
           link_values
         end
       end

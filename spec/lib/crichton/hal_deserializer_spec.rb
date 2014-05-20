@@ -18,7 +18,7 @@ describe Crichton::HalDeserializer do
       it "returns a hash with no attributes, links or embedded resources" do
         expect(deserializer.to_representor.properties).to be_empty
         expect(deserializer.to_representor.transitions).to be_empty
-        expect(deserializer.to_representor.transitions).to be_empty
+        expect(deserializer.to_representor.embedded).to be_empty
       end
     end
 
@@ -56,7 +56,7 @@ describe Crichton::HalDeserializer do
       end
       it 'Create a transition with the link' do
         expect(transitions_field.first.rel).to eq(transition_rel)
-        expect(transitions_field.first.href).to eq(transition_href)
+        expect(transitions_field.first.uri).to eq(transition_href)
       end
       it 'does not return any embedded resource' do
         expect(embedded_field).to be_empty
@@ -85,7 +85,7 @@ describe Crichton::HalDeserializer do
       end
       it 'Creates a transition with the link' do
         expect(transitions_field.first.rel).to eq(transition_rel)
-        expect(transitions_field.first.href).to eq(transition_href)
+        expect(transitions_field.first.uri).to eq(transition_href)
       end
 
       it 'Creates an embedded resource with its data' do
@@ -108,7 +108,7 @@ describe Crichton::HalDeserializer do
       end
 
       it 'Creates three embedded resources' do
-        expect(embedded_field['embedded_books'].count).to eq(embedded_books.size)
+        expect(embedded_field['embedded_books']).to have(embedded_books.size).items
       end
 
       it 'Creates embedded resources with its data' do
@@ -133,7 +133,7 @@ describe Crichton::HalDeserializer do
       end
 
       it 'The transition has its href set properly' do
-        expect(transitions_field.first.href).to eq(href)
+        expect(transitions_field.first.uri).to eq(href)
       end
 
       it 'The transition has a title' do
@@ -155,7 +155,7 @@ describe Crichton::HalDeserializer do
       end
 
       it 'The representor has two links' do
-        expect(transitions_field.size).to eq(2)
+        expect(transitions_field).to have(2).items
       end
 
       it 'The transitions have a rel properly set' do
@@ -163,8 +163,8 @@ describe Crichton::HalDeserializer do
       end
 
       it 'The transitions have a href properly set ' do
-        expect(transitions_field[0].href).to eq(first_href)
-        expect(transitions_field[1].href).to eq(second_href)
+        expect(transitions_field[0].uri).to eq(first_href)
+        expect(transitions_field[1].uri).to eq(second_href)
       end
     end
 
