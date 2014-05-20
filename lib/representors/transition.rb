@@ -1,4 +1,4 @@
-module Crichton
+module Representors
   ##
   # Manages the respresentation of link elements for hypermedia messages.
   class Transition

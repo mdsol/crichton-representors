@@ -1,6 +1,6 @@
 require 'json'
 
-module Crichton
+module Representors
 
   # Deserializes the HAL format as specified in http://stateless.co/hal_specification.html
   # For examples of how this format looks like check the files under spec/fixtures/hal
