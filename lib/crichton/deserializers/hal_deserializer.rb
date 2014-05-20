@@ -2,6 +2,31 @@ require 'json'
 
 module Crichton
 
+  module FormatDeserializer
+
+    def self.included(base_class)
+      base_class.send :extend, ClassMethods
+      (@@deserializers || []).push(base_class)
+    end
+
+    def self.all_deserializers
+      @@deserializers
+    end
+
+    module ClassMethods
+
+      def symbol_format(symbol)
+
+      end
+      def iana_format(format)
+      end
+    end
+  end
+
+end
+
+
+
   # Deserializes the HAL format as specified in http://stateless.co/hal_specification.html
   # For examples of how this format looks like check the files under spec/fixtures/hal
   # TODO: support Curies http://www.w3.org/TR/2010/NOTE-curie-20101216/
@@ -11,6 +36,15 @@ module Crichton
     EMBEDDED_KEY = '_embedded'
     CURIE_KEY = 'curies'
     HREF = 'href'
+
+    include FormatDeserializer
+
+    # Take care of Hale till we have a deserializer for it.
+    symbol_format :hal
+    symbol_format :hale
+    iana_format 'application/hal+json'
+    iana_format 'application/json'
+    iana_format 'application/vnd.hale+json'
 
     # Can be initialized with a json document(string) or an already parsed hash
     # @params document or hash
