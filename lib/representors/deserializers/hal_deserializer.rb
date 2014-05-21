@@ -2,30 +2,6 @@ require 'json'
 
 module Representors
 
-  module FormatDeserializer
-
-    def self.included(base_class)
-      base_class.send :extend, ClassMethods
-      (@@deserializers || []).push(base_class)
-    end
-
-    def self.all_deserializers
-      @@deserializers
-    end
-
-    module ClassMethods
-
-      def symbol_format(symbol)
-
-      end
-      def iana_format(format)
-      end
-    end
-  end
-
-end
-
-
 
   # Deserializes the HAL format as specified in http://stateless.co/hal_specification.html
   # For examples of how this format looks like check the files under spec/fixtures/hal
@@ -41,18 +17,18 @@ end
 
     # Take care of Hale till we have a deserializer for it.
     symbol_format :hal
-    symbol_format :hale
     iana_format 'application/hal+json'
     iana_format 'application/json'
-    iana_format 'application/vnd.hale+json'
+
+    attr_reader :document #returns the original document parsed
 
     # Can be initialized with a json document(string) or an already parsed hash
     # @params document or hash
     def initialize(document_or_hash)
       if document_or_hash.is_a?(Hash)
-        @json = document_or_hash
+        @document = document_or_hash
       else #This may raise with a Json parse error which is ok
-        @json = JSON.parse(document_or_hash)
+        @document = JSON.parse(document_or_hash)
       end
     end
 
@@ -65,7 +41,7 @@ end
     # Returns a hash representation of the data. This is useful to merge with new data which may
     # be built by different builders. In this class we use it to support embedded resources.
     def to_hash
-      builder = Representors::RepresentorBuilder.new
+      builder = RepresentorBuilder.new
       builder_add_from_deserialized!(builder)
       builder.to_representor_hash
     end
@@ -81,9 +57,9 @@ end
     # Properties are normal JSON keys in the HAL document. Create properties in the resulting object
     def deserialize_properties!(builder)
       # links and embedded are not properties but keywords of HAL, skipping them.
-      @json.keys.each do |property_name|
+      @document.keys.each do |property_name|
         if (property_name != LINKS_KEY) && (property_name != EMBEDDED_KEY)
-          builder.add_attribute(property_name, @json[property_name])
+          builder.add_attribute(property_name, @document[property_name])
         end
       end
     end
@@ -91,7 +67,7 @@ end
     # links are under '_links' in the original document. Links always have a key (its name) but
     # the value can be a hash with its properties or an array with several links.
     def deserialize_links!(builder)
-      links = @json[LINKS_KEY] || {}
+      links = @document[LINKS_KEY] || {}
       links.each do |link_rel, link_values|
         raise DeserializationError, "CURIE support not implemented for HAL" if link_rel.eql?(CURIE_KEY)
         if link_values.is_a?(Array)
@@ -111,7 +87,7 @@ end
     # contain an array or a single embedded resource. An embedded resource is a full document so
     # we create a new HalDeserializer for each.
     def deserialize_embedded!(builder)
-      embedded = @json[EMBEDDED_KEY] || {}
+      embedded = @document[EMBEDDED_KEY] || {}
       embedded.each do |name, value|
         if value.is_a?(Array)
           resources = value.map do |one_embedded_resource|
