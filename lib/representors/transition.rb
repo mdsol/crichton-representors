@@ -1,4 +1,4 @@
-module Crichton
+module Representors
   ##
   # Manages the respresentation of link elements for hypermedia messages.
   class Transition
@@ -31,9 +31,9 @@ module Crichton
     def uri
       @transition_hash[HREF_KEY]
     end
-    # TODO: Elevate discussion for this method name
-    alias_method :href, :uri
 
+    # @param [String] key on the transitions hash to retrieve
+    # @return [String] with the value of the key
     def [](key)
       @transition_hash[key]
     end

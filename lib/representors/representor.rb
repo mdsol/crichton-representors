@@ -1,7 +1,7 @@
 require 'yaml'
 require 'enumerable/lazy' if RUBY_VERSION < '2.0'
 
-module Crichton
+module Representors
   ##
   # Manages the respresentation of hypermedia messages for different media-types.
   class Representor
@@ -57,7 +57,7 @@ module Crichton
       @properties ||= Hash[(@representor_hash[SEMANTIC_KEY] || {}).map { |k, v| [ k, v[VALUE_KEY]] }]
     end
 
-    # @return [Enumerable] who's elements are all <Crichton:Representor> objects
+    # @return [Enumerable] who's elements are all <Representors:Representor> objects
     def embedded
       @embedded ||= begin
         embedded_representors = (@representor_hash[EMBEDDED_KEY] || {}).map do |name, values|
@@ -74,21 +74,21 @@ module Crichton
       end
     end
 
-    # @return [Array] who's elements are all <Crichton:Transition> objects
+    # @return [Array] who's elements are all <Representors:Transition> objects
     def meta_links
       @meta_links ||= (@representor_hash[META_KEY] || []).map do |k, v|
-        Crichton::Transition.new( { k => { href: v } } )
+        Representors::Transition.new( { k => { href: v } } )
       end
     end
 
-    # @return [Array] who's elements are all <Crichton:Transition> objects
+    # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
       @transitions ||= (@representor_hash[TRANSITION_KEY] || []).map do |hash|
-        Crichton::Transition.new(hash)
+        Representors::Transition.new(hash)
       end
     end
 
-    # @return [Array] who's elements are all <Crichton:Option> objects
+    # @return [Array] who's elements are all <Representors:Option> objects
     def datalists
       @datalists ||= begin
         attributes = transitions.map { |transition| transition.attributes }

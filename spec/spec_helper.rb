@@ -12,7 +12,7 @@ require 'simplecov'
 Debugger.start
 Bundler.setup
 
-require 'crichton-representors'
+require 'representors'
 
 Dir["#{SPEC_DIR}/support/*.rb"].each { |f| require f }
 

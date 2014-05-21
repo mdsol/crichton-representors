@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'yaml'
 require 'uri'
 
-module Crichton
+module Representors
   describe Field do
     before do
       @field_hash = {
@@ -20,8 +20,8 @@ module Crichton
     let(:subject) { Field.new(field_hash) }
 
     describe '.new' do
-      it 'returns a Crichton::Field instance' do
-        expect(subject).to be_an_instance_of(Crichton::Field)
+      it 'returns a Representors::Field instance' do
+        expect(subject).to be_an_instance_of(Representors::Field)
       end
 
       describe '#to_hash' do
