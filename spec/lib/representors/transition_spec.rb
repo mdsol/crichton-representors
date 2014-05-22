@@ -44,6 +44,12 @@ module Representors
     let(:representor_hash) { @representor_hash || @self_transition }
     let(:subject) { Transition.new(representor_hash) }
 
+    describe '#to_s' do
+      it 'retuns a string representation' do
+        expect(subject.to_s).to eq(representor_hash.to_s)
+      end
+    end
+
     describe '.new' do
       it 'returns a Representors::Transition instance' do
         expect(subject).to be_an_instance_of(Transition)

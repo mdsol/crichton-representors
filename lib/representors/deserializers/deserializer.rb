@@ -28,7 +28,8 @@ module Representors
         end
       else
         Representors::FormatDeserializer.all_deserializers.find do |deserializer|
-          deserializer.iana_formats.include?(format)
+          # because they may send us directly a content-type that may have more than just a format
+          deserializer.iana_formats.any?{|deserializer_format| format.include?(deserializer_format) }
         end
       end
     end

@@ -67,6 +67,12 @@ module Representors
     let(:representor_hash) { @representor_hash || @base_representor }
     let(:subject) { Representor.new(representor_hash) }
 
+    describe '#to_s' do
+      it 'retuns a string representation' do
+        expect(subject.to_s).to eq(representor_hash.to_s)
+      end
+    end
+
     describe '.new' do
       it 'returns a Representors::Representor instance' do
         expect(subject).to be_an_instance_of(Representors::Representor)

@@ -22,6 +22,11 @@ module Representors
       @transition_hash = transition_hash
     end
 
+    # @return [String] so the user can 'puts' this object
+    def to_s
+      @transition_hash.inspect
+    end
+
     # @return [String] The name of the Relationship
     def rel
       @transition_hash[REL_KEY]
