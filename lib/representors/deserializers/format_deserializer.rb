@@ -22,6 +22,7 @@ module Representors
         @iana_formats || []
       end
 
+      private
       def symbol_format(symbol)
         @symbol_formats ||= []
         @symbol_formats.push(symbol)
