@@ -1,17 +1,26 @@
 module Representors
   # This is the structure shared between the builder and the representor.
-  # Encapsulate the name of the keys constants
-  # TODO: create documentation with this:
-  #  https://gist.github.com/sheavalentine-mdsol/69649d4e1aeee76de21c
-  # TODO: Convert to Struct
+  # This class allows to pass all the data to the representor without polluting it with methods
+  # It is supposed to be a fast class (Struct is implemented in C)
+  # The structure looks like this:
+  # id: [string]
+  # doc: [string]
+  # href: [string]
+  # protocol: [string]
+  # attributes: [hash]  { key => value }
+  # links: [array of hashes]
+  # transitions: [array of hashes]
+  # embedded: [hash] where each value can be recursively defined by this same structure
   RepresentorHash  = Struct.new(:id, :doc, :href, :protocol, :attributes, :embedded, :links, :transitions) do
+
+    # be able to create from a hash
     def initialize(hash={})
       hash.each_pair do |key, value|
         self[key] = value
       end
-      #debugger
-      #self[*hash.values_at(*RepresentorHash.members.map {|m| m.to_sym})]
     end
+
+    # Be able to generate a new structure with myself and a hash
     def merge(hash)
       new_representor_hash = RepresentorHash.new(to_h)
       hash.each_pair do |key, value|
