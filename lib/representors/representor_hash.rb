@@ -1,37 +1,41 @@
 module Representors
   # This is the structure shared between the builder and the representor.
-  # Encapsulate the name of the keys constants
-  # TODO: create documentation with this:
-  #  https://gist.github.com/sheavalentine-mdsol/69649d4e1aeee76de21c
-  # TODO: Is a good idea to meta-program this?
-  class RepresentorHash < Hash
-    SEMANTICS_KEY = :semantics
-    TRANSITIONS_KEY = :transitions
-    EMBEDDED_KEY = :embedded
+  # This class allows to pass all the data to the representor without polluting it with methods
+  # It is supposed to be a fast class (Struct is implemented in C)
+  # The structure looks like this:
+  # id: [string]
+  # doc: [string]
+  # href: [string]
+  # protocol: [string]
+  # attributes: [hash]  { key => value }
+  # links: [array of hashes]
+  # transitions: [array of hashes]
+  # embedded: [hash] where each value can be recursively defined by this same structure
+  RepresentorHash  = Struct.new(:id, :doc, :href, :protocol, :attributes, :embedded, :links, :transitions) do
 
-    def attributes=(attributes)
-      merge!({SEMANTICS_KEY => attributes})
+    # be able to create from a hash
+    def initialize(hash={})
+      hash.each_pair do |key, value|
+        self[key] = value
+      end
     end
 
-    def transitions=(transitions_array)
-      merge!({TRANSITIONS_KEY => transitions_array})
+    # Be able to generate a new structure with myself and a hash
+    def merge(hash)
+      new_representor_hash = RepresentorHash.new(to_h)
+      hash.each_pair do |key, value|
+        new_representor_hash[key] = value
+      end
+      new_representor_hash
     end
 
-    def embedded=(embedded_array)
-      merge!({EMBEDDED_KEY => embedded_array})
+    # to_h does not exists in Ruby < 2.0
+    if RUBY_VERSION < '2.0'
+      def to_h
+        members.each_with_object({}) { |member, hash| hash[member] = self[member]}
+      end
     end
 
-    def embedded
-      self[EMBEDDED_KEY]
-    end
-
-    def attributes
-      self[SEMANTICS_KEY]
-    end
-
-    def transitions
-      self[TRANSITIONS_KEY]
-    end
   end
 
 end

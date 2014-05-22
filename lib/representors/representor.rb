@@ -5,29 +5,22 @@ module Representors
   ##
   # Manages the respresentation of hypermedia messages for different media-types.
   class Representor
-    DOC_KEY = :doc
-    LINK_KEY = :href
-    PROTOCOL_KEY = :protocol
-    SEMANTIC_KEY = :semantics
-    EMBEDDED_KEY = :embedded
-    META_KEY = :links
-    TRANSITION_KEY = :transitions
-    VALUE_KEY = :value
     UNKNOWN_PROTOCOL = 'ruby_id'
     DEFAULT_PROTOCOL = 'http'
     PROTOCOL_TEMPLATE = "%s://%s"
+    VALUE_KEY = :value
 
 
     # @param representor_hash [Hash] the abstract representor hash defining a resource
     def initialize(representor_hash = nil)
-      @representor_hash = representor_hash || {}
+      @representor_hash = representor_hash || RepresentorHash.new
     end
 
     # Returns the documentfor the representor
     #
     # @return [String] the document for the representor
     def doc
-      @doc ||= @representor_hash[DOC_KEY] || ''
+      @doc ||= @representor_hash.doc || ''
     end
 
     # The URI for the object
@@ -36,8 +29,8 @@ module Representors
     # @return [String]
     def identifier
       @identifier ||= begin
-        uri = @representor_hash[LINK_KEY] || self.object_id
-        protocol = @representor_hash[PROTOCOL_KEY] || (uri == self.object_id ? UNKNOWN_PROTOCOL : DEFAULT_PROTOCOL)
+        uri = @representor_hash.href || self.object_id
+        protocol = @representor_hash.protocol || (uri == self.object_id ? UNKNOWN_PROTOCOL : DEFAULT_PROTOCOL)
         PROTOCOL_TEMPLATE % [protocol, uri]
       end
     end
@@ -54,13 +47,13 @@ module Representors
 
     # @return [Hash] the resource attributes inferred from representor[:semantics]
     def properties
-      @properties ||= Hash[(@representor_hash[SEMANTIC_KEY] || {}).map { |k, v| [ k, v[VALUE_KEY]] }]
+      @properties ||= Hash[(@representor_hash.attributes || {}).map { |k, v| [ k, v[VALUE_KEY]] }]
     end
 
     # @return [Enumerable] who's elements are all <Representors:Representor> objects
     def embedded
       @embedded ||= begin
-        embedded_representors = (@representor_hash[EMBEDDED_KEY] || {}).map do |name, values|
+        embedded_representors = (@representor_hash.embedded || {}).map do |name, values|
           if values.is_a?(Array)
             several_representors = values.map do |value|
               Representor.new(value)
@@ -76,14 +69,14 @@ module Representors
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def meta_links
-      @meta_links ||= (@representor_hash[META_KEY] || []).map do |k, v|
+      @meta_links ||= (@representor_hash.links || []).map do |k, v|
         Representors::Transition.new( { k => { href: v } } )
       end
     end
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
-      @transitions ||= (@representor_hash[TRANSITION_KEY] || []).map do |hash|
+      @transitions ||= (@representor_hash.transitions || []).map do |hash|
         Representors::Transition.new(hash)
       end
     end

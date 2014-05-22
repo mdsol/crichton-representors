@@ -3,7 +3,7 @@ require 'spec_helper'
 
 RSpec.shared_examples_for 'one attribute added' do
   it 'creates a semantic key at the top level of the output' do
-    expect(builder.to_representor_hash.has_key?(Representors::RepresentorHash::SEMANTICS_KEY)).to be_true
+    expect(builder.to_representor_hash.attributes).to_not be_empty
   end
 
   it 'adds the attribute name as a key under "semantic" in the output hash' do
@@ -24,7 +24,7 @@ end
 
 RSpec.shared_examples_for 'one transition added' do
   it 'creates a transition key at the top level of the output' do
-    expect(builder.to_representor_hash.has_key?(Representors::RepresentorHash::TRANSITIONS_KEY)).to be_true
+    expect(builder.to_representor_hash.transitions).to_not be_empty
   end
 
   it 'adds an array under "transitions" ' do
@@ -41,7 +41,7 @@ end
 
 RSpec.shared_examples_for 'one embedded added' do
   it 'creates a transition key at the top level of the output' do
-    expect(builder.to_representor_hash.has_key?(Representors::RepresentorHash::EMBEDDED_KEY)).to be_true
+    expect(builder.to_representor_hash.embedded).to_not be_empty
   end
 
   it 'adds a hash under "embedded" ' do
@@ -63,7 +63,8 @@ RSpec.describe Representors::RepresentorBuilder do
 
   context 'empty builder' do
     it "returns an empty hash" do
-      expect(builder.to_representor_hash).to eq({})
+      empty_hash = {:id=>nil, :doc=>nil, :href=>nil, :protocol=>nil, :attributes=>nil, :embedded=>nil, :links=>nil, :transitions=>nil}
+      expect(builder.to_representor_hash.to_h).to eq(empty_hash)
     end
   end
 
