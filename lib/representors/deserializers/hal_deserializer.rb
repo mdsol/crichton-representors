@@ -15,7 +15,6 @@ module Representors
 
     include FormatDeserializer
 
-    # Take care of Hale till we have a deserializer for it.
     symbol_format :hal
     iana_format 'application/hal+json'
     iana_format 'application/json'
