@@ -45,6 +45,11 @@ module Representors
       @to_yaml ||= YAML.dump(@representor_hash)
     end
 
+    # @return [String] so the user can 'puts' this object
+    def to_s
+      to_hash.inspect
+    end
+
     # @return [Hash] the resource attributes inferred from representor[:semantics]
     def properties
       @properties ||= Hash[(@representor_hash.attributes || {}).map { |k, v| [ k, v[VALUE_KEY]] }]
