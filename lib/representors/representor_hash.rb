@@ -3,34 +3,21 @@ module Representors
   # Encapsulate the name of the keys constants
   # TODO: create documentation with this:
   #  https://gist.github.com/sheavalentine-mdsol/69649d4e1aeee76de21c
-  # TODO: Is a good idea to meta-program this?
-  class RepresentorHash < Hash
-    SEMANTICS_KEY = :semantics
-    TRANSITIONS_KEY = :transitions
-    EMBEDDED_KEY = :embedded
-
-    def attributes=(attributes)
-      merge!({SEMANTICS_KEY => attributes})
+  # TODO: Convert to Struct
+  RepresentorHash  = Struct.new(:id, :doc, :href, :protocol, :attributes, :embedded, :links, :transitions) do
+    def initialize(hash={})
+      hash.each_pair do |key, value|
+        self[key] = value
+      end
+      #debugger
+      #self[*hash.values_at(*RepresentorHash.members.map {|m| m.to_sym})]
     end
-
-    def transitions=(transitions_array)
-      merge!({TRANSITIONS_KEY => transitions_array})
-    end
-
-    def embedded=(embedded_array)
-      merge!({EMBEDDED_KEY => embedded_array})
-    end
-
-    def embedded
-      self[EMBEDDED_KEY]
-    end
-
-    def attributes
-      self[SEMANTICS_KEY]
-    end
-
-    def transitions
-      self[TRANSITIONS_KEY]
+    def merge(hash)
+      new_representor_hash = RepresentorHash.new(to_h)
+      hash.each_pair do |key, value|
+        new_representor_hash[key] = value
+      end
+      new_representor_hash
     end
   end
 

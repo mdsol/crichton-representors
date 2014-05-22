@@ -4,16 +4,17 @@ require 'uri'
 
 module Representors
   describe Representor do
+    let(:doc) {'A list of DRDs.'}
     before do
-      @base_representor = {
+      @base_representor = RepresentorHash.new(
         protocol: 'http',
         href: 'www.example.com/drds',
         id: 'drds',
-        doc: 'A list of DRDs.'
-      }
+        doc: doc
+      )
 
       @semantic_elements = {
-        semantics: {
+        attributes: {
           total_count: {
             doc: 'The total count of DRDs.',
             type: 'semantic',
@@ -77,19 +78,20 @@ module Representors
 
       describe '#doc' do
         it 'returns the same value specified under the doc element of the hash' do
-          @representor_hash = {doc: 'The total count of DRDs.'}
-          expect(subject.doc).to eq(representor_hash[:doc])
+          @representor_hash = RepresentorHash.new
+          @representor_hash.doc = doc
+          expect(subject.doc).to eq(doc)
         end
       end
 
       describe '#identifier' do
         it 'when given an href returns a url' do
-          @representor_hash = {protocol: 'http', href: 'www.example.com/drds'}
+          @representor_hash = RepresentorHash.new(protocol: 'http', href: 'www.example.com/drds')
           expect(subject.identifier).to match(URI::regexp)
         end
 
         it 'when not given an href it returns ruby reference' do
-          @representor_hash = {}
+          @representor_hash = RepresentorHash.new
           expect(subject.identifier).to eq("ruby_id://%s" % subject.object_id)
         end
       end
@@ -110,7 +112,7 @@ module Representors
         it 'returns a hash of attributes associated with the represented resource' do
           @representor_hash =  @base_representor.merge(@semantic_elements)
           semantic_elements_present =  %w(total_count uptime brackreference).all? do |key|
-            subject.properties[key.to_sym] == @semantic_elements[:semantics][key.to_sym][:value]
+            subject.properties[key.to_sym] == @semantic_elements[:attributes][key.to_sym][:value]
           end
           expect(semantic_elements_present).to be_true
          end
@@ -121,7 +123,7 @@ module Representors
         before do
           @count = 3
           @representor_hash = @base_representor.merge(@semantic_elements)
-          @representor_hash[:embedded] = { embedded_resource => [@representor_hash.clone]*@count}
+          @representor_hash.embedded = { embedded_resource => [@representor_hash.clone]*@count}
         end
 
         it 'returns a set of Representor objects' do
@@ -129,7 +131,7 @@ module Representors
         end
 
         it 'returns a Representor objects that has its data' do
-          embedded_objects_valid = subject.embedded[embedded_resource].all? { |embed| embed.doc == representor_hash[:doc] }
+          embedded_objects_valid = subject.embedded[embedded_resource].all? { |embed| embed.doc == doc }
           expect(embedded_objects_valid).to be_true
         end
 
