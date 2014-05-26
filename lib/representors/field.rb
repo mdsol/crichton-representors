@@ -1,7 +1,7 @@
 require 'yaml'
-require 'crichton/representors/options'
+require 'representors/options'
 
-module Crichton
+module Representors
   ##
   # Manages the respresentation of hypermedia fields for different media-types.
   class Field
@@ -11,7 +11,7 @@ module Crichton
     SCOPE_KEY = :scope
     NAME_KEY = :name
     DEFAULT_SCOPE = 'attribute'
-    
+
     # @example
     #   hash =  {field_name: {field_property: property_name}}
     #   Fields.new(hash)
@@ -26,22 +26,22 @@ module Crichton
     SIMPLE_METHODS.each do |meth|
       define_method(meth) { @field_hash[meth] }
     end
-    
+
     # @return [String] representing the sort of field
     def scope
       @scope ||= @field_hash[SCOPE_KEY] || DEFAULT_SCOPE
     end
-    
+
     # @return [Hash] The hash representation of the object
     def to_hash
       @to_hash ||= { @field_hash[NAME_KEY] => @field_hash.reject {|k,v| k == NAME_KEY } }
     end
-    
-    # @return [String] the yaml representation of the object 
+
+    # @return [String] the yaml representation of the object
     def to_yaml
       @to_yaml ||= YAML.dump(to_hash)
-    end    
-    
+    end
+
     # @return [Array] who's elements are all [Hash] objects
     def validators
       @validators ||= if @field_hash.has_key?(VALIDATORS_KEY)
@@ -50,12 +50,12 @@ module Crichton
         []
       end
     end
-    
-    # @return [Array] who's elements are all Crichton::Options objects
+
+    # @return [Array] who's elements are all Representors::Options objects
     def options
       @options ||= Options.new(@field_hash[OPTIONS_KEY], name)
     end
-    
+
     # @returns the value of the field
     def call
       value
