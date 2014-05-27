@@ -7,3 +7,4 @@ coverage
 tmp
 .yardoc
 yardoc
+.DS_Store
