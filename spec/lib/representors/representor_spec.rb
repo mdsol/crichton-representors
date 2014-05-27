@@ -51,13 +51,13 @@ module Representors
                 doc: "Name to search",
                 profile: "http://alps.io/schema.org/Text",
                 sample: "drdname",
-                options: {list: ['one', 'two']}
+                options: {'list' => ['one', 'two']}
               },
               status: {
                 doc: "How is the DRD.",
                 profile: "http://alps.io/schema.org/Text",
                 sample: "renegade",
-                options: {list: ['renegade', 'compliant'], id: 'status_list'}
+                options: {'list' => ['renegade', 'compliant'], 'id' => 'status_list'}
               }
             }
           }
@@ -175,7 +175,7 @@ module Representors
       describe '#datalists' do
         it 'returns all paramters and attributes that are members of a datalist' do
           @representor_hash =  @base_representor.merge(@transition_elements)
-          has_data_list = expect(subject.datalists.first.as_hash).to eq({renegade: "renegade", compliant: "compliant"})
+          has_data_list = expect(subject.datalists.first.as_hash).to eq({"renegade" => "renegade", "compliant" => "compliant"})
         end
       end
     end

@@ -48,7 +48,6 @@ module Representors
       representor_hash[:embedded].each do |embed_name, embed|
         embed[:attributes].each do |k, v|
           it "has the document attribute #{k} and associated value" do
-            print 'moo!', serializer.to_media_type(media)
             expect(serializer.to_media_type(media)[:_embedded][embed_name][k]).to eq(v[:value])
           end
         end      

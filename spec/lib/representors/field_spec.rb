@@ -51,27 +51,27 @@ module Representors
         end
 
         it 'has a list interface even when a hash' do
-          @field_hash[:total_count][:options] = { hash: {foo: 'bar', ninja: 'cow'} }
-          expect(subject.options.as_list).to eq(field_hash[:total_count][:options][:hash].keys)
+          @field_hash[:total_count][:options] = { 'hash' => {'foo' => 'bar', 'ninja' => 'cow'} }
+          expect(subject.options.as_list).to eq(field_hash[:total_count][:options]['hash'].keys)
         end
 
         it 'has a hash interface even when a list' do
-          @field_hash[:total_count][:options] = { list: ['bar', 'cow'] }
-          expect(subject.options.as_hash).to eq({bar: 'bar', cow: 'cow'})
+          @field_hash[:total_count][:options] = { 'list' => ['bar', 'cow'] }
+          expect(subject.options.as_hash).to eq({'bar' => 'bar', 'cow' => 'cow'})
         end
 
         it 'has a hash interface when external' do
-          @field_hash[:total_count][:options] = { external: {source: 'foo', target: 'bar'} }
-          expect(subject.options.as_hash).to eq({source: 'foo', target: 'bar'})
+          @field_hash[:total_count][:options] = { 'external' => {'source' => 'foo', 'target' => 'bar'} }
+          expect(subject.options.as_hash).to eq({'source' => 'foo', 'target' => 'bar'})
         end
 
         it 'defaults to a sensible id' do
-           @field_hash[:total_count][:options] = { external: {source: 'foo', target: 'bar'} }
+           @field_hash[:total_count][:options] = { 'external' => {'source' => 'foo', 'target' => 'bar'} }
            expect(subject.options.id).to eq('total_count_options')
         end
 
         it 'gives back a passed in id' do
-          @field_hash[:total_count][:options] = { list: ['bar', 'cow'], id: 'fortunes grace' }
+          @field_hash[:total_count][:options] = { 'list' => ['bar', 'cow'], 'id' => 'fortunes grace' }
           expect(subject.options.id).to eq('fortunes grace')
         end
 
