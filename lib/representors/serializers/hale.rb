@@ -7,11 +7,7 @@ module Representors
       private
       
       def serialize(representor)
-        base_hash = get_semantics(representor)
-        embedded_links, embedded_hales = get_embedded_elements(representor)
-        links = representor.transitions.map { |link| construct_links(link) }+embedded_links
-
-        links = links != [] ? { '_links' => links.reduce({}, :merge) } : {}
+        base_hash, links, embedded_hales = common_serialization(representor)
         meta = get_data_lists(representor)
         ->(options) { base_hash.merge(meta).merge(links).merge(embedded_hales.(options)) }
       end

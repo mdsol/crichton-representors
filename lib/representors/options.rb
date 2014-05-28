@@ -3,8 +3,11 @@ module Representors
   # Manages the respresentation of representation of
   # field options for a hypermedia message.
   class Options
-    TYPE_KEYS = %w(external hash list).map
-    DEFAULT_TYPE = 'list'
+    TYPE_KEYS = %w(external hash list)
+    LIST_TYPE = 'list'
+    EXTERNAL_TYPE = 'external'
+    HASH_TYPE = 'hash'
+    DEFAULT_TYPE = LIST_TYPE
     ID_KEY = 'id'
     ID_TEMPLATE = "%s_options"
 
@@ -24,7 +27,7 @@ module Representors
 
     # @return [Bool] indicating whether the Options can be treated as a datalist
     def datalist?
-      type == 'external' || @options_hash.has_key?(ID_KEY)
+      type == EXTERNAL_TYPE || @options_hash.has_key?(ID_KEY)
     end
 
     # @return [String] representing a unique id for the options
@@ -34,7 +37,7 @@ module Representors
 
     # @return [Hash] version of the Options
     def as_hash
-      type == 'list' ? Hash[@options_hash['list'].map { |x| [x, x] }] : @options_hash[type]
+      type == LIST_TYPE ? Hash[@options_hash[LIST_TYPE].map { |x| [x, x] }] : @options_hash[type]
     end
 
     # @return [Array] hash keys
@@ -53,7 +56,7 @@ module Representors
     end
     
     def as_data
-      if type == 'hash' || type == 'external'
+      if type == HASH_TYPE || type == EXTERNAL_TYPE
         as_hash
       else
         as_list

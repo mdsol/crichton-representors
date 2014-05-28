@@ -4,8 +4,11 @@ module Representors
   module Serialization
     class HalSerializer
   
-      @media_types = ['vnd.hal', 'hal']
-      @formats = ['json', 'yaml']
+      LINKS_KEY = "_links"
+      EMBEDDED_KEY = "_embedded"
+        
+      @media_types = %w(hal)
+      @formats = %w(json yaml)
 
       def self.media_types
         @media_types
@@ -25,26 +28,29 @@ module Representors
       end
               
       def as_media_type(format, options)
-        media_format(to_media_type(option), format)
+        media_format(to_media_type(options), format)
       end
       
       private
       
       def media_format(object, format)
-        formatters = ->(object, format) do
-          {
-            yaml: object.to_yaml,
-            json: object.to_json
-          }[format]
-        end
-        formatter(object, format)
+        formatters = {
+            'yaml' => ->(obj) { obj.to_yaml },
+            'json' => ->(obj) { obj.to_json }
+          }
+        formatters[format].(object)
       end
       
-      def serialize(representor)
+      def common_serialization(representor)
         base_hash = get_semantics(representor)
         embedded_links, embedded_hals = get_embedded_elements(representor)
         links = (representor.transitions.map { |link| construct_links(link) })+embedded_links
-        links = links != [] ? { _links: links.reduce({}, :merge) } : {}
+        links = links != [] ? { LINKS_KEY => links.reduce({}, :merge) } : {}
+        [base_hash, links, embedded_hals]
+      end
+      
+      def serialize(representor)
+        base_hash, links, embedded_hals = common_serialization(representor)
         ->(options) { base_hash.merge(links.merge(embedded_hals.(options))) }
       end
       
@@ -58,7 +64,7 @@ module Representors
             embedded = representor.embedded
             links = embedded.map { |k, v| get_embedded_links(k, v) }
             _embedded = embedded.map { |k, v| get_embedded_objects(k, v) }
-            embedded_hals = ->(options) { options.has_key?(:link_only) ? {} : { _embedded: _embedded.reduce({}, :merge) } }
+            embedded_hals = ->(options) { options.has_key?(:link_only) ? {} : { EMBEDDED_KEY => _embedded.reduce({}, :merge) } }
             [links, embedded_hals]
           else
             [[], ->(o) { {} }]

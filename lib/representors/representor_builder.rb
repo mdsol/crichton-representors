@@ -7,10 +7,10 @@ module Representors
   class RepresentorBuilder
     HREF_KEY = 'href'
 
-    def initialize(base_hash = {})
-      @embedded_resources = base_hash[:embedded] || {}
-      @transitions = base_hash[:transitions] || []
-      @attributes = base_hash.reject {|key,_| key == :transitions || key == :embedded }
+    def initialize
+      @embedded_resources = {}
+      @transitions = []
+      @attributes = {}
 
     end
 

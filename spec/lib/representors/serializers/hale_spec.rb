@@ -15,7 +15,7 @@ module Representors
     
    subject(:serializer) { Representor.new(RepresentorHash.new(document)) }
     
-    top_level_media = %w(application text)
+    top_level_media = %w(application)
     media_types = %w(hale vnd.hale)
     formats = %w(json yaml)   
        
@@ -47,12 +47,12 @@ module Representors
       representor_hash[:embedded].each do |embed_name, embed|
         embed[:attributes].each do |k, v|
           it "has the document attribute #{k} and associated value" do
-            expect(serializer.to_media_type(media)[:_embedded][embed_name][k]).to eq(v[:value])
+            expect(serializer.to_media_type(media)["_embedded"][embed_name][k]).to eq(v[:value])
           end
         end      
         embed[:transitions].each do |item|
           it "has the document attribute #{item} and associated value" do
-            expect(serializer.to_media_type(media)[:_embedded][embed_name]["_links"][item[:rel]][:href]).to eq(item[:href])
+            expect(serializer.to_media_type(media)["_embedded"][embed_name]["_links"][item[:rel]][:href]).to eq(item[:href])
           end
         end
       end
@@ -64,14 +64,35 @@ module Representors
         embeds.each_with_index do |embed, index|
           embed[:attributes].each do |k, v|
             it "has the document attribute #{k} and associated value" do
-              expect(serializer.to_media_type(media)[:_embedded][embed_name][index][k]).to eq(v[:value])
+              expect(serializer.to_media_type(media)["_embedded"][embed_name][index][k]).to eq(v[:value])
             end
           end      
           embed[:transitions].each do |item|
             it "has the document attribute #{item} and associated value" do
-              expect(serializer.to_media_type(media)[:_embedded][embed_name][index]["_links"][item[:rel]][:href]).to eq(item[:href])
+              expect(serializer.to_media_type(media)["_embedded"][embed_name][index]["_links"][item[:rel]][:href]).to eq(item[:href])
             end
           end
+        end
+      end
+    end
+
+    media_requests.each do |media|   
+        describe "#as_media_type(%s)" % media do
+        representor_hash = {
+          attributes:
+            {
+              'title' => {value: 'The Neverending Story'},
+              },
+          transitions: [
+                {
+                href: '/mike',
+                rel: 'author',
+                }
+              ]
+            }
+        let(:document) { representor_hash.merge(@base_representor) }  
+        it 'returns media in the requested format' do
+          expect(YAML.load(serializer.as_media_type(media))).to_not be_nil
         end
       end
     end
