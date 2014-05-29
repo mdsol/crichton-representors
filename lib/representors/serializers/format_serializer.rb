@@ -1,5 +1,6 @@
 module Representors
 
+  #TODO: DRY this with the FormatDeserializer
   module FormatSerializer
 
     def self.included(base_class)

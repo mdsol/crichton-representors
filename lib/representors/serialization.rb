@@ -3,6 +3,7 @@ require 'representors/serializers/hal'
 require 'representors/serializers/hale'
 
 module Representors
+  #TODO: rename to Serializer
   module Serialization
 
     def self.build(representor, format, options={})

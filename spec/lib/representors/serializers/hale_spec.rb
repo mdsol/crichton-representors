@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'yaml'
 require 'uri'
 
+#TODO: This should only test functionality of this class and not repeat the file hal_spec
 module Representors
   describe Representor do
     before do
@@ -76,8 +77,7 @@ module Representors
       end
     end
 
-
-    media = {}
+    media = {}    # TODO: get rid of media
     describe "#to_media_type" do
       context "empty document" do
         let(:document) { {} }
