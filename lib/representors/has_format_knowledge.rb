@@ -1,6 +1,5 @@
 module Representors
 
-  #TODO: DRY this with the FormatDeserializer
   module HasFormatKnowledge
 
     def self.included(base_class)
