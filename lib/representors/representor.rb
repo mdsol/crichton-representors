@@ -2,7 +2,7 @@ require 'yaml'
 require 'enumerable/lazy' if RUBY_VERSION < '2.0'
 require 'representors/field'
 require 'representors/transition'
-require 'representors/serialization'
+require 'representors/serializer'
 
 module Representors
   ##
