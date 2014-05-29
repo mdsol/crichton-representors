@@ -27,6 +27,11 @@ module Representors
       @transition_hash.inspect
     end
 
+    # @return [Hash] useful in cucumber steps where the feature file provides a hash
+    def to_hash
+      Hash[@transition_hash.map{ |k, v| [k.to_s, v] }]
+    end
+
     # @return [String] The name of the Relationship
     def rel
       @transition_hash[REL_KEY]
