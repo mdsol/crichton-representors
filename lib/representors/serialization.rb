@@ -1,45 +1,34 @@
+require 'representors/serializers/format_serializer'
 require 'representors/serializers/hal'
 require 'representors/serializers/hale'
 
 module Representors
   module Serialization
 
-    TOP_LEVEL_MEDIA = %w(application text)
-
-    def known_serializers
-      @known_serializers ||= begin
-        serializers = Serialization.constants.select {|c| Serialization.const_get(c).is_a? Class}
-        serializer_registry = []
-        serializers.map do |serializer|
-          klass = Serialization.const_get('%s' % serializer)
-          formats = klass.formats
-          media_types = klass.media_types
-          serializer_registry += construed_media_types(formats, media_types).flatten.map { |mime| { mime => klass } }
-        end
-        serializer_registry.reduce({}, :merge)
+    def self.build(representor, format, options={})
+      serializer = serializers_mapping(format)
+      if serializer
+        serializer.new(representor, options)
+      else
+        raise UnknownFormatError, "Representors can not serialize #{format}"
       end
     end
-    
-    def to_media_type(media_type, options={})
-      build(media_type).to_media_type(options)
-    end
-    
-    def as_media_type(media_type, options={})
-      format = media_type.split('+').last
-      build(media_type).as_media_type(format, options)
-    end   
-     
-    def build(media_type)
-      known_serializers[media_type].new(self, media_type)
-    end
-    
-    def construed_media_types(formats, media_types)
-      TOP_LEVEL_MEDIA.map do |top_level|
-        media_types.map do |media_type|
-          formats.map { |format| "#{top_level}/#{media_type}+#{format}" }
+
+    private
+    # If a client send directly a Content-Type it may have encodings or other things so we want
+    # to be more flexible
+    def self.serializers_mapping(format)
+      if format.is_a?(Symbol)
+        FormatSerializer.all_serializers.find do |serializer|
+          serializer.symbol_formats.include?(format)
         end
-      end         
+      else
+        FormatSerializer.all_serializers.find do |serializer|
+          # because they may send us directly a content-type that may have more than just a format
+          serializer.iana_formats.any?{|format| format.include?(format) }
+        end
+      end
     end
-    
+
   end
 end
