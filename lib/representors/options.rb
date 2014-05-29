@@ -1,6 +1,6 @@
 module Representors
   ##
-  # Manages the respresentation of representation of
+  # Manages the respresentation of
   # field options for a hypermedia message.
   class Options
     TYPE_KEYS = %w(external hash list)
@@ -32,35 +32,31 @@ module Representors
 
     # @return [String] representing a unique id for the options
     def id
-        @options_hash[ID_KEY] || ID_TEMPLATE % @field_name
+      @options_hash[ID_KEY] || ID_TEMPLATE % @field_name
     end
 
     # @return [Hash] version of the Options
-    def as_hash
-      type == LIST_TYPE ? Hash[@options_hash[LIST_TYPE].map { |x| [x, x] }] : @options_hash[type]
+    def to_hash
+      type == LIST_TYPE ? Hash[(@options_hash[LIST_TYPE] || {}).map { |x| [x, x] }] : @options_hash[type]
     end
 
     # @return [Array] hash keys
     def keys
-      as_hash.keys
+      to_hash.keys
     end
 
     # @return [Array] hash values
     def values
-      as_hash.values
+      to_hash.values
     end
 
     # @return [Array] version of the Options
-    def as_list
+    def to_list
       keys
     end
     
-    def as_data
-      if type == HASH_TYPE || type == EXTERNAL_TYPE
-        as_hash
-      else
-        as_list
-      end
+    def to_data
+      type == HASH_TYPE || type == EXTERNAL_TYPE ? to_hash : to_list
     end
     
   end

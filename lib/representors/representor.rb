@@ -8,7 +8,6 @@ module Representors
   ##
   # Manages the respresentation of hypermedia messages for different media-types.
   class Representor
-  
     include Serialization
     
     UNKNOWN_PROTOCOL = 'ruby_id'
