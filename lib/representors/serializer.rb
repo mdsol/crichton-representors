@@ -3,8 +3,7 @@ require 'representors/serializers/hal'
 require 'representors/serializers/hale'
 
 module Representors
-  #TODO: rename to Serializer
-  module Serialization
+  module Serializer
 
     def self.build(representor, format, options={})
       serializer = serializers_mapping(format)

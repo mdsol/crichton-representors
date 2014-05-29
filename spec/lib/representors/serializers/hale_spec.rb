@@ -14,7 +14,7 @@ module Representors
         }
     end
 
-    subject(:serializer) { Serialization.build(Representor.new(RepresentorHash.new(document)), :hale) }
+    subject(:serializer) { Serializer.build(Representor.new(RepresentorHash.new(document)), :hale) }
 
     top_level_media = %w(application)
     media_types = %w(hale vnd.hale)
