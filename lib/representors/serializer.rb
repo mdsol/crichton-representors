@@ -1,4 +1,5 @@
-require 'representors/serializers/format_serializer'
+require 'representors/has_format_knowledge'
+require 'representors/serializers/serializer_base'
 require 'representors/serializers/hal'
 require 'representors/serializers/hale'
 
@@ -18,12 +19,15 @@ module Representors
     # If a client send directly a Content-Type it may have encodings or other things so we want
     # to be more flexible
     def self.serializers_mapping(format)
+      serializers = HasFormatKnowledge.all_classes_with_format_knowledge.select do |serializer|
+        serializer.applied_to == SerializerBase::OPERATION
+      end
       if format.is_a?(Symbol)
-        FormatSerializer.all_serializers.find do |serializer|
+        serializers.find do |serializer|
           serializer.symbol_formats.include?(format)
         end
       else
-        FormatSerializer.all_serializers.find do |serializer|
+        serializers.find do |serializer|
           # because they may send us directly a content-type that may have more than just a format
           serializer.iana_formats.any?{|format| format.include?(format) }
         end

@@ -1,13 +1,11 @@
-require 'yaml'
-
 module Representors
   module Serialization
-    class HalSerializer
+    class HalSerializer < SerializerBase
 
       LINKS_KEY = "_links"
       EMBEDDED_KEY = "_embedded"
 
-      include FormatSerializer
+      include HasFormatKnowledge
 
       symbol_format :hal
       iana_format 'application/hal+json'

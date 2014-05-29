@@ -2,7 +2,7 @@ module Representors
   module Serialization
     class HaleSerializer < HalSerializer
 
-      include FormatSerializer
+      include HasFormatKnowledge
 
       symbol_format :hale
       iana_format 'application/vnd.hale+json'
