@@ -50,6 +50,48 @@ module Representors
       end
     end
 
+    describe '#to_hash' do
+      let(:hash_with_symbol_keys) do
+        {
+          href: 'some.niceplace.com/list',
+          rel: 'self'
+        }
+      end
+      let(:hash_with_string_keys) do
+        {
+          'href' => 'some.niceplace.com/list',
+          'rel' => 'self'
+        }
+      end
+      context 'the keys are strings' do
+        let(:representor_hash) {hash_with_string_keys}
+        it 'returns a hash with the keys as strings' do
+          expect(subject.to_hash).to eq(hash_with_string_keys)
+        end
+      end
+      context 'the keys are symbols' do
+        let(:representor_hash) {hash_with_symbol_keys}
+        it 'returns a hash with the keys as strings' do
+          expect(subject.to_hash).to eq(hash_with_string_keys)
+        end
+      end
+    end
+
+    describe '#[]' do
+      let(:representor_hash) { {key => value}}
+      let(:value) { 'http://www.dontknow.com'}
+      let(:key)  {'href'}
+
+      it 'retuns the value for the keys' do
+        expect(subject[key]).to eq(value)
+      end
+
+      it 'returns nil if the key is not in this transition' do
+        expect(subject['Ido not exists']).to be_nil
+      end
+
+    end
+
     describe '.new' do
       it 'returns a Representors::Transition instance' do
         expect(subject).to be_an_instance_of(Transition)
