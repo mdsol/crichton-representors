@@ -24,7 +24,7 @@ module Representors
       def common_serialization(representor)
         base_hash = get_semantics(representor)
         embedded_links, embedded_hals = get_embedded_elements(representor)
-        links = (representor.transitions.map { |link| construct_links(link) })+embedded_links
+        links = representor.transitions.map { |link| construct_links(link) } + embedded_links
         links = links != [] ? { LINKS_KEY => links.reduce({}, :merge) } : {}
         [base_hash, links, embedded_hals]
       end

@@ -175,7 +175,7 @@ module Representors
       describe '#datalists' do
         it 'returns all paramters and attributes that are members of a datalist' do
           @representor_hash =  @base_representor.merge(@transition_elements)
-          has_data_list = expect(subject.datalists.first.as_hash).to eq({"renegade" => "renegade", "compliant" => "compliant"})
+          has_data_list = expect(subject.datalists.first.to_hash).to eq({"renegade" => "renegade", "compliant" => "compliant"})
         end
       end
     end

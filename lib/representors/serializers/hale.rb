@@ -18,7 +18,7 @@ module Representors
       def get_data_lists(representor)
         meta = {}
         representor.datalists.each do |datalist|
-          meta[datalist.id] = datalist.as_data
+          meta[datalist.id] = datalist.to_data
         end
         meta.empty? ? {} : {'_meta' => meta }
       end
