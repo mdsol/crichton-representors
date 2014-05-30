@@ -10,15 +10,6 @@ module Representors
       symbol_format :hal
       iana_format 'application/hal+json'
 
-
-      def initialize(representor, options = {})
-        @serialization = serialize(representor)
-      end
-
-      def to_media_type(options={})
-        @serialization.(options)
-      end
-
       private
 
       def common_serialization(representor)

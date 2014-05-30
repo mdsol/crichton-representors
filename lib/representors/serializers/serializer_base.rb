@@ -8,5 +8,14 @@ module Representors
     def self.applied_to
       OPERATION
     end
+    
+    def initialize(representor, options = {})
+      @serialization = serialize(representor)
+    end
+
+    def to_media_type(options={})
+      @serialization.(options)
+    end
+
   end
 end

@@ -16,16 +16,7 @@ module Representors
 
     subject(:serializer) { Serializer.build(Representor.new(RepresentorHash.new(document)), :hale) }
 
-    top_level_media = %w(application)
-    media_types = %w(hale vnd.hale)
-    formats = %w(json yaml)
-
-    media_requests = media_types.product(formats).product(top_level_media).map do |media, top_level|
-      med, format = media
-      "#{top_level}/#{med}+#{format}"
-    end
-
-     shared_examples "a hale documents attributes" do |representor_hash, media|
+    shared_examples "a hale documents attributes" do |representor_hash, media|
       let(:document) { representor_hash.merge(@base_representor) }
       representor_hash[:attributes].each do |k, v|
         it "has the document attribute #{k} and associated value" do
