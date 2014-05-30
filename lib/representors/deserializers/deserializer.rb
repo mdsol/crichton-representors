@@ -1,5 +1,6 @@
 require 'representors/deserializers/deserialization_error'
-require 'representors/deserializers/format_deserializer'
+require 'representors/has_format_knowledge'
+require 'representors/deserializers/deserializer_base'
 require 'representors/deserializers/hal_deserializer'
 require 'representors/deserializers/hale_deserializer'
 require 'representors/deserializers/unknown_format_error'
@@ -22,12 +23,15 @@ module Representors
     # If a client send directly a Content-Type it may have encodings or other things so we want
     # to be more flexible
     def self.serializers_mapping(format)
+      serializers = HasFormatKnowledge.all_classes_with_format_knowledge.select do |serializer|
+        serializer.applied_to == DeserializerBase::OPERATION
+      end
       if format.is_a?(Symbol)
-        Representors::FormatDeserializer.all_deserializers.find do |deserializer|
+        serializers.find do |deserializer|
           deserializer.symbol_formats.include?(format)
         end
       else
-        Representors::FormatDeserializer.all_deserializers.find do |deserializer|
+        serializers.find do |deserializer|
           # because they may send us directly a content-type that may have more than just a format
           deserializer.iana_formats.any?{|deserializer_format| format.include?(deserializer_format) }
         end

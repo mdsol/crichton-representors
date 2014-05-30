@@ -1,6 +1,6 @@
 module Representors
 
-  module FormatDeserializer
+  module HasFormatKnowledge
 
     def self.included(base_class)
       base_class.send :extend, ClassMethods
@@ -8,7 +8,7 @@ module Representors
       @@deserializers.push(base_class)
     end
 
-    def self.all_deserializers
+    def self.all_classes_with_format_knowledge
       @@deserializers
     end
 
