@@ -22,7 +22,7 @@ module Representors
     # @param format to convert this representor to
     # @return the representor serialized to a particular media-type like application/hal+json
     def to_media_type(format, options={})
-      Serializer.build(self, format).to_media_type(options)
+      SerializerFactory.build(self, format).to_media_type(options)
     end
 
     # Returns the documentfor the representor

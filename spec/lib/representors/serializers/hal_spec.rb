@@ -14,7 +14,7 @@ module Representors
         }
     end
 
-    subject(:serializer) { Serializer.build(Representor.new(RepresentorHash.new(document)), :hal) }
+    subject(:serializer) { SerializerFactory.build(Representor.new(RepresentorHash.new(document)), :hal) }
 
     shared_examples "a hal documents attributes" do |representor_hash|
       let(:document) { representor_hash.merge(@base_representor) }

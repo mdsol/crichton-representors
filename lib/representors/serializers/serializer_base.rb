@@ -1,6 +1,6 @@
 
 module Representors
-  class SerializerBase
+  class Serializer
     OPERATION = :serialization
 
     # The kind of operation we do with the format in here. Used by Serializer to tell the difference
