@@ -6,14 +6,14 @@ module Representors
   # Deserializes the HAL format as specified in http://stateless.co/hal_specification.html
   # For examples of how this format looks like check the files under spec/fixtures/hal
   # TODO: support Curies http://www.w3.org/TR/2010/NOTE-curie-20101216/
-  class HalDeserializer
+  class HalDeserializer < DeserializerBase
 
     LINKS_KEY = '_links'
     EMBEDDED_KEY = '_embedded'
     CURIE_KEY = 'curies'
     HREF = 'href'
 
-    include FormatDeserializer
+    include HasFormatKnowledge
 
     symbol_format :hal
     iana_format 'application/hal+json'

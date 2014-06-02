@@ -10,12 +10,12 @@ describe Representors::HalDeserializer do
     expect(Representors::HalDeserializer.new({}.to_json)).to be_instance_of (Representors::HalDeserializer)
   end
 
-  it 'provides the iana format application/vnd.hale+json' do
+  it 'provides the iana format application/vnd.hal+json' do
     formats = Representors::HalDeserializer.iana_formats
     expect(formats).to eq(['application/hal+json', 'application/json'])
   end
 
-  it 'provides the symbol format :hale' do
+  it 'provides the symbol format :hal' do
     expect(Representors::HalDeserializer.symbol_formats).to eq([:hal])
   end
 

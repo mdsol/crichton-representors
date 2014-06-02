@@ -50,28 +50,33 @@ module Representors
           expect(subject.options).to be_an_instance_of(Options)
         end
 
+        it 'works with empty options' do
+          @field_hash[:total_count][:options] = {}
+          expect(subject.options.to_hash).to eq(field_hash[:total_count][:options])
+        end
+
         it 'has a list interface even when a hash' do
-          @field_hash[:total_count][:options] = { hash: {foo: 'bar', ninja: 'cow'} }
-          expect(subject.options.as_list).to eq(field_hash[:total_count][:options][:hash].keys)
+          @field_hash[:total_count][:options] = { 'hash' => {'foo' => 'bar', 'ninja' => 'cow'} }
+          expect(subject.options.to_list).to eq(field_hash[:total_count][:options]['hash'].keys)
         end
 
         it 'has a hash interface even when a list' do
-          @field_hash[:total_count][:options] = { list: ['bar', 'cow'] }
-          expect(subject.options.as_hash).to eq({bar: 'bar', cow: 'cow'})
+          @field_hash[:total_count][:options] = { 'list' => ['bar', 'cow'] }
+          expect(subject.options.to_hash).to eq({'bar' => 'bar', 'cow' => 'cow'})
         end
 
         it 'has a hash interface when external' do
-          @field_hash[:total_count][:options] = { external: {source: 'foo', target: 'bar'} }
-          expect(subject.options.as_hash).to eq({source: 'foo', target: 'bar'})
+          @field_hash[:total_count][:options] = { 'external' => {'source' => 'foo', 'target' => 'bar'} }
+          expect(subject.options.to_hash).to eq({'source' => 'foo', 'target' => 'bar'})
         end
 
         it 'defaults to a sensible id' do
-           @field_hash[:total_count][:options] = { external: {source: 'foo', target: 'bar'} }
+           @field_hash[:total_count][:options] = { 'external' => {'source' => 'foo', 'target' => 'bar'} }
            expect(subject.options.id).to eq('total_count_options')
         end
 
         it 'gives back a passed in id' do
-          @field_hash[:total_count][:options] = { list: ['bar', 'cow'], id: 'fortunes grace' }
+          @field_hash[:total_count][:options] = { 'list' => ['bar', 'cow'], 'id' => 'fortunes grace' }
           expect(subject.options.id).to eq('fortunes grace')
         end
 
@@ -93,7 +98,6 @@ module Representors
           object_vals = subject.validators.map { |hash| hash[hash.keys[0]] }
           expect(object_vals).to eq(hash_values)
         end
-      end
 
       describe '#call' do
         it 'returns the value when called' do
@@ -101,5 +105,6 @@ module Representors
         end
       end
     end
+  end
   end
 end

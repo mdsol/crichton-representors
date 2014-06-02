@@ -14,7 +14,8 @@ module Representors
   RepresentorHash  = Struct.new(:id, :doc, :href, :protocol, :attributes, :embedded, :links, :transitions) do
 
     # be able to create from a hash
-    def initialize(hash={})
+    def initialize(hash = {})
+      hash = hash || {}
       hash.each_pair do |key, value|
         self[key] = value
       end
