@@ -15,14 +15,16 @@ module Representors
     VALUE_KEY = :value
 
     # @param representor_hash [Hash] the abstract representor hash defining a resource
-    def initialize(representor_hash = nil)
+    def initialize(representor_hash = nil, s_map={}, m_map={})
       @representor_hash = RepresentorHash.new(representor_hash)
+      @s_map = s_map || {}
+      @m_map = m_map || {}
     end
 
     # @param format to convert this representor to
     # @return the representor serialized to a particular media-type like application/hal+json
     def to_media_type(format, options={})
-      SerializerFactory.build(self, format).to_media_type(options)
+      SerializerFactory.new(@s_map, @m_map).build(self, format).to_media_type(options)
     end
 
     # Returns the documentfor the representor

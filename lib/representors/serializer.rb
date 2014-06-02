@@ -6,7 +6,12 @@ require 'representors/serializers/hale'
 module Representors
   class SerializerFactory
 
-    def self.build(representor, format, options={})
+    def initialize(s_map={}, m_map={})
+      @s_map = s_map || {}
+      @m_map = m_map || {}
+    end
+
+    def build(representor, format, options={})
       serializer = serializers_mapping(format)
       if serializer
         serializer.new(representor, options)
@@ -15,32 +20,32 @@ module Representors
       end
     end
 
-    def self.known_serializers
-      HasFormatKnowledge.all_classes_with_format_knowledge.select do |serializer|
+    def known_serializers
+      @known_serializers ||= HasFormatKnowledge.all_classes_with_format_knowledge.select do |serializer|
         serializer.applied_to == Serializer::OPERATION
       end
     end
     
-    def self.symbol_mapping
-      known_serializers.map do |serializer| 
+    def symbol_mapping
+      @symbol_mapping ||= known_serializers.map do |serializer| 
         serializer.symbol_formats.map do |format| 
           {format => serializer}
         end.reduce(:merge)
-      end.reduce(:merge)
+      end.reduce(:merge).merge(@s_map)
     end
     
-    def self.mime_mapping
-      known_serializers.map do |serializer| 
+    def mime_mapping
+      @mime_mapping ||= known_serializers.map do |serializer| 
         serializer.iana_formats.map do |format| 
           {format => serializer.symbol_formats[0]}
         end.reduce(:merge)
-      end.reduce(:merge)
+      end.reduce(:merge).merge(@m_map)
     end
     
     private
     # If a client send directly a Content-Type it may have encodings or other things so we want
     # to be more flexible
-    def self.serializers_mapping(format)
+    def serializers_mapping(format)
       if format.is_a?(Symbol)
         symbol_mapping[format]
       else
