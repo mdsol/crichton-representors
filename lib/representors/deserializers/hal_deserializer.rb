@@ -1,4 +1,7 @@
 require 'json'
+require 'representors/deserializers/deserializer_base'
+# TODO Put error message helper in pass class
+require 'representors/deserializers/deserialization_error'
 
 module Representors
 
@@ -7,13 +10,10 @@ module Representors
   # For examples of how this format looks like check the files under spec/fixtures/hal
   # TODO: support Curies http://www.w3.org/TR/2010/NOTE-curie-20101216/
   class HalDeserializer < DeserializerBase
-
     LINKS_KEY = '_links'
     EMBEDDED_KEY = '_embedded'
     CURIE_KEY = 'curies'
     HREF = 'href'
-
-    include HasFormatKnowledge
 
     symbol_format :hal
     iana_format 'application/hal+json'

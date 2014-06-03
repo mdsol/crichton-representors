@@ -1,14 +1,12 @@
+require 'representors/serializers/hal'
+
 module Representors
   module Serialization
     class HaleSerializer < HalSerializer
-
-      include HasFormatKnowledge
-
       symbol_format :hale
       iana_format 'application/vnd.hale+json'
 
       private
-
       def serialize(representor)
         base_hash, links, embedded_hales = common_serialization(representor)
         meta = get_data_lists(representor)

@@ -2,29 +2,26 @@ require 'yaml'
 require 'enumerable/lazy' if RUBY_VERSION < '2.0'
 require 'representors/field'
 require 'representors/transition'
-require 'representors/serializer'
+require 'representors/serializer_factory'
 
 module Representors
   ##
   # Manages the respresentation of hypermedia messages for different media-types.
   class Representor
-
-    UNKNOWN_PROTOCOL = 'ruby_id'
     DEFAULT_PROTOCOL = 'http'
     PROTOCOL_TEMPLATE = "%s://%s"
+    UNKNOWN_PROTOCOL = 'ruby_id'
     VALUE_KEY = :value
 
     # @param representor_hash [Hash] the abstract representor hash defining a resource
-    def initialize(representor_hash = nil, s_map={}, m_map={})
+    def initialize(representor_hash = nil)
       @representor_hash = RepresentorHash.new(representor_hash)
-      @s_map = s_map || {}
-      @m_map = m_map || {}
     end
 
     # @param format to convert this representor to
     # @return the representor serialized to a particular media-type like application/hal+json
     def to_media_type(format, options={})
-      SerializerFactory.new(@s_map, @m_map).build(self, format).to_media_type(options)
+      SerializerFactory.build(format, self).to_media_type(options)
     end
 
     # Returns the documentfor the representor
