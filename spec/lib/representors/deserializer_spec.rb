@@ -34,7 +34,7 @@ module Representors
       let(:format) { 'Iamunknown'}
       let(:document) { {}.to_json}
       it 'Raises an unknown format error' do
-        expect{deserializer}.to raise_error(UnknownFormatError, "Unknown format: #{format}.")
+        expect{deserializer}.to raise_error(UnknownFormatError, "Unknown media-type: #{format}.")
       end
     end
   
@@ -42,7 +42,7 @@ module Representors
       let(:format) { :Iamunknown}
       let(:document) { {}.to_json}
       it 'Raises an unknown format error' do
-        expect{deserializer}.to raise_error(UnknownFormatError, "Unknown format: #{format}.")
+        expect{deserializer}.to raise_error(UnknownFormatError, "Unknown media-type: #{format}.")
       end
     end
   end
