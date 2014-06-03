@@ -3,8 +3,8 @@ require 'representors/serializers/hal'
 module Representors
   module Serialization
     class HaleSerializer < HalSerializer
-      symbol_format :hale
-      iana_format 'application/vnd.hale+json'
+      media_symbol :hale
+      media_type 'application/vnd.hale+json'
 
       private
       def serialize(representor)

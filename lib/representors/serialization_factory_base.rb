@@ -13,7 +13,7 @@ module Representors
 
     def self.symbol_mapping
       @symbol_mapping ||= registered_serialization_classes.map do |serialization_class|
-        serialization_class.symbol_formats.map do |media_type|
+        serialization_class.media_symbols.map do |media_type|
           { media_type => serialization_class }
         end.reduce(:merge)
       end.reduce(:merge)
@@ -21,8 +21,8 @@ module Representors
 
     def self.mime_mapping
       @mime_mapping ||= registered_serialization_classes.map do |serializer|
-        serializer.iana_formats.map do |media_type|
-          {media_type => serializer.symbol_formats[0]}
+        serializer.media_types.map do |media_type|
+          { media_type => serializer.media_symbols.first }
         end.reduce(:merge)
       end.reduce(:merge)
     end

@@ -1,14 +1,15 @@
 require 'representors/serializer_factory'
+require 'representors/media_type_accessors'
 
 module Representors
-  class Serializer
-    extend HasFormatKnowledge
+  class SerializerBase
+    extend MediaTypeAccessors
     
     def self.inherited(subclass)
       SerializerFactory.register_serializers(subclass)
     end
     
-    def initialize(representor, options = {})
+    def initialize(representor)
       @serialization = serialize(representor)
     end
 

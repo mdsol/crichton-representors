@@ -2,12 +2,12 @@ require 'representors/serializers/serializer_base'
 
 module Representors
   module Serialization
-    class HalSerializer < Serializer
+    class HalSerializer < SerializerBase
       LINKS_KEY = "_links"
       EMBEDDED_KEY = "_embedded"
 
-      symbol_format :hal
-      iana_format 'application/hal+json'
+      media_symbol :hal
+      media_type 'application/hal+json'
 
       private
 
@@ -55,9 +55,9 @@ module Representors
 
       def get_embedded_objects(key, embedded)
         if embedded.is_a?(Array)
-          embed = embedded.to_a.map { |embed| embed.to_media_type(self.class.iana_formats.first) }
+          embed = embedded.to_a.map { |embed| embed.to_media_type(self.class.media_types.first) }
         else
-          embed = embedded.to_media_type(self.class.iana_formats.first)
+          embed = embedded.to_media_type(self.class.media_types.first)
         end
         { key =>  embed}
       end

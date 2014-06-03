@@ -1,8 +1,8 @@
 require 'json'
 require 'representors/deserializers/deserializer_base'
-# TODO Put error message helper in pass class
 require 'representors/deserializers/deserialization_error'
 
+# TODO Put error message helper in pass class
 module Representors
 
 
@@ -15,9 +15,9 @@ module Representors
     CURIE_KEY = 'curies'
     HREF = 'href'
 
-    symbol_format :hal
-    iana_format 'application/hal+json'
-    iana_format 'application/json'
+    media_symbol :hal
+    media_type 'application/hal+json'
+    media_type 'application/json'
 
     attr_reader :document #returns the original document parsed
 
@@ -99,6 +99,5 @@ module Representors
         end
       end
     end
-
   end
 end

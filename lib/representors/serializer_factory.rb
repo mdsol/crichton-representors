@@ -1,4 +1,3 @@
-require 'representors/has_format_knowledge'
 require 'representors/serialization_factory_base'
 
 module Representors
