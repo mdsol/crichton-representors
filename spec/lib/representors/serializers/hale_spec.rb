@@ -7,11 +7,11 @@ module Representors
   describe Representor do
     before do
       @base_representor = {
-          protocol: 'http',
-          href: 'www.example.com/drds',
-          id: 'drds',
-          doc: 'doc'
-        }
+        protocol: 'http',
+        href: 'www.example.com/drds',
+        id: 'drds',
+        doc: 'doc'
+      }
     end
 
     subject(:serializer) { SerializerFactory.build(:hale, Representor.new(RepresentorHash.new(document))) }
@@ -36,12 +36,14 @@ module Representors
 
     shared_examples "a hale documents embedded hale documents" do |representor_hash, media|
       let(:document) { representor_hash.merge(@base_representor) }
+      
       representor_hash[:embedded].each do |embed_name, embed|
         embed[:attributes].each do |k, v|
           it "has the document attribute #{k} and associated value" do
             expect(serializer.to_media_type(media)["_embedded"][embed_name][k]).to eq(v[:value])
           end
         end
+        
         embed[:transitions].each do |item|
           it "has the document attribute #{item} and associated value" do
             expect(serializer.to_media_type(media)["_embedded"][embed_name]["_links"][item[:rel]][:href]).to eq(item[:href])
@@ -174,21 +176,25 @@ module Representors
           ]
         }
         let(:document) { representor_hash.merge(@base_representor) }
+        
         it 'properly returns the link method' do
           test_path = ->(result) { result["_links"]['author'][:method] }
           descriptor_path = ->(doc) { doc[:transitions].first[:method] }
           expect(test_path.(serializer.to_media_type)).to eq(descriptor_path.(document))
         end
+        
         it 'properly represents the type keyword in link data' do
           test_path = ->(result) { result["_links"]['author'][:data]['name']['type'] }
           descriptor_path = ->(doc) { doc[:transitions].first[:descriptors]['name']['type'] }
           expect(test_path.(serializer.to_media_type)).to eq(descriptor_path.(document))
         end
+        
         it 'properly represents the scope keyword in link data' do
           test_path = ->(result) { result["_links"]['author'][:data]['name']['scope'] }
           descriptor_path = ->(doc) { doc[:transitions].first[:descriptors]['name']['scope'] }
           expect(test_path.(serializer.to_media_type)).to eq(descriptor_path.(document))
         end
+        
         it 'properly represents the value keyword in link data' do
           test_path = ->(result) { result["_links"]['author'][:data]['name']['value'] }
           descriptor_path = ->(doc) { doc[:transitions].first[:descriptors]['name']['value'] }
@@ -199,20 +205,18 @@ module Representors
           descriptor_path = ->(doc) { doc[:transitions].first[:descriptors]['name'][:options]['list'] }
           expect(test_path.(serializer.to_media_type)).to eq(descriptor_path.(document))
         end
+        
         it 'properly references the datalists' do
           test_path = ->(result) { result["_links"]['author'][:data]['name'][:options]['_ref'] }
           expect(test_path.(serializer.to_media_type)).to eq(['names'])
         end
+        
         it 'properly represents the required in link data' do
           test_path = ->(result) { result["_links"]['author'][:data]['name']['required'] }
           descriptor_path = ->(doc) { doc[:transitions].first[:descriptors]['name']['required'] }
           expect(test_path.(serializer.to_media_type)).to eq(descriptor_path.(document))
         end
-
       end
-
-      #  it 'properly represents the method keyword' do
-      #  end
     end
   end
 end

@@ -13,8 +13,8 @@ module Representors
 
     def self.symbol_mapping
       @symbol_mapping ||= registered_serialization_classes.map do |serialization_class|
-        serialization_class.media_symbols.map do |media_type|
-          { media_type => serialization_class }
+        serialization_class.media_symbols.map do |media_symbol|
+          {media_symbol => serialization_class }
         end.reduce(:merge)
       end.reduce(:merge)
     end

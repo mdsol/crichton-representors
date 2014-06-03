@@ -18,6 +18,7 @@ module Representors
 
     shared_examples "a hal documents attributes" do |representor_hash|
       let(:document) { representor_hash.merge(@base_representor) }
+      
       representor_hash[:attributes].each do |k, v|
         it "has the document attribute #{k} and associated value" do
           expect(serializer.to_media_type[k]).to eq(v[:value])
@@ -27,6 +28,7 @@ module Representors
 
     shared_examples "a hal documents links" do |representor_hash|
       let(:document) { representor_hash.merge(@base_representor) }
+      
       representor_hash[:transitions].each do |item|
         it "has the document transition #{item}" do
           expect(serializer.to_media_type["_links"][item[:rel]][:href]).to eq(item[:href])

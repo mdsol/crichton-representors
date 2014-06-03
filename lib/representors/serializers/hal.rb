@@ -44,7 +44,9 @@ module Representors
 
       def get_embedded_links(key, embedded)
         if embedded.is_a?(Array)
-          embedded_self = embedded.to_a.map { |embed| embed.transitions.select { |transition| transition.rel == :self } }
+          embedded_self = embedded.to_a.map do |embed| 
+            embed.transitions.select { |transition| transition.rel == :self }
+          end
           links = embedded_self.flatten.map { |embed| { href: embed.uri } }
         else
           embedded_self = embedded.transitions.select { |transition| transition.rel == 'self' }

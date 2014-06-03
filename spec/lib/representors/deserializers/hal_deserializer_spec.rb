@@ -12,7 +12,7 @@ describe Representors::HalDeserializer do
 
   it 'provides the media-type application/vnd.hal+json' do
     formats = Representors::HalDeserializer.media_types
-    expect(formats).to eq(['application/hal+json', 'application/json'])
+    expect(formats).to include('application/hal+json', 'application/json')
   end
 
   it 'provides the media symbol :hal' do
