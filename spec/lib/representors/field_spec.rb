@@ -30,6 +30,12 @@ module Representors
         end
       end
 
+      describe '#to_yaml' do
+        it 'returns its constructor hash represented as a yaml document' do
+          expect(subject.to_yaml).to eq(YAML.dump(field_hash))
+        end
+      end
+
       describe '#name' do
         it 'returns the key when requesting the name' do
           expect(subject.name).to eq(field_hash.keys.first)
@@ -58,6 +64,11 @@ module Representors
         it 'has a list interface even when a hash' do
           @field_hash[:total_count][:options] = { 'hash' => {'foo' => 'bar', 'ninja' => 'cow'} }
           expect(subject.options.to_list).to eq(field_hash[:total_count][:options]['hash'].keys)
+        end
+        
+        it 'has a values interface when a hash' do
+          @field_hash[:total_count][:options] = { 'hash' => {'foo' => 'bar', 'ninja' => 'cow'} }
+          expect(subject.options.values).to eq(field_hash[:total_count][:options]['hash'].values)
         end
 
         it 'has a hash interface even when a list' do
@@ -99,12 +110,16 @@ module Representors
           expect(object_vals).to eq(hash_values)
         end
 
+        it 'returns an empty list when there are no validators' do
+          expect(subject.validators).to eq([])
+        end
+      end
+      
       describe '#call' do
         it 'returns the value when called' do
           expect(subject.()).to eq(@field_hash[:total_count][:value])
         end
       end
     end
-  end
   end
 end

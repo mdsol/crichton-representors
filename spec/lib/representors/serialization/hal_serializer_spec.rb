@@ -19,7 +19,7 @@ module Representors
       let(:document) { representor_hash.merge(@base_representor) }
       
       representor_hash[:attributes].each do |k, v|
-        it 'has the document attribute #{k} and associated value' do
+        it "includes the document attribute #{k} and associated value" do
           expect(serializer.to_media_type[k]).to eq(v[:value])
         end
       end
@@ -29,7 +29,7 @@ module Representors
       let(:document) { representor_hash.merge(@base_representor) }
       
       representor_hash[:transitions].each do |item|
-        it 'has the document transition #{item}' do
+        it "includes the document transition #{item}" do
           expect(serializer.to_media_type['_links'][item[:rel]][:href]).to eq(item[:href])
         end
       end
@@ -40,12 +40,12 @@ module Representors
       
       representor_hash[:embedded].each do |embed_name, embed|
         embed[:attributes].each do |k, v|
-          it 'has the document attribute #{k} and associated value' do
+          it "includes the document attribute #{k} and associated value" do
             expect(serializer.to_media_type['_embedded'][embed_name][k]).to eq(v[:value])
           end
         end
         embed[:transitions].each do |item|
-          it 'has the document attribute #{item} and associated value' do
+          it "includes the document attribute #{item} and associated value" do
             expect(serializer.to_media_type['_embedded'][embed_name]['_links'][item[:rel]][:href]).to eq(item[:href])
           end
         end
@@ -58,12 +58,12 @@ module Representors
       representor_hash[:embedded].each do |embed_name, embeds|
         embeds.each_with_index do |embed, index|
           embed[:attributes].each do |k, v|
-            it 'has the document attribute #{k} and associated value' do
+            it "includes the document attribute #{k} and associated value" do
               expect(serializer.to_media_type['_embedded'][embed_name][index][k]).to eq(v[:value])
             end
           end
           embed[:transitions].each do |item|
-            it 'has the document attribute #{item} and associated value' do
+            it "includes the document attribute #{item} and associated value" do
               expect(serializer.to_media_type['_embedded'][embed_name][index]['_links'][item[:rel]][:href]).to eq(item[:href])
             end
           end

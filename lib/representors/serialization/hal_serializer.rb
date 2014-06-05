@@ -29,44 +29,39 @@ module Representors
       def get_semantics(representor)
         representor.properties
       end
-      
-      def map_or_apply(proc, obj)
-        obj.is_a?(Array) ? obj.map { |sub| proc.(sub) } : proc.(obj)
-      end
 
- 
-       def get_embedded_links(representor)
-        @get_embedded_links ||= begin
-          representor.embedded.map { |k, v| _get_embedded_links(k, v) }
-        end
+      def get_embedded_links(representor)
+        @get_embedded_links ||= representor.embedded.map { |k, v| build_embedded_links(k, v) }
       end     
 
       def get_embedded_objects(representor, options)
-        @get_embedded_objects ||= begin
-          unless representor.embedded == {} || options.has_key?(LINKS_ONLY_OPTION) 
-            _embedded = representor.embedded.map { |k, v| _get_embedded_objects(k, v) }
-            { EMBEDDED_KEY => _embedded.reduce({}, :merge) }
-          else
-            {}
-          end
+        @get_embedded_objects ||= if representor.embedded == {} || options.has_key?(LINKS_ONLY_OPTION)
+          {}
+        else
+          embedded_elements = representor.embedded.map { |k, v| build_embedded_objects(k, v) }
+          { EMBEDDED_KEY => embedded_elements.reduce({}, :merge) }
         end
       end
 
       # Lambda used in this case to DRY code.  Allows 'is array' functionality to be handled elsewhere
-      def _get_embedded_links(key, embedded)
-        find_embedded_links = ->(rhash) { rhash.transitions.select { |transition| transition.rel == :self } }
+      def build_embedded_links(key, embedded)
+        find_embedded_links = ->(obj) { obj.transitions.select { |transition| transition.rel == :self } }
         embedded_self = map_or_apply(find_embedded_links, embedded)
         links = embedded_self.flatten.map { |embed| { href: embed.uri } }
         { key =>  links }
       end
 
       # Lambda used in this case to DRY code.  Allows 'is array' functionality to be handled elsewhere
-      def _get_embedded_objects(key, embedded)
-        make_media_type = ->(rhash) { rhash.to_media_type(self.class.media_types.first) }
+      def build_embedded_objects(key, embedded)
+        make_media_type = ->(obj) { obj.to_media_type(self.class.media_types.first) }
         embed = map_or_apply(make_media_type, embedded)
         { key =>  embed}
       end
-
+      
+      def map_or_apply(proc, obj)
+        obj.is_a?(Array) ? obj.map { |sub| proc.(sub) } : proc.(obj)
+      end
+      
       def construct_links(transition)
         link = transition.templated? ? { href:  transition.templated_uri, templated: true } : { href: transition.uri }
         { transition.rel => link }
