@@ -1,4 +1,4 @@
-require 'representors/deserializers/hal_deserializer'
-require 'representors/deserializers/hale_deserializer'
-require 'representors/serializers/hal'
-require 'representors/serializers/hale'
+require 'representors/serialization/hal_deserializer'
+require 'representors/serialization/hale_deserializer'
+require 'representors/serialization/hal_serializer'
+require 'representors/serialization/hale_serializer'

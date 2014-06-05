@@ -1,4 +1,4 @@
-require 'representors/deserializers/hal_deserializer'
+require 'representors/serialization/hal_deserializer'
 
 module Representors
   class HaleDeserializer < HalDeserializer

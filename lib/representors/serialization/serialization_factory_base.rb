@@ -1,4 +1,4 @@
-require 'representors/deserializers/unknown_format_error'
+require 'representors/serialization/unknown_format_error'
 
 module Representors
   class SerializationFactoryBase

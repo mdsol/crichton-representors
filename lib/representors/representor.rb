@@ -2,7 +2,7 @@ require 'yaml'
 require 'enumerable/lazy' if RUBY_VERSION < '2.0'
 require 'representors/field'
 require 'representors/transition'
-require 'representors/serializer_factory'
+require 'representors/serialization/serializer_factory'
 
 module Representors
   ##
@@ -89,9 +89,7 @@ module Representors
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
-      @transitions ||= (@representor_hash.transitions || []).map do |hash|
-        Transition.new(hash)
-      end
+      @transitions ||= (@representor_hash.transitions || []).map { |hash| Transition.new(hash) }
     end
 
     # @return [Array] who's elements are all <Representors:Option> objects

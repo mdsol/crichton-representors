@@ -1,6 +1,6 @@
 require 'json'
-require 'representors/deserializers/deserializer_base'
-require 'representors/deserializers/deserialization_error'
+require 'representors/serialization/deserializer_base'
+require 'representors/serialization/deserialization_error'
 
 # TODO Put error message helper in pass class
 module Representors
@@ -18,8 +18,6 @@ module Representors
     media_symbol :hal
     media_type 'application/hal+json'
     media_type 'application/json'
-
-    attr_reader :document #returns the original document parsed
 
     # Can be initialized with a json document(string) or an already parsed hash
     # @params document or hash

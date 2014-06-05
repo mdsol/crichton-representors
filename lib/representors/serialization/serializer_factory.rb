@@ -1,4 +1,4 @@
-require 'representors/serialization_factory_base'
+require 'representors/serialization/serialization_factory_base'
 
 module Representors
   class SerializerFactory < SerializationFactoryBase

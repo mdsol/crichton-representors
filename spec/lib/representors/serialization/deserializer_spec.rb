@@ -1,7 +1,5 @@
 require 'spec_helper'
-require 'representors/deserializer_factory'
-require 'representors/deserializers/hal_deserializer'
-require 'representors/deserializers/hale_deserializer'
+require 'representors/serialization/deserializer_factory'
 
 #TODO make specs for individual deserializers under deserializer directory
 module Representors

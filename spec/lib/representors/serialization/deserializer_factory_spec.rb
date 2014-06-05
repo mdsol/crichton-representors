@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'representors/deserializer_factory'
+require 'representors/serialization/deserializer_factory'
 
 # TODO resolve with other DeserializerFactory relate spec
 module Representors

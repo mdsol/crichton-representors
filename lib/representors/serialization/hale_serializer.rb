@@ -1,4 +1,4 @@
-require 'representors/serializers/hal'
+require 'representors/serialization/hal_serializer'
 
 module Representors
   module Serialization
@@ -29,11 +29,8 @@ module Representors
       end
 
       def construct_links(transition)
-        link = if transition.templated?
-          { href:  transition.templated_uri, templated: true }
-        else
-          { href: transition.uri }
-        end
+        uri = transition.templated? ? transition.templated_uri : transition.uri
+        link = { href:  uri, templated: true }
         link[:method] = transition.interface_method
         data_elements = transition.attributes.reduce({}) do |results, element|
           results.merge( get_data_element(element) )

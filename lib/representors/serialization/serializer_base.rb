@@ -1,4 +1,4 @@
-require 'representors/serializer_factory'
+require 'representors/serialization/serializer_factory'
 require 'representors/media_type_accessors'
 
 module Representors
