@@ -8,9 +8,10 @@ module Representors
     HREF_KEY = 'href'
 
     def initialize
-      @attributes = {}
-      @transitions = []
       @embedded_resources = {}
+      @transitions = []
+      @attributes = {}
+
     end
 
     # Returns a hash usable by the representor class

@@ -7,16 +7,16 @@ describe Representors::HalDeserializer do
   let(:embedded_field) {deserializer.to_representor.embedded }
 
   it "initializes with a JSON document" do
-    expect(Representors::HalDeserializer.new({}.to_json)).to be_instance_of (Representors::HalDeserializer)
+    expect(Representors::HalDeserializer.new({}.to_json)).to be_instance_of(Representors::HalDeserializer)
   end
 
-  it 'provides the iana format application/vnd.hale+json' do
-    formats = Representors::HalDeserializer.iana_formats
-    expect(formats).to eq(['application/hal+json', 'application/json'])
+  it 'provides the media-type application/vnd.hal+json' do
+    formats = Representors::HalDeserializer.media_types
+    expect(formats).to include('application/hal+json', 'application/json')
   end
 
-  it 'provides the symbol format :hale' do
-    expect(Representors::HalDeserializer.symbol_formats).to eq([:hal])
+  it 'provides the media symbol :hal' do
+    expect(Representors::HalDeserializer.media_symbols).to include(:hal)
   end
 
   describe "#to_representor" do

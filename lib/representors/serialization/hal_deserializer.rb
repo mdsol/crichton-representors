@@ -1,25 +1,23 @@
 require 'json'
+require 'representors/serialization/deserializer_base'
+require 'representors/serialization/deserialization_error'
 
+# TODO Put error message helper in pass class
 module Representors
 
 
   # Deserializes the HAL format as specified in http://stateless.co/hal_specification.html
   # For examples of how this format looks like check the files under spec/fixtures/hal
   # TODO: support Curies http://www.w3.org/TR/2010/NOTE-curie-20101216/
-  class HalDeserializer
-
+  class HalDeserializer < DeserializerBase
     LINKS_KEY = '_links'
     EMBEDDED_KEY = '_embedded'
     CURIE_KEY = 'curies'
     HREF = 'href'
 
-    include FormatDeserializer
-
-    symbol_format :hal
-    iana_format 'application/hal+json'
-    iana_format 'application/json'
-
-    attr_reader :document #returns the original document parsed
+    media_symbol :hal
+    media_type 'application/hal+json'
+    media_type 'application/json'
 
     # Can be initialized with a json document(string) or an already parsed hash
     # @params document or hash
@@ -99,6 +97,5 @@ module Representors
         end
       end
     end
-
   end
 end

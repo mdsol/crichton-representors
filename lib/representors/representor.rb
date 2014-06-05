@@ -1,19 +1,27 @@
 require 'yaml'
 require 'enumerable/lazy' if RUBY_VERSION < '2.0'
+require 'representors/field'
+require 'representors/transition'
+require 'representors/serialization/serializer_factory'
 
 module Representors
   ##
   # Manages the respresentation of hypermedia messages for different media-types.
   class Representor
-    UNKNOWN_PROTOCOL = 'ruby_id'
     DEFAULT_PROTOCOL = 'http'
     PROTOCOL_TEMPLATE = "%s://%s"
+    UNKNOWN_PROTOCOL = 'ruby_id'
     VALUE_KEY = :value
-
 
     # @param representor_hash [Hash] the abstract representor hash defining a resource
     def initialize(representor_hash = nil)
-      @representor_hash = representor_hash || RepresentorHash.new
+      @representor_hash = RepresentorHash.new(representor_hash)
+    end
+
+    # @param format to convert this representor to
+    # @return the representor serialized to a particular media-type like application/hal+json
+    def to_media_type(format, options={})
+      SerializerFactory.build(format, self).to_media_type(options)
     end
 
     # Returns the documentfor the representor
@@ -81,9 +89,7 @@ module Representors
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
-      @transitions ||= (@representor_hash.transitions || []).map do |hash|
-        Representors::Transition.new(hash)
-      end
+      @transitions ||= (@representor_hash.transitions || []).map { |hash| Transition.new(hash) }
     end
 
     # @return [Array] who's elements are all <Representors:Option> objects
@@ -99,4 +105,3 @@ module Representors
 
   end
 end
-
