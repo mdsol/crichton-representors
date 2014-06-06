@@ -1,11 +1,9 @@
 require 'json'
 require 'representors/serialization/deserializer_base'
-require 'representors/serialization/deserialization_error'
+require 'representors/errors'
 
-# TODO Put error message helper in pass class
 module Representors
-
-
+  ##
   # Deserializes the HAL format as specified in http://stateless.co/hal_specification.html
   # For examples of how this format looks like check the files under spec/fixtures/hal
   # TODO: support Curies http://www.w3.org/TR/2010/NOTE-curie-20101216/
@@ -18,14 +16,12 @@ module Representors
     media_symbol :hal
     media_type 'application/hal+json', 'application/json'
 
-    # Can be initialized with a json document(string) or an already parsed hash
-    # @params document or hash
-    def initialize(document_or_hash)
-      if document_or_hash.is_a?(Hash)
-        @document = document_or_hash
-      else #This may raise with a Json parse error which is ok
-        @document = JSON.parse(document_or_hash)
-      end
+    # Can be initialized with a json document(string) or an already parsed hash.
+    #
+    # @param [String, Hash] target The target object to deserialize
+    def initialize(target)
+      # sets the target in the base class
+      super(target.is_a?(Hash) ? target : JSON.parse(target)) #This may raise with a Json parse error which is ok
     end
 
     # Returns back a class with all the information of the document and with convenience methods
@@ -53,9 +49,9 @@ module Representors
     # Properties are normal JSON keys in the HAL document. Create properties in the resulting object
     def deserialize_properties!(builder)
       # links and embedded are not properties but keywords of HAL, skipping them.
-      @document.keys.each do |property_name|
+      target.keys.each do |property_name|
         if (property_name != LINKS_KEY) && (property_name != EMBEDDED_KEY)
-          builder.add_attribute(property_name, @document[property_name])
+          builder.add_attribute(property_name, target[property_name])
         end
       end
     end
@@ -63,9 +59,9 @@ module Representors
     # links are under '_links' in the original document. Links always have a key (its name) but
     # the value can be a hash with its properties or an array with several links.
     def deserialize_links!(builder)
-      links = @document[LINKS_KEY] || {}
+      links = target[LINKS_KEY] || {}
       links.each do |link_rel, link_values|
-        raise DeserializationError, "CURIE support not implemented for HAL" if link_rel.eql?(CURIE_KEY)
+        raise(DeserializationError, 'CURIE support not implemented for HAL') if link_rel.eql?(CURIE_KEY)
         if link_values.is_a?(Array)
           if link_values.map{|link| link[HREF]}.any?(&:nil?)
             raise DeserializationError, 'All links must contain the href attribute'
@@ -83,7 +79,7 @@ module Representors
     # contain an array or a single embedded resource. An embedded resource is a full document so
     # we create a new HalDeserializer for each.
     def deserialize_embedded!(builder)
-      embedded = @document[EMBEDDED_KEY] || {}
+      embedded = target[EMBEDDED_KEY] || {}
       embedded.each do |name, value|
         if value.is_a?(Array)
           resources = value.map do |one_embedded_resource|

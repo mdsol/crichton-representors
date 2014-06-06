@@ -66,7 +66,6 @@ module Representors
         link = transition.templated? ? { href:  transition.templated_uri, templated: true } : { href: transition.uri }
         { transition.rel => link }
       end
-
     end
   end
 end

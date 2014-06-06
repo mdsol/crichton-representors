@@ -228,7 +228,6 @@ module Representors
           @result_element = serialized_result["_links"]['author'][:data]['name'][:options]['_ref']
           @document_element = ['names']
         end  
-
       end
     end
   end

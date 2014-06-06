@@ -102,8 +102,8 @@ module Representors
             },
             transitions: [
               {
-              href: '/mike',
-              rel: 'author',
+                href: '/mike',
+                rel: 'author',
               }
             ]
           }
@@ -140,7 +140,7 @@ module Representors
         representor_hash = begin
           {
             attributes: {
-                'title' => {value: 'The Neverending Story'},
+              'title' => {value: 'The Neverending Story'},
             },
             transitions: [
               {
