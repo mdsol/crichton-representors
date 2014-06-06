@@ -14,7 +14,7 @@ module Representors
         expect(deserializer).to be_instance_of HalDeserializer
       end
       it 'the HalDeserializer has the correct document' do
-        expect(deserializer.document).to eq({})
+        expect(deserializer.target).to eq({})
       end
     end
   
@@ -25,8 +25,8 @@ module Representors
       it 'returns a HaleDeserializer' do
         expect(deserializer).to be_instance_of HaleDeserializer
       end
-      it 'the HalDeserializer has the correct document' do
-        expect(deserializer.document).to eq({})
+      it 'the HalDeserializer has the correct target' do
+        expect(deserializer.target).to eq({})
       end
     end
   
@@ -35,7 +35,7 @@ module Representors
       let(:document) { {}.to_json}
       
       it 'Raises an unknown format error' do
-        expect{deserializer}.to raise_error(UnknownFormatError, "Unknown media-type: #{format}.")
+        expect{deserializer}.to raise_error(UnknownMediaTypeError, "Unknown media-type: #{format}.")
       end
     end
   
@@ -44,7 +44,7 @@ module Representors
       let(:document) { {}.to_json}
       
       it 'Raises an unknown format error' do
-        expect{deserializer}.to raise_error(UnknownFormatError, "Unknown media-type: #{format}.")
+        expect{deserializer}.to raise_error(UnknownMediaTypeError, "Unknown media-type: #{format}.")
       end
     end
   end
