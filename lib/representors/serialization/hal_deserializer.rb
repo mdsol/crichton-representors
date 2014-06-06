@@ -18,14 +18,10 @@ module Representors
 
     # Can be initialized with a json document(string) or an already parsed hash.
     #
-    # @param [String, Hash] target The target to deserialize
+    # @param [String, Hash] target The target object to deserialize
     def initialize(target)
-      document = if target.is_a?(Hash)
-        target
-      else #This may raise with a Json parse error which is ok
-        JSON.parse(target)  
-      end
-      super(document)
+      # sets the target in the base class
+      super(target.is_a?(Hash) ? target : JSON.parse(target)) #This may raise with a Json parse error which is ok
     end
 
     # Returns back a class with all the information of the document and with convenience methods
