@@ -37,10 +37,10 @@ module Representors
     end
 
     describe '#build' do
-      subject(:deserializer) { DeserializerFactory.build(media_type, document) }
       let(:document) { {}.to_json }
-
-      shared_examples_for 'a built_deserializer' do
+      subject(:deserializer) { DeserializerFactory.build(media_type, document) }
+      
+      shared_examples_for 'a built deserializer' do
         it 'sets the correct target in the deserializer' do
           expect(deserializer.target).to eq({})
         end
@@ -51,7 +51,7 @@ module Representors
           expect(deserializer).to be_instance_of HalDeserializer
         end
 
-        it_behaves_like 'a built_deserializer'
+        it_behaves_like 'a built deserializer'
       end
       
       context 'with hal+json media type as a string' do
@@ -71,7 +71,7 @@ module Representors
           expect(deserializer).to be_instance_of HaleDeserializer
         end
 
-        it_behaves_like 'a built_deserializer'
+        it_behaves_like 'a built deserializer'
       end
 
       context 'with hale+json media type as a string' do
