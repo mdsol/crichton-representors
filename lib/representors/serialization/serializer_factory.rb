@@ -11,4 +11,3 @@ module Representors
     end
   end
 end
-

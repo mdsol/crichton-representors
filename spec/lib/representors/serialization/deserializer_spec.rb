@@ -9,6 +9,7 @@ module Representors
     context 'hal+json format' do
       let(:format) {'application/hal+json' }
       let(:document) { {}.to_json}
+      
       it 'returns a HalDeserializer' do
         expect(deserializer).to be_instance_of HalDeserializer
       end
@@ -20,6 +21,7 @@ module Representors
     context ':hale format' do
       let(:format) {:hale }
       let(:document) { {}.to_json}
+      
       it 'returns a HaleDeserializer' do
         expect(deserializer).to be_instance_of HaleDeserializer
       end
@@ -31,6 +33,7 @@ module Representors
     context 'unknown format string' do
       let(:format) { 'Iamunknown'}
       let(:document) { {}.to_json}
+      
       it 'Raises an unknown format error' do
         expect{deserializer}.to raise_error(UnknownFormatError, "Unknown media-type: #{format}.")
       end
@@ -39,6 +42,7 @@ module Representors
     context 'unknown format symbol' do
       let(:format) { :Iamunknown}
       let(:document) { {}.to_json}
+      
       it 'Raises an unknown format error' do
         expect{deserializer}.to raise_error(UnknownFormatError, "Unknown media-type: #{format}.")
       end

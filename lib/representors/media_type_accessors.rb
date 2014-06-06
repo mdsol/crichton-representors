@@ -1,3 +1,4 @@
+
 module Representors
   module MediaTypeAccessors
     def media_symbols
@@ -9,12 +10,12 @@ module Representors
     end
 
     private
-    def media_symbol(symbol)
-      media_symbols << symbol
+    def media_symbol(*symbol)
+      @media_symbols = media_symbols | symbol
     end
 
-    def media_type(media_type)
-      media_types << media_type
+    def media_type(*media)
+      @media_types = media_types | media
     end
   end
 end

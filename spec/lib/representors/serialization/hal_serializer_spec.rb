@@ -71,7 +71,6 @@ module Representors
       end
     end
 
-
     describe '#to_media_type' do
       context 'empty document' do
         let(:document) { {} }
@@ -82,50 +81,55 @@ module Representors
       end
 
       context 'Document with only properties' do
-        representor_hash = {
-          attributes:
-            {
-            'title' => {value: 'The Neverending Story'},
-            'author' => {value: 'Michael Ende'},
-            'pages' => {value: '396'}
-            }}
-
+        representor_hash = begin
+          {
+            attributes: {
+              'title' => {value: 'The Neverending Story'},
+              'author' => {value: 'Michael Ende'},
+              'pages' => {value: '396'}
+            }
+          }
+        end
+        
         it_behaves_like 'a hal documents attributes', representor_hash
       end
 
       context 'Document with properties and links' do
-        representor_hash = {
-          attributes:
-            {
+        representor_hash = begin
+          {
+            attributes: {
               'title' => {value: 'The Neverending Story'},
-              },
-          transitions: [
-                {
-                href: '/mike',
-                rel: 'author',
-                }
-              ]
-            }
-
+            },
+            transitions: [
+              {
+              href: '/mike',
+              rel: 'author',
+              }
+            ]
+          }
+        end
+        
         it_behaves_like 'a hal documents attributes', representor_hash
         it_behaves_like 'a hal documents links', representor_hash
       end
 
       context 'Document with properties, links, and embedded' do
-        representor_hash = {
-          attributes: {
+        representor_hash = begin
+          {
+            attributes: {
               'title' => {value: 'The Neverending Story'},
-          },
-          transitions: [
-            {
-              href: '/mike',
-              rel: 'author',
+            },
+            transitions: [
+              {
+                href: '/mike',
+                rel: 'author',
+              }
+            ],
+            embedded: {
+              'embedded_book' => {attributes: {'content' => { value: 'A...' } }, transitions: [{rel: 'self', href: '/foo'}]}
             }
-          ],
-          embedded: {
-            'embedded_book' => {attributes: {'content' => { value: 'A...' } }, transitions: [{rel: 'self', href: '/foo'}]}
           }
-        }
+        end
         
         it_behaves_like 'a hal documents attributes', representor_hash
         it_behaves_like 'a hal documents links', representor_hash
@@ -133,24 +137,26 @@ module Representors
       end
 
       context 'Document with an embedded collection' do
-        representor_hash = {
-          attributes: {
-              'title' => {value: 'The Neverending Story'},
-          },
-          transitions: [
-            {
-              href: '/mike',
-              rel: 'author',
+        representor_hash = begin
+          {
+            attributes: {
+                'title' => {value: 'The Neverending Story'},
+            },
+            transitions: [
+              {
+                href: '/mike',
+                rel: 'author',
+              }
+            ],
+            embedded: {
+              'embedded_book' => [
+                {attributes: {'content' => { value: 'A...' } }, transitions: [{rel: 'self', href: '/foo1'}]},
+                {attributes: {'content' => { value: 'B...' } }, transitions: [{rel: 'self', href: '/foo2'}]},
+                {attributes: {'content' => { value: 'C...' } }, transitions: [{rel: 'self', href: '/foo3'}]}
+              ]
             }
-          ],
-          embedded: {
-            'embedded_book' => [
-              {attributes: {'content' => { value: 'A...' } }, transitions: [{rel: 'self', href: '/foo1'}]},
-              {attributes: {'content' => { value: 'B...' } }, transitions: [{rel: 'self', href: '/foo2'}]},
-              {attributes: {'content' => { value: 'C...' } }, transitions: [{rel: 'self', href: '/foo3'}]}
-            ]
           }
-        }
+        end
         
         it_behaves_like 'a hal documents attributes', representor_hash
         it_behaves_like 'a hal documents links', representor_hash

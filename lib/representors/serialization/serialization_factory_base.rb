@@ -13,7 +13,9 @@ module Representors
 
     def self.media_symbol_mapping
       @media_symbol ||= registered_serialization_classes.map do |serialization_class|
+        print 'sc', serialization_class
         serialization_class.media_symbols.map do |media_symbol|
+          print 'ms', serialization_class
           {media_symbol => serialization_class }
         end.reduce(:merge)
       end.reduce(:merge)

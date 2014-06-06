@@ -12,6 +12,7 @@ module Representors
         id: 'drds',
         doc: 'doc'
       }
+      @options = {}
     end
 
     subject(:serializer) { SerializerFactory.build(:hale, Representor.new(document)) }
@@ -21,7 +22,7 @@ module Representors
       
       representor_hash[:attributes].each do |k, v|
         it "includes the document attribute #{k} and associated value" do
-          expect(serializer.to_media_type(media)[k]).to eq(v[:value])
+          expect(serializer.to_media_type(@options)[k]).to eq(v[:value])
         end
       end
     end
@@ -31,7 +32,7 @@ module Representors
       
       representor_hash[:transitions].each do |item|
         it "includes the document transition #{item}" do
-          expect(serializer.to_media_type(media)["_links"][item[:rel]][:href]).to eq(item[:href])
+          expect(serializer.to_media_type(@options)["_links"][item[:rel]][:href]).to eq(item[:href])
         end
       end
     end
@@ -42,12 +43,12 @@ module Representors
       representor_hash[:embedded].each do |embed_name, embed|
         embed[:attributes].each do |k, v|
           it "includes the document attribute #{k} and associated value" do
-            expect(serializer.to_media_type(media)["_embedded"][embed_name][k]).to eq(v[:value])
+            expect(serializer.to_media_type(@options)["_embedded"][embed_name][k]).to eq(v[:value])
           end
         end
         embed[:transitions].each do |item|
           it "includes the document attribute #{item} and associated value" do
-            expect(serializer.to_media_type(media)["_embedded"][embed_name]["_links"][item[:rel]][:href]).to eq(item[:href])
+            expect(serializer.to_media_type(@options)["_embedded"][embed_name]["_links"][item[:rel]][:href]).to eq(item[:href])
           end
         end
       end
@@ -60,106 +61,112 @@ module Representors
         embeds.each_with_index do |embed, index|
           embed[:attributes].each do |k, v|
             it "includes the document attribute #{k} and associated value" do
-              expect(serializer.to_media_type(media)["_embedded"][embed_name][index][k]).to eq(v[:value])
+              expect(serializer.to_media_type(@options)["_embedded"][embed_name][index][k]).to eq(v[:value])
             end
           end
           embed[:transitions].each do |item|
             it "includes the document attribute #{item} and associated value" do
-              expect(serializer.to_media_type(media)["_embedded"][embed_name][index]["_links"][item[:rel]][:href]).to eq(item[:href])
+              expect(serializer.to_media_type(@options)["_embedded"][embed_name][index]["_links"][item[:rel]][:href]).to eq(item[:href])
             end
           end
         end
       end
     end
 
-    media = {}    # TODO: get rid of media
     describe '#to_media_type' do
       context 'Document that is empty' do
         let(:document) { {} }
 
         it 'returns a hash with no attributes, links or embedded resources' do
-          expect(serializer.to_media_type(media)).to be_empty
+          expect(serializer.to_media_type(@options)).to be_empty
         end
       end
 
       context 'Document with only properties' do
-        representor_hash = {
-          attributes:
-            {
-            'title' => {value: 'The Neverending Story'},
-            'author' => {value: 'Michael Ende'},
-            'pages' => {value: '396'}
-            }}
-
-        it_behaves_like 'a hale documents attributes', representor_hash, media
+        representor_hash = begin
+          {
+            attributes: {
+              'title' => {value: 'The Neverending Story'},
+              'author' => {value: 'Michael Ende'},
+              'pages' => {value: '396'}
+            }
+          }
+        end
+        
+        it_behaves_like 'a hale documents attributes', representor_hash, @options
       end
 
       context 'Document with properties and links' do
-        representor_hash = {
-          attributes:
-            {
+        representor_hash = begin
+          {
+            attributes:{
               'title' => {value: 'The Neverending Story'},
-              },
-          transitions: [
-                {
-                href: '/mike',
-                rel: 'author',
-                }
-              ]
-            }
-
-        it_behaves_like 'a hale documents attributes', representor_hash, media
-        it_behaves_like 'a hale documents links', representor_hash, media
+            },
+            transitions: [
+              {
+              href: '/mike',
+              rel: 'author',
+              }
+            ]
+          }
+        end
+        
+        it_behaves_like 'a hale documents attributes', representor_hash, @options
+        it_behaves_like 'a hale documents links', representor_hash, @options
       end
 
       context 'Document with properties, links, and embedded' do
-        representor_hash = {
-          attributes: {
-              'title' => {value: 'The Neverending Story'},
-          },
-          transitions: [
-            {
-              href: '/mike',
-              rel: 'author',
+        representor_hash = begin
+          {
+            attributes: {
+                'title' => {value: 'The Neverending Story'},
+            },
+            transitions: [
+              {
+                href: '/mike',
+                rel: 'author',
+              }
+            ],
+            embedded: {
+              'embedded_book' => {attributes: {'content' => { value: 'A...' } }, transitions: [{rel: 'self', href: '/foo'}]}
             }
-          ],
-          embedded: {
-            'embedded_book' => {attributes: {'content' => { value: 'A...' } }, transitions: [{rel: 'self', href: '/foo'}]}
           }
-        }
+        end
         
-        it_behaves_like 'a hale documents attributes', representor_hash, media
-        it_behaves_like 'a hale documents links', representor_hash, media
-        it_behaves_like 'a hale documents embedded hale documents', representor_hash, media
+        it_behaves_like 'a hale documents attributes', representor_hash, @options
+        it_behaves_like 'a hale documents links', representor_hash, @options
+        it_behaves_like 'a hale documents embedded hale documents', representor_hash, @options
       end
 
       context 'Document with an embedded collection' do
-        representor_hash = {
-          attributes: {
-              'title' => {value: 'The Neverending Story'},
-          },
-          transitions: [
-            {
-              href: '/mike',
-              rel: 'author',
+        representor_hash = begin
+          {
+            attributes: {
+                'title' => {value: 'The Neverending Story'},
+            },
+            transitions: [
+              {
+                href: '/mike',
+                rel: 'author',
+              }
+            ],
+            embedded: {
+              'embedded_book' => [
+                {attributes: {'content' => { value: 'A...' } }, transitions: [{rel: 'self', href: '/foo1'}]},
+                {attributes: {'content' => { value: 'B...' } }, transitions: [{rel: 'self', href: '/foo2'}]},
+                {attributes: {'content' => { value: 'C...' } }, transitions: [{rel: 'self', href: '/foo3'}]}
+              ]
             }
-          ],
-          embedded: {
-            'embedded_book' => [
-              {attributes: {'content' => { value: 'A...' } }, transitions: [{rel: 'self', href: '/foo1'}]},
-              {attributes: {'content' => { value: 'B...' } }, transitions: [{rel: 'self', href: '/foo2'}]},
-              {attributes: {'content' => { value: 'C...' } }, transitions: [{rel: 'self', href: '/foo3'}]}
-            ]
           }
-        }
+        end
         
-        it_behaves_like 'a hale documents attributes', representor_hash, media
-        it_behaves_like 'a hale documents links', representor_hash, media
-        it_behaves_like 'a hale documents embedded collection', representor_hash, media
+        it_behaves_like 'a hale documents attributes', representor_hash, @options
+        it_behaves_like 'a hale documents links', representor_hash, @options
+        it_behaves_like 'a hale documents embedded collection', representor_hash, @options
       end
 
       context 'Document has a link data objects' do
-        let(:representor_hash) do 
+        representor_hash = begin
           { 
             transitions: [
               {
@@ -179,6 +186,7 @@ module Representors
             ]
           }
         end
+        
         let(:document) { representor_hash.merge(@base_representor) }
         let(:serialized_result) { serializer.to_media_type }
 

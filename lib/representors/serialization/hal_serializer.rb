@@ -16,8 +16,8 @@ module Representors
         base_hash = get_semantics(representor)
         embedded_links = get_embedded_links(representor)
         embedded_hals = ->(options) { get_embedded_objects(representor, options) }
-        links = representor.transitions.map { |link| construct_links(link) } + embedded_links
-        links = links != [] ? { LINKS_KEY => links.reduce({}, :merge) } : {}
+        links = representor.transitions.map { |link| build_links(link) } + embedded_links
+        links = links.empty? ? {} : { LINKS_KEY => links.reduce({}, :merge) }
         [base_hash, links, embedded_hals]
       end
 
@@ -35,7 +35,7 @@ module Representors
       end     
 
       def get_embedded_objects(representor, options)
-        @get_embedded_objects ||= if representor.embedded == {} || options.has_key?(LINKS_ONLY_OPTION)
+        @get_embedded_objects ||= if representor.embedded.empty? || options.has_key?(LINKS_ONLY_OPTION)
           {}
         else
           embedded_elements = representor.embedded.map { |k, v| build_embedded_objects(k, v) }
@@ -62,7 +62,7 @@ module Representors
         obj.is_a?(Array) ? obj.map { |sub| proc.(sub) } : proc.(obj)
       end
       
-      def construct_links(transition)
+      def build_links(transition)
         link = transition.templated? ? { href:  transition.templated_uri, templated: true } : { href: transition.uri }
         { transition.rel => link }
       end

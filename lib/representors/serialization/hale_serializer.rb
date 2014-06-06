@@ -28,7 +28,7 @@ module Representors
         { element.name => element_data }
       end
 
-      def construct_links(transition)
+      def build_links(transition)
         uri = transition.templated? ? transition.templated_uri : transition.uri
         link = { href:  uri, templated: true }
         link[:method] = transition.interface_method

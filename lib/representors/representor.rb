@@ -89,7 +89,7 @@ module Representors
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
-      @transitions ||= (@representor_hash.transitions || []).map { |hash| Transition.new(hash) }
+      @transitions ||= (@representor_hash.transitions || []).map { |t| Transition.new(t) }
     end
 
     # @return [Array] who's elements are all <Representors:Option> objects

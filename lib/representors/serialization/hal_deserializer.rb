@@ -16,8 +16,7 @@ module Representors
     HREF = 'href'
 
     media_symbol :hal
-    media_type 'application/hal+json'
-    media_type 'application/json'
+    media_type 'application/hal+json', 'application/json'
 
     # Can be initialized with a json document(string) or an already parsed hash
     # @params document or hash
