@@ -1,7 +1,9 @@
 require 'json'
 require 'representors/serialization/deserializer_base'
+require 'representors/errors'
 
 module Representors
+  ##
   # Deserializes the HAL format as specified in http://stateless.co/hal_specification.html
   # For examples of how this format looks like check the files under spec/fixtures/hal
   # TODO: support Curies http://www.w3.org/TR/2010/NOTE-curie-20101216/
@@ -16,12 +18,12 @@ module Representors
 
     # Can be initialized with a json document(string) or an already parsed hash.
     #
-    # @param [String, Hash] document_or_hash The target to deserialize
-    def initialize(document_or_hash)
-      document = if document_or_hash.is_a?(Hash)
-        document_or_hash
+    # @param [String, Hash] target The target to deserialize
+    def initialize(target)
+      document = if target.is_a?(Hash)
+        target
       else #This may raise with a Json parse error which is ok
-        JSON.parse(document_or_hash)
+        JSON.parse(target)  
       end
       super(document)
     end
@@ -63,7 +65,7 @@ module Representors
     def deserialize_links!(builder)
       links = target[LINKS_KEY] || {}
       links.each do |link_rel, link_values|
-        raise_error("CURIE support not implemented for HAL") if link_rel.eql?(CURIE_KEY)
+        raise(DeserializationError, 'CURIE support not implemented for HAL') if link_rel.eql?(CURIE_KEY)
         if link_values.is_a?(Array)
           if link_values.map{|link| link[HREF]}.any?(&:nil?)
             raise DeserializationError, 'All links must contain the href attribute'
