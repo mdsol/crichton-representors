@@ -1,9 +1,9 @@
-require 'representors/serialization/serialization_base'
+require 'representors/serialization/base'
 require 'representors/serialization/serializer_factory'
 
 module Representors
   module Serialization
-    class SerializerBase < SerializationBase
+    class SerializerBase < Base
       def self.inherited(subclass)
         SerializerFactory.register_serializers(subclass)
       end
