@@ -1,14 +1,18 @@
+require 'representors/serialization/base'
 require 'representors/serialization/deserializer_factory'
-require 'representors/media_type_accessors'
+require 'representors/errors'
 
 module Representors
-  class DeserializerBase
-    extend MediaTypeAccessors
-    
-    attr_reader :document #returns the original document parsed
-    
-    def self.inherited(subclass)
-      DeserializerFactory.register_deserializers(subclass)
+  module Serialization
+    class DeserializerBase < Base
+      def self.inherited(subclass)
+        DeserializerFactory.register_deserializers(subclass)
+      end
+      
+      private
+      def raise_error(message)
+        raise DeserializationError, message
+      end
     end
   end
 end

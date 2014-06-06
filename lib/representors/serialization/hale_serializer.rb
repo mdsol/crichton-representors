@@ -38,7 +38,6 @@ module Representors
         link[:data] = data_elements unless data_elements.empty?
         { transition.rel => link }
       end
-
     end
   end
 end
