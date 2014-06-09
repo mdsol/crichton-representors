@@ -128,6 +128,10 @@ RSpec.describe Representors::RepresentorBuilder do
       end
 
       it_behaves_like 'one transition added'
+      
+      it 'can reconstruct itself' do
+        expect(Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash).to eq(builder.to_representor_hash)
+      end
     end
 
     context 'Added a transition with extra options' do
@@ -148,6 +152,10 @@ RSpec.describe Representors::RepresentorBuilder do
       it 'adds the correct value for the extra options' do
         expect(transitions_field.first[extra_key]).to eq(extra_value)
       end
+      
+      it 'can reconstruct itself' do
+        expect(Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash).to eq(builder.to_representor_hash)
+      end    
     end
   end
 
@@ -165,6 +173,10 @@ RSpec.describe Representors::RepresentorBuilder do
     end
 
     it_behaves_like 'one transition added'
+    
+    it 'can reconstruct itself' do
+      expect(Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash).to eq(builder.to_representor_hash)
+    end
   end
 
 
@@ -178,6 +190,10 @@ RSpec.describe Representors::RepresentorBuilder do
       end
 
       it_behaves_like 'one embedded added'
+      
+      it 'can reconstruct itself' do
+        expect(Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash).to eq(builder.to_representor_hash)
+      end
     end
   end
 
