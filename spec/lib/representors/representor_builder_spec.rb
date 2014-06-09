@@ -54,6 +54,13 @@ RSpec.shared_examples_for 'one embedded added' do
 
 end
 
+RSpec.shared_examples_for 'it can reconstruct itself' do
+  it 'can be constructed with the hash' do
+    expect(
+      Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash
+    ).to eq(builder.to_representor_hash)
+  end
+end
 
 RSpec.describe Representors::RepresentorBuilder do
   subject(:builder) {Representors::RepresentorBuilder.new}
@@ -107,6 +114,8 @@ RSpec.describe Representors::RepresentorBuilder do
 
       it_behaves_like 'one attribute added'
 
+      it_behaves_like 'it can reconstruct itself'
+
       it 'adds any extra options as keys under the attribute name hash' do
         expect(semantic_field[attribute_name].has_key?(extra_key)).to be_true
       end
@@ -129,9 +138,7 @@ RSpec.describe Representors::RepresentorBuilder do
 
       it_behaves_like 'one transition added'
       
-      it 'can reconstruct itself' do
-        expect(Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash).to eq(builder.to_representor_hash)
-      end
+      it_behaves_like 'it can reconstruct itself'
     end
 
     context 'Added a transition with extra options' do
@@ -153,9 +160,7 @@ RSpec.describe Representors::RepresentorBuilder do
         expect(transitions_field.first[extra_key]).to eq(extra_value)
       end
       
-      it 'can reconstruct itself' do
-        expect(Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash).to eq(builder.to_representor_hash)
-      end    
+      it_behaves_like 'it can reconstruct itself'
     end
   end
 
@@ -174,9 +179,7 @@ RSpec.describe Representors::RepresentorBuilder do
 
     it_behaves_like 'one transition added'
     
-    it 'can reconstruct itself' do
-      expect(Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash).to eq(builder.to_representor_hash)
-    end
+    it_behaves_like 'it can reconstruct itself'
   end
 
 
@@ -191,9 +194,7 @@ RSpec.describe Representors::RepresentorBuilder do
 
       it_behaves_like 'one embedded added'
       
-      it 'can reconstruct itself' do
-        expect(Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash).to eq(builder.to_representor_hash)
-      end
+      it_behaves_like 'it can reconstruct itself'
     end
   end
 
