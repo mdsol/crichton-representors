@@ -70,7 +70,7 @@ RSpec.describe Representors::RepresentorBuilder do
 
   context 'empty builder' do
     it "returns an empty hash" do
-      empty_hash = {:id=>nil, :doc=>nil, :href=>nil, :protocol=>nil, :attributes=>nil, :embedded=>nil, :links=>nil, :transitions=>nil}
+      empty_hash = {}
       expect(builder.to_representor_hash.to_h).to eq(empty_hash)
     end
   end

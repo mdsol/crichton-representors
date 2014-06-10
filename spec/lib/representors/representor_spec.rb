@@ -6,12 +6,12 @@ module Representors
   describe Representor do
     let(:doc) {'A list of DRDs.'}
     before do
-      @base_representor = RepresentorHash.new(
+      @base_representor = {
         protocol: 'http',
         href: 'www.example.com/drds',
         id: 'drds',
         doc: doc
-      )
+      }
 
       @semantic_elements = {
         attributes: {
@@ -67,19 +67,24 @@ module Representors
     let(:representor_hash) { @representor_hash || @base_representor }
     let(:subject) { Representor.new(representor_hash) }
 
-    describe '#to_s' do
-      it 'retuns a string representation' do
-        expect(subject.to_s).to eq(representor_hash.to_s)
-      end
-    end
-
     describe '.new' do
       it 'returns a Representors::Representor instance' do
         expect(subject).to be_an_instance_of(Representor)
       end
+      
+      it 'yields a builder' do
+        subject = Representor.new { |builder| builder.add_embedded('contains', @base_representor) }
+        expect(subject.embedded['contains'].to_hash).to eq(@base_representor)
+      end
 
       it 'returns a Representors::Representor instance with a nil argument' do
         expect(Representor.new).to be_an_instance_of(Representor)
+      end
+
+      describe '#to_s' do
+        it 'retuns a string representation' do
+          expect(eval(subject.to_s)).to eq(representor_hash)
+        end
       end
 
       describe '#doc' do
@@ -128,7 +133,7 @@ module Representors
         let(:embedded_resource) {'embedded_resource'}
         before do
           @count = 3
-          @representor_hash = @base_representor.merge(@semantic_elements)
+          @representor_hash = RepresentorHash.new(@base_representor).merge(@semantic_elements)
           @representor_hash.embedded = { embedded_resource => [@representor_hash.clone]*@count}
         end
 
@@ -138,6 +143,7 @@ module Representors
 
         it 'returns a Representor objects that has its data' do
           embedded_objects_valid = subject.embedded[embedded_resource].all? { |embed| embed.doc == doc }
+          print subject.embedded
           expect(embedded_objects_valid).to be_true
         end
 

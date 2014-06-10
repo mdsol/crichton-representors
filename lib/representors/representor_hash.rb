@@ -33,7 +33,7 @@ module Representors
     # to_h does not exists in Ruby < 2.0
     if RUBY_VERSION < '2.0'
       def to_h
-        members.each_with_object({}) { |member, hash| hash[member] = self[member]}
+        members.each_with_object({}) { |member, hash| hash[member] = self[member] if self[member] }
       end
     end
 
