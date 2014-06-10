@@ -15,15 +15,14 @@ module Representors
 
     media_symbol :hal
     media_type 'application/hal+json', 'application/json'
-
+    
     # Can be initialized with a json document(string) or an already parsed hash.
     #
     # @param [String, Hash] target The target object to deserialize
     def initialize(target)
-      # sets the target in the base class
-      super(target.is_a?(Hash) ? target : JSON.parse(target)) #This may raise with a Json parse error which is ok
+      initialize_data(target) 
     end
-
+    
     # Returns back a class with all the information of the document and with convenience methods
     # to access it.
     def to_representor
@@ -37,7 +36,7 @@ module Representors
       builder_add_from_deserialized!(builder)
       builder.to_representor_hash
     end
-
+    
     private
 
     def builder_add_from_deserialized!(builder)

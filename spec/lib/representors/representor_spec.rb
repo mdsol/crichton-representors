@@ -143,7 +143,6 @@ module Representors
 
         it 'returns a Representor objects that has its data' do
           embedded_objects_valid = subject.embedded[embedded_resource].all? { |embed| embed.doc == doc }
-          print subject.embedded
           expect(embedded_objects_valid).to be_true
         end
 
