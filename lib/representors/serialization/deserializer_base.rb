@@ -6,5 +6,6 @@ module Representors
     def self.inherited(subclass)
       DeserializerFactory.register_deserializers(subclass)
     end
+    
   end
 end

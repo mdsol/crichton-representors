@@ -13,9 +13,16 @@ module Representors
     UNKNOWN_PROTOCOL = 'ruby_id'
     VALUE_KEY = :value
 
-    # @param representor_hash [Hash] the abstract representor hash defining a resource
-    def initialize(representor_hash = nil)
-      @representor_hash = RepresentorHash.new(representor_hash)
+    # @example
+    #  representor = Representors::Representor.new do |builder|
+    #    builder.add_attribute({ name: => 'Bob' })
+    #  end
+    # 
+    # @param [Hash] hash the abstract representor hash defining a resource
+    def initialize(hash = {})
+      builder = RepresentorBuilder.new(hash)
+      yield builder if block_given?
+      @representor_hash = builder.to_representor_hash
     end
 
     # @param format to convert this representor to
@@ -45,12 +52,12 @@ module Representors
 
     # @return [Hash] The hash representation of the object
     def to_hash
-      @to_hash ||= @representor_hash
+      @to_hash ||= @representor_hash.to_h
     end
 
     # @return [String] the yaml representation of the object
     def to_yaml
-      @to_yaml ||= YAML.dump(@representor_hash)
+      @to_yaml ||= YAML.dump(to_hash)
     end
 
     # @return [String] so the user can 'puts' this object
