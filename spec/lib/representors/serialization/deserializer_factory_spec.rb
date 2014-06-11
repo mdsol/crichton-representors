@@ -41,7 +41,7 @@ module Representors
 
       shared_examples_for 'a built deserializer' do
         it 'sets the correct target in the deserializer' do
-          expect(deserializer.target).to eq({})
+          expect(deserializer.to_representor_hash).to eq(RepresentorHash.new)
         end
       end
       

@@ -7,7 +7,7 @@ module Representors
       media_type 'application/vnd.hale+json'
 
       private
-      def serialize(representor)
+      def setup_serialization(representor)
         base_hash, links, embedded_hales = common_serialization(representor)
         meta = get_data_lists(representor)
         ->(options) { base_hash.merge(meta).merge(links).merge(embedded_hales.(options)) }

@@ -16,6 +16,13 @@ require 'representors'
 
 Dir["#{SPEC_DIR}/support/*.rb"].each { |f| require f }
 
+def create_serializer(name)
+  Class.new(Representors::SerializerBase) do |klass|
+    klass.media_symbol name.to_sym
+    klass.media_type name
+  end
+end
+
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.expect_with :rspec do |c|
