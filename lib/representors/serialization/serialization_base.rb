@@ -31,7 +31,7 @@ module Representors
     end
     
     # @note setup_serialization _must_ return a lambda, 
-    #   this allows delayed evaluation of computation that's depended on options
+    #   this allows delayed evaluation of computation that's dependent on options
     def setup_serialization(target)
       raise NotImplementedError, "Abstract method #setup_serialization must be implemented in #{self.class.name}."
     end
