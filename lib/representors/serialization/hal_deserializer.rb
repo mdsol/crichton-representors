@@ -18,7 +18,7 @@ module Representors
     
     private
 
-    def setup(media)
+    def setup_serialization(media)
       media = media.is_a?(Hash) ? media : JSON.parse(media)
       builder = RepresentorBuilder.new
       builder_add_from_deserialized!(builder, media)

@@ -17,9 +17,10 @@ require 'representors'
 Dir["#{SPEC_DIR}/support/*.rb"].each { |f| require f }
 
 def create_serializer(name)
-  klass = Class.new(Representors::SerializerBase)
-  klass.media_symbol name
-  klass.media_type name
+  Class.new(Representors::SerializerBase) do |klass|
+    klass.media_symbol name
+    klass.media_type name
+  end
 end
 
 RSpec.configure do |config|

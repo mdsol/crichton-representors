@@ -21,7 +21,7 @@ module Representors
         [base_hash, links, embedded_hals]
       end
 
-      def setup(representor)
+      def setup_serialization(representor)
         base_hash, links, embedded_hals = common_serialization(representor)
         ->(options) { base_hash.merge(links.merge(embedded_hals.(options))) }
       end

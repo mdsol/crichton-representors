@@ -16,7 +16,7 @@ module Representors
     # Returns a hash representation of the data. This is useful to merge with new data which may
     # be built by different builders. In this class we use it to support embedded resources.
     def to_hash(options = {})
-      @serialization.call(options)
+      apply_serialization(options)
     end
     
   end

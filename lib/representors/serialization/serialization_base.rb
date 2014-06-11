@@ -4,7 +4,7 @@ module Representors
 
     def initialize(target)
       @target = target
-      @serialization = setup(target)
+      @serialization = setup_serialization(target)
     end
     
     def self.media_symbols
@@ -24,8 +24,12 @@ module Representors
       @media_types = media_types | media
     end
     
-    def setup(target)
-      target
+    def apply_serialization(options)
+      @serialization.call(options)
+    end
+    
+    def setup_serialization(target)
+      ->() { raise NotImplementedError }
     end
     
   end
