@@ -2,6 +2,8 @@ module Representors
   class SerializationBase
     attr_reader :target
 
+
+
     def initialize(target)
       @target = target
       @serialization = setup_serialization(target)
@@ -28,8 +30,10 @@ module Representors
       @serialization.call(options)
     end
     
+    # @note setup_serialization _must_ return a lambda, 
+    #   this allows delayed evaluation of computation that's depended on options
     def setup_serialization(target)
-      ->() { raise NotImplementedError }
+      raise NotImplementedError, "Abstract method #setup_serialization must be implemented in #{self.class.name}."
     end
     
   end

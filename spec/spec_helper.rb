@@ -18,7 +18,7 @@ Dir["#{SPEC_DIR}/support/*.rb"].each { |f| require f }
 
 def create_serializer(name)
   Class.new(Representors::SerializerBase) do |klass|
-    klass.media_symbol name
+    klass.media_symbol name.to_sym
     klass.media_type name
   end
 end

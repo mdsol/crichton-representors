@@ -68,11 +68,11 @@ module Representors
       embedded.each do |name, value|
         if value.is_a?(Array)
           resources = value.map do |one_embedded_resource|
-            HalDeserializer.new(one_embedded_resource).to_hash
+            HalDeserializer.new(one_embedded_resource).to_representor_hash
           end
           builder.add_embedded(name, resources)
         else
-          resource_hash = HalDeserializer.new(value).to_hash
+          resource_hash = HalDeserializer.new(value).to_representor_hash
           builder.add_embedded(name, resource_hash)
         end
       end

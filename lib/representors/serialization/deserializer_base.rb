@@ -9,13 +9,14 @@ module Representors
 
     # Returns back a class with all the information of the document and with convenience methods
     # to access it.
+    # TODO: Yield builder to factor out builder dependency.
     def to_representor(options = {})
-      Representor.new(to_hash(options))
+      Representor.new(to_representor_hash(options))
     end
 
     # Returns a hash representation of the data. This is useful to merge with new data which may
     # be built by different builders. In this class we use it to support embedded resources.
-    def to_hash(options = {})
+    def to_representor_hash(options = {})
       apply_serialization(options)
     end
     

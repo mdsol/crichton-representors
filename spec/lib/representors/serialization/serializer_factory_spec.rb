@@ -38,7 +38,7 @@ module Representors
   end
 
   describe '#build' do
-    let(:representor) { Representor.new({}) }
+    let(:representor) { Representor.new }
     subject(:serializer) { SerializerFactory.build(media_type, representor) }
     
     shared_examples_for 'a built serializer' do
