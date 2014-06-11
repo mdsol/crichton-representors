@@ -8,7 +8,6 @@ module Representors
     end
     
     def to_media_type(options = {})
-      @serialization ||= serialize(target)
       @serialization.call(options)
     end
   end

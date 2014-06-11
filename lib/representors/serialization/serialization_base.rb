@@ -4,6 +4,7 @@ module Representors
 
     def initialize(target)
       @target = target
+      @serialization = setup(target)
     end
     
     def self.media_symbols
@@ -22,5 +23,10 @@ module Representors
     def self.media_type(*media)
       @media_types = media_types | media
     end
+    
+    def setup(target)
+      target
+    end
+    
   end
 end

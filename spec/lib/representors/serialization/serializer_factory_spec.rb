@@ -1,12 +1,14 @@
 require 'spec_helper'
+require 'representors/serialization/serializer_base'
 
 module Representors
+
   describe SerializerFactory do
     let(:factory) { Class.new(SerializerFactory) } # prevent singleton pollution from spec
-    
+  
     describe '.register_serializers' do
       it 'adds classes to the registered serializers' do
-        serializer_classes = [double('serializer1'), double('serializer2')]
+        serializer_classes = [create_serializer('serializer1'), create_serializer('serializer2')]
         factory.register_serializers(*serializer_classes)
         
         expect(factory.registered_serializers).to include(*serializer_classes)
@@ -15,7 +17,7 @@ module Representors
     
     describe '.registered_serializers' do
       before do
-        @serializer_class = double('serializer3')
+        @serializer_class = create_serializer('serializer3')
         factory.register_serializers(@serializer_class)
       end
       
@@ -36,7 +38,7 @@ module Representors
   end
 
   describe '#build' do
-    let(:representor) { double('representor') }
+    let(:representor) { Representor.new({}) }
     subject(:serializer) { SerializerFactory.build(media_type, representor) }
     
     shared_examples_for 'a built serializer' do
