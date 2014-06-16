@@ -16,6 +16,7 @@ module Representors
     # be able to create from a hash
     def initialize(hash = {})
       hash ||= {}
+      print '---', hash, '---'
       hash.each_pair do |key, value|
         self[key] = value
       end

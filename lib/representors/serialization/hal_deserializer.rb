@@ -11,7 +11,7 @@ module Representors
     LINKS_KEY = '_links'
     EMBEDDED_KEY = '_embedded'
     CURIE_KEY = 'curies'
-    HREF = 'href'
+    HREF = :href
 
     media_symbol :hal
     media_type 'application/hal+json', 'application/json'
@@ -45,7 +45,9 @@ module Representors
     # the value can be a hash with its properties or an array with several links.
     def deserialize_links!(builder, media)
       links = media[LINKS_KEY] || {}
+      print links
       links.each do |link_rel, link_values|
+        print link_values
         raise(DeserializationError, 'CURIE support not implemented for HAL') if link_rel.eql?(CURIE_KEY)
         if link_values.is_a?(Array)
           if link_values.map{|link| link[HREF]}.any?(&:nil?)
