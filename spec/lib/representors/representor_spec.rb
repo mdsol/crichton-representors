@@ -183,6 +183,7 @@ module Representors
           has_data_list = expect(subject.datalists.first.to_hash).to eq({"renegade" => "renegade", "compliant" => "compliant"})
         end
       end
+      
     end
   end
 end

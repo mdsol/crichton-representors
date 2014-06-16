@@ -2,8 +2,6 @@ module Representors
   class SerializationBase
     attr_reader :target
 
-
-
     def initialize(target)
       @target = target
       @serialization = setup_serialization(target)
@@ -35,6 +33,9 @@ module Representors
     def setup_serialization(target)
       raise NotImplementedError, "Abstract method #setup_serialization must be implemented in #{self.class.name}."
     end
-    
+
+    def map_or_apply(proc, obj)
+      obj.is_a?(Array) ? obj.map { |sub| proc.(sub) } : proc.(obj)
+    end
   end
 end

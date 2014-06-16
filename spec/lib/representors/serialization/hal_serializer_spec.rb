@@ -15,6 +15,14 @@ module Representors
 
     subject(:serializer) { SerializerFactory.build(:hal, Representor.new(document)) }
 
+    shared_examples 'itself when deserialized and reserialized' do |representor_hash|
+      let(:document) { representor_hash.merge(@base_representor) }
+      #print Serialization::HalDeserializer(serializer)
+      it 'deserializes into an equivalent representor hash' do
+        expect(Representors::HalDeserializer.new(serializer.to_media_type).to_representor).to eq(Representor.new(representor_hash))
+      end
+    end
+    
     shared_examples 'a hal documents attributes' do |representor_hash|
       let(:document) { representor_hash.merge(@base_representor) }
       
@@ -161,6 +169,8 @@ module Representors
         it_behaves_like 'a hal documents attributes', representor_hash
         it_behaves_like 'a hal documents links', representor_hash
         it_behaves_like 'a hal documents ebedded collection', representor_hash
+        
+        it_behaves_like 'itself when deserialized and reserialized', representor_hash
       end
     end
   end
