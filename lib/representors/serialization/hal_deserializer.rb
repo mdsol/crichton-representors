@@ -36,7 +36,7 @@ module Representors
     def deserialize_properties!(builder, media)
       media.keys.each do |property_name|
         # links and embedded are not properties but keywords of HAL, skipping them.
-        if (!RESERVED_KEYS.include?(property_name))
+        unless (RESERVED_KEYS.include?(property_name))
           builder.add_attribute(property_name, media[property_name])
         end
       end

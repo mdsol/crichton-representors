@@ -6,8 +6,7 @@ module Representors
     media_type 'application/vnd.hale+json'
 
     META_KEY = '_meta'.freeze
-    RESERVED_KEYS = [LINKS_KEY, META_KEY, EMBEDDED_KEY]
-
+    RESERVED_KEYS = HalDeserializer::RESERVED_KEYS +  [META_KEY]
 
     private
 
