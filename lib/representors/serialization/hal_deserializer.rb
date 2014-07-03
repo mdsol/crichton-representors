@@ -8,14 +8,15 @@ module Representors
   # For examples of how this format looks like check the files under spec/fixtures/hal
   # TODO: support Curies http://www.w3.org/TR/2010/NOTE-curie-20101216/
   class HalDeserializer < DeserializerBase
-    LINKS_KEY = '_links'
-    EMBEDDED_KEY = '_embedded'
-    CURIE_KEY = 'curies'
-    HREF = 'href'
+    LINKS_KEY = '_links'.freeze
+    EMBEDDED_KEY = '_embedded'.freeze
+    CURIE_KEY = 'curies'.freeze
+    HREF = 'href'.freeze
+    RESERVED_KEYS = [LINKS_KEY, EMBEDDED_KEY]
 
     media_symbol :hal
     media_type 'application/hal+json', 'application/json'
-    
+
     private
 
     def setup_serialization(media)
@@ -33,9 +34,9 @@ module Representors
 
     # Properties are normal JSON keys in the HAL document. Create properties in the resulting object
     def deserialize_properties!(builder, media)
-      # links and embedded are not properties but keywords of HAL, skipping them.
       media.keys.each do |property_name|
-        if (property_name != LINKS_KEY) && (property_name != EMBEDDED_KEY)
+        # links and embedded are not properties but keywords of HAL, skipping them.
+        unless (RESERVED_KEYS.include?(property_name))
           builder.add_attribute(property_name, media[property_name])
         end
       end
