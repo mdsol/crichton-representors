@@ -91,7 +91,7 @@ module Representors
       end
 
       it 'has indiferent access to the hash' do
-        expect(subject[key]).to eq(value)
+        expect(subject[key.to_sym]).to eq(value)
         expect(subject[key.to_s]).to eq(value)
       end
 
