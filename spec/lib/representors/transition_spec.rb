@@ -90,6 +90,11 @@ module Representors
         expect(subject['Ido not exists']).to be_nil
       end
 
+      it 'has indiferent access to the hash' do
+        expect(subject[key.to_sym]).to eq(value)
+        expect(subject[key.to_s]).to eq(value)
+      end
+
     end
 
     describe '.new' do

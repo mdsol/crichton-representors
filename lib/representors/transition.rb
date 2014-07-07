@@ -34,18 +34,18 @@ module Representors
 
     # @return [String] The name of the Relationship
     def rel
-      @transition_hash[REL_KEY]
+      retrieve(REL_KEY)
     end
 
     # @return [String] The URI for the object
     def uri
-      @transition_hash[HREF_KEY]
+      retrieve(HREF_KEY)
     end
 
     # @param [String] key on the transitions hash to retrieve
     # @return [String] with the value of the key
     def [](key)
-      @transition_hash[key]
+      retrieve(key)
     end
 
     # TODO: Figure out how to scope differently
@@ -64,14 +64,14 @@ module Representors
 
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
-      meta_links ||= (@transition_hash[LINKS_KEY] || []).map do |link_key, link_href|
+      meta_links ||= (retrieve(LINKS_KEY) || []).map do |link_key, link_href|
         Transition.new( { link_key => { href: link_href } } )
       end
     end
 
     # @return [String] representing the Uniform Interface Method
     def interface_method
-      @interface_method ||= @transition_hash[METHOD_KEY] || DEFAULT_METHOD
+      retrieve(METHOD_KEY) ||DEFAULT_METHOD
     end
 
     # The Parameters (i.e. GET variables)
@@ -89,6 +89,11 @@ module Representors
     end
 
     private
+
+    # accept retrieving keys by symbol or string
+    def retrieve(key)
+      @transition_hash[key.to_sym] || @transition_hash[key.to_s]
+    end
 
     def descriptor_fields(hash)
       hash[DESCRIPTORS_KEY].map { |k, v| Field.new({k => v }) }
