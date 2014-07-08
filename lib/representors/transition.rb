@@ -8,7 +8,7 @@ module Representors
     METHOD_KEY = :method
     DESCRIPTORS_KEY = :descriptors
     DEFAULT_METHOD = 'GET'
-    PARAMETER_FIELDS = 'url'
+    PARAMETER_FIELDS = 'href'
     ATTRIBUTE_FIELDS = 'attribute'
     URL_TEMPLATE = "%s{?%s}"
 
@@ -86,6 +86,10 @@ module Representors
     # @return [Array] who's elements are all <Crichton:Field> objects
     def attributes
       @attributes ||= get_field_by_type(ATTRIBUTE_FIELDS)
+    end
+
+    def data
+      retrieve('data') || {}
     end
 
     private

@@ -1,0 +1,12 @@
+{
+   "_meta": {
+   "any": { "json": "object" }
+  },
+  "_links": {
+    "self": { "href": "/goes_to_myself", "method": "GET" },
+    "customers": [
+      { "href": "/customer/1", "method": "GET" },
+	  { "href": "/customer/2", "method": "GET" }
+    ]
+  }
+}

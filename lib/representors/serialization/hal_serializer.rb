@@ -16,7 +16,11 @@ module Representors
         base_hash = get_semantics(representor)
         embedded_links = get_embedded_links(representor)
         embedded_hals = ->(options) { get_embedded_objects(representor, options) }
-        links = representor.transitions.map { |link| build_links(link) } + embedded_links
+        # we want to group by rel name because it is possible to have several transitions with the same
+        # rel name. This will become an array in the output. For instance an items array
+        # with links to each item
+        grouped_transitions = representor.transitions.group_by{|transition| transition[:rel]}
+        links = build_links(grouped_transitions) + embedded_links
         links = links.empty? ? {} : { LINKS_KEY => links.reduce({}, :merge) }
         [base_hash, links, embedded_hals]
       end
@@ -32,7 +36,7 @@ module Representors
 
       def get_embedded_links(representor)
         @get_embedded_links ||= representor.embedded.map { |k, v| build_embedded_links(k, v) }
-      end     
+      end
 
       def get_embedded_objects(representor, options)
         @get_embedded_objects ||= if representor.embedded.empty? || options.has_key?(LINKS_ONLY_OPTION)
@@ -57,14 +61,36 @@ module Representors
         embed = map_or_apply(make_media_type, embedded)
         { key =>  embed}
       end
-      
+
       def map_or_apply(proc, obj)
         obj.is_a?(Array) ? obj.map { |sub| proc.(sub) } : proc.(obj)
       end
-      
-      def build_links(transition)
-        link = transition.templated? ? { href:  transition.templated_uri, templated: true } : { href: transition.uri }
-        { transition.rel => link }
+
+      # @param [Hash] transitions. A hash on the shape "rel_name" => [Transition]
+      # The value for the rel_name usually will have only one transition but when we are building an
+      # array of transitions will have many.
+      # @return [Array] Array of hashes with the format [ { rel_name => {link_info1}}, {rel_name2 => ... }]
+      def build_links(transitions)
+        transitions.map do |rel_name, transition_array|
+          links = transition_array.map{|transition| build_links_for_this_media_type(transition)}
+          if links.size > 1
+            {rel_name => links}
+          else
+            {rel_name => links.first}
+          end
+        end
+      end
+
+      # This method can be overriden by other classes
+      # @param transition , a single tansition
+      def build_links_for_this_media_type(transition)
+        link = if transition.templated?
+          { href:  transition.templated_uri, templated: true }
+        else
+          { href: transition.uri }
+        end
+        link[:method] = transition.interface_method
+        link
       end
     end
   end

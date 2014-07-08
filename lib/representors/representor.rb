@@ -12,7 +12,6 @@ module Representors
     PROTOCOL_TEMPLATE = "%s://%s"
     UNKNOWN_PROTOCOL = 'ruby_id'
     VALUE_KEY = :value
-    DATA_KEY = 'data'
 
     # @example
     #  representor = Representors::Representor.new do |builder|
@@ -93,7 +92,7 @@ module Representors
     def data(name)
       data_bucket = transitions.find{|transition| transition[:rel] == name}
       if data_bucket
-        data_bucket[DATA_KEY]
+        data_bucket[Transition::DESCRIPTORS_KEY]
       else
         {}
       end

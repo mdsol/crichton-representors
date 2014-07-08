@@ -30,6 +30,10 @@ module Representors
       type == EXTERNAL_TYPE || @options_hash.has_key?(ID_KEY)
     end
 
+    def empty?
+      to_hash.empty?
+    end
+
     # @return [String] representing a unique id for the options
     def id
       @options_hash[ID_KEY] || ID_TEMPLATE % @field_name
@@ -54,10 +58,10 @@ module Representors
     def to_list
       keys
     end
-    
+
     def to_data
       type == HASH_TYPE || type == EXTERNAL_TYPE ? to_hash : to_list
     end
-    
+
   end
 end

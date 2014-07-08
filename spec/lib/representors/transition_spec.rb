@@ -28,7 +28,7 @@ module Representors
               doc: 'Name to search',
               profile: 'http://alps.io/schema.org/Text',
               sample: 'drdname',
-              scope: 'url',
+              scope: 'href',
               options: { list: ['one', 'two'] }
               },
             status: {

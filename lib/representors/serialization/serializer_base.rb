@@ -6,7 +6,7 @@ module Representors
     def self.inherited(subclass)
       SerializerFactory.register_serializers(subclass)
     end
-    
+
     def to_media_type(options = {})
       apply_serialization(options)
     end
