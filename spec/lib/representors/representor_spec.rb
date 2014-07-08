@@ -71,7 +71,7 @@ module Representors
       it 'returns a Representors::Representor instance' do
         expect(subject).to be_an_instance_of(Representor)
       end
-      
+
       it 'yields a builder' do
         subject = Representor.new { |builder| builder.add_embedded('contains', @base_representor) }
         expect(subject.embedded['contains'].to_hash).to eq(@base_representor)
@@ -176,6 +176,42 @@ module Representors
           expect(has_meta_link).to be_true
         end
       end
+
+      describe '#data' do
+        subject(:representor) {Representors::HaleDeserializer.new(document).to_representor}
+        let(:data_contents) do
+          {
+            'name' => 'rust monster',
+            'hp' => 10,
+            'damage' => 5
+          }
+        end
+        let(:document) do
+          { '_links' => {
+              'monster' => { 'href' => '/dungeon1',
+                'data' =>  data_contents
+              },
+              'hero' => { 'href' => '/hero1'
+              }
+            }
+          }
+        end
+
+        context 'transition has a data element' do
+          let(:link_name) {'monster'}
+          it 'provides access to the data of the given transition' do
+            expect(representor.data(link_name)).to eq(data_contents)
+          end
+        end
+
+        context 'transition has no data element' do
+          let(:link_name) {'hero'}
+          it 'returns an empty hash when the name' do
+            expect(representor.data('unexistent_link')).to eq({})
+          end
+        end
+      end
+
 
       describe '#datalists' do
         it 'returns all paramters and attributes that are members of a datalist' do

@@ -12,12 +12,13 @@ module Representors
     PROTOCOL_TEMPLATE = "%s://%s"
     UNKNOWN_PROTOCOL = 'ruby_id'
     VALUE_KEY = :value
+    DATA_KEY = 'data'
 
     # @example
     #  representor = Representors::Representor.new do |builder|
     #    builder.add_attribute({ name: => 'Bob' })
     #  end
-    # 
+    #
     # @param [Hash] hash the abstract representor hash defining a resource
     def initialize(hash = {})
       builder = RepresentorBuilder.new(hash)
@@ -84,6 +85,17 @@ module Representors
           end
         end
         Hash[embedded_representors]
+      end
+    end
+
+    # @param [String] name : name of the transition to get the data from
+    # @return [Hash] hash with the contents of the data field for the transition
+    def data(name)
+      data_bucket = transitions.find{|transition| transition[:rel] == name}
+      if data_bucket
+        data_bucket[DATA_KEY]
+      else
+        {}
       end
     end
 
