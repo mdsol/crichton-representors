@@ -19,7 +19,7 @@ module Representors
 
     # This need to be public to support embedded data
     # TODO: make this private
-    def to_representor_hash(_options = {})
+    def to_representor_hash
       media = @target.is_a?(Hash) ? @target : JSON.parse(@target)
       builder = RepresentorBuilder.new
       builder_add_from_deserialized!(builder, media)
