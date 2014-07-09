@@ -87,17 +87,6 @@ module Representors
       end
     end
 
-    # @param [String] name : name of the transition to get the data from
-    # @return [Hash] hash with the contents of the data field for the transition
-    def data(name)
-      data_bucket = transitions.find{|transition| transition[:rel] == name}
-      if data_bucket
-        data_bucket[Transition::DESCRIPTORS_KEY]
-      else
-        {}
-      end
-    end
-
     # @return [Array] who's elements are all <Representors:Transition> objects
     def meta_links
       @meta_links ||= (@representor_hash.links || []).map do |k, v|

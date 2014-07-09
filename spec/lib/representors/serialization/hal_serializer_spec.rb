@@ -4,79 +4,83 @@ require 'uri'
 
 module Representors
   describe Serialization::HalSerializer do
-    before do
-      @base_representor = {
-        protocol: 'http',
-        href: 'www.example.com/drds',
-        id: 'drds',
-        doc: 'doc'
+
+    subject(:serializer) { SerializerFactory.build(:hal, Representor.new(document)) }
+    let(:result) {JSON.parse(serializer.to_media_type)}
+    let(:base_representor) do
+      {
+         protocol: 'http',
+         href: 'www.example.com/drds',
+         id: 'drds',
+         doc: 'doc'
       }
     end
 
-    subject(:serializer) { SerializerFactory.build(:hal, Representor.new(document)) }
-
     shared_examples 'a hal documents attributes' do |representor_hash|
-      let(:document) { representor_hash.merge(@base_representor) }
-      
+      let(:document) { representor_hash.merge(base_representor) }
+
       representor_hash[:attributes].each do |k, v|
         it "includes the document attribute #{k} and associated value" do
-          expect(serializer.to_media_type[k]).to eq(v[:value])
+          expect(result[k]).to eq(v[:value])
         end
       end
     end
 
     shared_examples 'a hal documents links' do |representor_hash|
-      let(:document) { representor_hash.merge(@base_representor) }
-      
+      let(:document) { representor_hash.merge(base_representor) }
+
       representor_hash[:transitions].each do |item|
         it "includes the document transition #{item}" do
-          expect(serializer.to_media_type['_links'][item[:rel]][:href]).to eq(item[:href])
+          links = result['_links']
+          link = links[item[:rel]]
+          expect(link['href']).to eq(item[:href])
         end
       end
     end
 
     shared_examples 'a hal documents ebedded hal documents' do |representor_hash|
-      let(:document) { representor_hash.merge(@base_representor) }
-      
+      let(:document) { representor_hash.merge(base_representor) }
+
       representor_hash[:embedded].each do |embed_name, embed|
         embed[:attributes].each do |k, v|
           it "includes the document attribute #{k} and associated value" do
-            expect(serializer.to_media_type['_embedded'][embed_name][k]).to eq(v[:value])
+            expect(result['_embedded'][embed_name][k]).to eq(v[:value])
           end
         end
         embed[:transitions].each do |item|
           it "includes the document attribute #{item} and associated value" do
-            expect(serializer.to_media_type['_embedded'][embed_name]['_links'][item[:rel]][:href]).to eq(item[:href])
+            expect(result['_embedded'][embed_name]['_links'][item[:rel]]['href']).to eq(item[:href])
           end
         end
       end
     end
 
     shared_examples 'a hal documents ebedded collection' do |representor_hash|
-      let(:document) { representor_hash.merge(@base_representor) }
-      
+      let(:document) { representor_hash.merge(base_representor) }
+
       representor_hash[:embedded].each do |embed_name, embeds|
         embeds.each_with_index do |embed, index|
           embed[:attributes].each do |k, v|
             it "includes the document attribute #{k} and associated value" do
-              expect(serializer.to_media_type['_embedded'][embed_name][index][k]).to eq(v[:value])
+              expect(result['_embedded'][embed_name][index][k]).to eq(v[:value])
             end
           end
           embed[:transitions].each do |item|
             it "includes the document attribute #{item} and associated value" do
-              expect(serializer.to_media_type['_embedded'][embed_name][index]['_links'][item[:rel]][:href]).to eq(item[:href])
+              expect(result['_embedded'][embed_name][index]['_links'][item[:rel]]['href']).to eq(item[:href])
             end
           end
         end
       end
     end
 
-    describe '#to_media_type' do
+    describe '#as_media_type' do
       context 'empty document' do
         let(:document) { {} }
 
         it 'returns a hash with no attributes, links or embedded resources' do
-          expect(serializer.to_media_type).to be_empty
+          empty_json_document = '{}'
+          expect(serializer.to_media_type).to eq(empty_json_document)
         end
       end
 
@@ -90,7 +94,7 @@ module Representors
             }
           }
         end
-        
+
         it_behaves_like 'a hal documents attributes', representor_hash
       end
 
@@ -108,7 +112,7 @@ module Representors
             ]
           }
         end
-        
+
         it_behaves_like 'a hal documents attributes', representor_hash
         it_behaves_like 'a hal documents links', representor_hash
       end
@@ -130,7 +134,7 @@ module Representors
             }
           }
         end
-        
+
         it_behaves_like 'a hal documents attributes', representor_hash
         it_behaves_like 'a hal documents links', representor_hash
         it_behaves_like 'a hal documents ebedded hal documents', representor_hash
@@ -157,7 +161,7 @@ module Representors
             }
           }
         end
-        
+
         it_behaves_like 'a hal documents attributes', representor_hash
         it_behaves_like 'a hal documents links', representor_hash
         it_behaves_like 'a hal documents ebedded collection', representor_hash

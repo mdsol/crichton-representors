@@ -6,16 +6,25 @@ module Representors
       media_symbol :hale
       media_type 'application/vnd.hale+json'
 
-      def to_document
-        to_media_type.to_json
+      # This is public and returning a hash to be able to implement embedded resources
+      # serialization
+      # TODO: make this private and merge with to_media_type
+      # The name is quite misleading,
+      def to_representing_hash(options ={})
+        base_hash, links, embedded_hales = common_serialization(@target)
+        meta = get_data_lists(@target)
+        base_hash.merge!(meta).merge!(links).merge!(embedded_hales.(options))
+        base_hash
+      end
+
+
+      # This is the main entry of this class. It returns a serialization of the data
+      # in a given media type.
+      def to_media_type(options = {})
+        to_representing_hash(options).to_json
       end
 
       private
-      def setup_serialization(representor)
-        base_hash, links, embedded_hales = common_serialization(representor)
-        meta = get_data_lists(representor)
-        ->(options) { base_hash.merge(meta).merge(links).merge(embedded_hales.(options)) }
-      end
 
       def get_data_lists(representor)
         meta = {}

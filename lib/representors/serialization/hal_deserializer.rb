@@ -17,14 +17,16 @@ module Representors
     media_symbol :hal
     media_type 'application/hal+json', 'application/json'
 
-    private
-
-    def setup_serialization(media)
-      media = media.is_a?(Hash) ? media : JSON.parse(media)
+    # This need to be public to support embedded data
+    # TODO: make this private
+    def to_representor_hash(_options = {})
+      media = @target.is_a?(Hash) ? @target : JSON.parse(@target)
       builder = RepresentorBuilder.new
       builder_add_from_deserialized!(builder, media)
-      ->(options) { builder.to_representor_hash }
+      builder.to_representor_hash
     end
+
+    private
 
     def builder_add_from_deserialized!(builder, media)
       deserialize_properties!(builder, media)

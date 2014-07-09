@@ -7,8 +7,9 @@ module Representors
       SerializerFactory.register_serializers(subclass)
     end
 
-    def to_media_type(options = {})
-      apply_serialization(options)
+    def to_representing_hash(options = {})
+      raise "Abstract method #to_representing_hash not implemented in #{self.class.to_s} serializer class."
     end
+
   end
 end

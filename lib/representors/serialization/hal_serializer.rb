@@ -10,6 +10,22 @@ module Representors
       media_symbol :hal
       media_type 'application/hal+json'
 
+      # This is public and returning a hash to be able to implement embedded resources
+      # serialization
+      # TODO: make this private and merge with to_media_type
+      # The name is quite misleading,
+      def to_representing_hash(options = {})
+        base_hash, links, embedded_hals = common_serialization(@target)
+        base_hash.merge!(links.merge(embedded_hals.(options)))
+        base_hash
+      end
+
+      # This is the main entry of this class. It returns a serialization of the data
+      # in a given media type.
+      def to_media_type(options = {})
+        to_representing_hash.to_json
+      end
+
       private
 
       def common_serialization(representor)
@@ -23,11 +39,6 @@ module Representors
         links = build_links(grouped_transitions) + embedded_links
         links = links.empty? ? {} : { LINKS_KEY => links.reduce({}, :merge) }
         [base_hash, links, embedded_hals]
-      end
-
-      def setup_serialization(representor)
-        base_hash, links, embedded_hals = common_serialization(representor)
-        ->(options) { base_hash.merge(links.merge(embedded_hals.(options))) }
       end
 
       def get_semantics(representor)
@@ -57,7 +68,7 @@ module Representors
 
       # Lambda used in this case to DRY code.  Allows 'is array' functionality to be handled elsewhere
       def build_embedded_objects(key, embedded)
-        make_media_type = ->(obj) { obj.to_media_type(self.class.media_types.first) }
+        make_media_type = ->(obj) { HalSerializer.new(obj).to_representing_hash }
         embed = map_or_apply(make_media_type, embedded)
         { key =>  embed}
       end
