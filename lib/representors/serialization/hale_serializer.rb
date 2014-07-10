@@ -10,7 +10,7 @@ module Representors
       # serialization
       # TODO: make this private and merge with to_media_type
       # The name is quite misleading,
-      def to_representing_hash(options ={})
+      def to_hash(options ={})
         base_hash, links, embedded_hales = common_serialization(@target)
         meta = get_data_lists(@target)
         base_hash.merge!(meta).merge!(links).merge!(embedded_hales.(options))
@@ -21,7 +21,7 @@ module Representors
       # This is the main entry of this class. It returns a serialization of the data
       # in a given media type.
       def to_media_type(options = {})
-        to_representing_hash(options).to_json
+        to_hash(options).to_json
       end
 
       private

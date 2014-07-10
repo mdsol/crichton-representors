@@ -14,7 +14,7 @@ module Representors
       # serialization
       # TODO: make this private and merge with to_media_type
       # The name is quite misleading,
-      def to_representing_hash(options = {})
+      def to_hash(options = {})
         base_hash, links, embedded_hals = common_serialization(@target)
         base_hash.merge!(links.merge(embedded_hals.(options)))
         base_hash
@@ -23,7 +23,7 @@ module Representors
       # This is the main entry of this class. It returns a serialization of the data
       # in a given media type.
       def to_media_type(options = {})
-        to_representing_hash.to_json
+        to_hash.to_json
       end
 
       private
@@ -68,7 +68,7 @@ module Representors
 
       # Lambda used in this case to DRY code.  Allows 'is array' functionality to be handled elsewhere
       def build_embedded_objects(key, embedded)
-        make_media_type = ->(obj) { HalSerializer.new(obj).to_representing_hash }
+        make_media_type = ->(obj) { HalSerializer.new(obj).to_hash }
         embed = map_or_apply(make_media_type, embedded)
         { key =>  embed}
       end
