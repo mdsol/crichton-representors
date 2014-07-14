@@ -60,5 +60,6 @@ module Representors
     def call
       value
     end
+
   end
 end

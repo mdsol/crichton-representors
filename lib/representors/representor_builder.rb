@@ -6,6 +6,7 @@ module Representors
   # Initialize the Representor with, this will create classess with it.
   class RepresentorBuilder
     HREF_KEY = 'href'
+    DATA_KEY = 'data'
 
     def initialize(representor_hash = {})
       @representor_hash = RepresentorHash.new(representor_hash || {})
@@ -30,6 +31,9 @@ module Representors
       options ||= {}
       @representor_hash.transitions ||= []
       link_values = options.merge({href: href, rel: rel})
+      if options[DATA_KEY]
+        link_values[Transition::DESCRIPTORS_KEY] = link_values.delete(DATA_KEY)
+      end
       @representor_hash.transitions.push(link_values)
     end
 
@@ -39,6 +43,9 @@ module Representors
       @representor_hash.transitions += array_of_hashes.map do |link_values|
         link_values[:rel] = rel
         link_values[:href] = link_values.delete(HREF_KEY)
+        if link_values[DATA_KEY]
+          link_values[Transition::DESCRIPTORS_KEY] = link_values.delete(DATA_KEY)
+        end
         link_values
       end
     end

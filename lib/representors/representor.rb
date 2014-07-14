@@ -17,7 +17,7 @@ module Representors
     #  representor = Representors::Representor.new do |builder|
     #    builder.add_attribute({ name: => 'Bob' })
     #  end
-    # 
+    #
     # @param [Hash] hash the abstract representor hash defining a resource
     def initialize(hash = {})
       builder = RepresentorBuilder.new(hash)

@@ -6,12 +6,25 @@ module Representors
       media_symbol :hale
       media_type 'application/vnd.hale+json'
 
-      private
-      def setup_serialization(representor)
-        base_hash, links, embedded_hales = common_serialization(representor)
-        meta = get_data_lists(representor)
-        ->(options) { base_hash.merge(meta).merge(links).merge(embedded_hales.(options)) }
+      # This is public and returning a hash to be able to implement embedded resources
+      # serialization
+      # TODO: make this private and merge with to_media_type
+      # The name is quite misleading,
+      def to_hash(options ={})
+        base_hash, links, embedded_hales = common_serialization(@target)
+        meta = get_data_lists(@target)
+        base_hash.merge!(meta).merge!(links).merge!(embedded_hales.(options))
+        base_hash
       end
+
+
+      # This is the main entry of this class. It returns a serialization of the data
+      # in a given media type.
+      def to_media_type(options = {})
+        to_hash(options).to_json
+      end
+
+      private
 
       def get_data_lists(representor)
         meta = {}
@@ -24,19 +37,18 @@ module Representors
       def get_data_element(element)
         options = element.options.datalist? ? { '_ref' => [element.options.id] } : element.options
         element_data = element.to_hash[element.name]
-        element_data[:options] = options
+        element_data[:options] = options unless options.empty?
         { element.name => element_data }
       end
 
-      def build_links(transition)
-        uri = transition.templated? ? transition.templated_uri : transition.uri
-        link = { href:  uri, templated: true }
-        link[:method] = transition.interface_method
+      def build_links_for_this_media_type(transition)
+        link = super(transition) #default Hal serialization
+        # below add fields specific for Hale
         data_elements = transition.attributes.reduce({}) do |results, element|
           results.merge( get_data_element(element) )
         end
         link[:data] = data_elements unless data_elements.empty?
-        { transition.rel => link }
+        link
       end
     end
   end

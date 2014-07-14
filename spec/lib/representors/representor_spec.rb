@@ -71,7 +71,7 @@ module Representors
       it 'returns a Representors::Representor instance' do
         expect(subject).to be_an_instance_of(Representor)
       end
-      
+
       it 'yields a builder' do
         subject = Representor.new { |builder| builder.add_embedded('contains', @base_representor) }
         expect(subject.embedded['contains'].to_hash).to eq(@base_representor)
