@@ -21,21 +21,19 @@ COMPLEX_REPRESENTOR = {
     {
       rel: 'self', # same as Descriptor File
       href: 'www.example.com/drds', # Crichton needs to give the actual link
-      type: 'safe', # When it's in Descriptor 'links' or 'safe' section
+      method: 'GET', # When it's in Descriptor 'links' or 'safe' section
     },
     {
       rel: 'list',
       doc: 'Returns a list of DRDs.', # Same as descriptor file
       rt: 'drds', # This should actually be a link right? #Profile?
       href: 'www.example.com/drds/list',
-      type: 'safe',
     },
     {
       rel: 'search',
       doc: 'Returns a list of DRDs that satisfy the search term.',
       href: 'www.example.com/drds/search',
       rt: 'drds',
-      type: 'safe',
       descriptors: {# parameters - This should probably be change is representors to just be "data"
         search_term: {
           doc: 'The terms to search.',
@@ -63,13 +61,13 @@ COMPLEX_REPRESENTOR = {
         help: 'help.example.com/Forms/update',
       },
       href: 'www.example.com/drds/create',
-      type: 'unsafe',
+      method: 'POST',
       descriptors: { 
         name: { #These should only show up under 'name' if they actually show up in the document body
           doc: 'The name of the DRD.',
           profile: 'http://alps.io/schema.org/Text',
           sample: 'drdname',
-          field_type: 'text',
+          field_type: 'text', #
           validators: [
             'required',
             {maxlength: 50},
@@ -88,7 +86,7 @@ COMPLEX_REPRESENTOR = {
               profile: 'http://alps.io/schema.org/Text',
               sample: '007d8e12-babd-4f2c-b01e-8b5e2f749e1b',
               type: 'text',
-              field_type: 'text',
+              field_type: 'text', #not actually supported
             },
             leviathan_health_points: {
               doc: 'The health points of Leviathan.',
@@ -231,7 +229,6 @@ COMPLEX_REPRESENTOR = {
             doc: 'Shows a particular DRD.',
             rt: 'drd',
             href: 'www.example.com/drds/show/173875983789',
-            type: 'safe',
           },
           {
             rel: 'leviathan-link',
@@ -240,7 +237,6 @@ COMPLEX_REPRESENTOR = {
             embed: true, #?
             rt: 'http://alps.io/schema.org/Leviathan#leviathan',
             href: 'www.example.com/drds/Leviathan',
-            type: 'safe',
           },
           {
             rel: 'repair-history',
@@ -248,28 +244,27 @@ COMPLEX_REPRESENTOR = {
             embed: true, #?,
             rt: 'http://alps.io/schema.org/Repairs#history',
             href: 'www.example.com/drds/Repairs',
-            type: 'safe',
           },
           {
             rel: 'activate',
             doc: 'Activates a DRD if it is deactivated.',
             rt: 'drd',
             href: 'www.example.com/drds/activate/173875983789',
-            type: 'idempotent',
+            method: 'PUT',
           },
           {
             rel: 'deactivate',
             doc: 'Deactivates a DRD if it is activated.',
             rt: 'drd',
             href: 'www.example.com/drds/show/173875983789',
-            type: 'idempotent',
+            method: 'PUT',
           },
           {
             rel: 'delete',
             doc: 'Drops a DRD out an air-lock.',
             rt: 'none', # nil?  maybe don't even show it?
             href: 'www.example.com/drds/show/173875983789',
-            type: 'idempotent',
+            method: 'DELETE',
           },
           {
             rel: 'update',
@@ -277,7 +272,7 @@ COMPLEX_REPRESENTOR = {
             rt: 'none',
             profile: 'http://alps.io/schema.org/DRDs#update',#from links->self
             href: 'www.example.com/drds/show/173875983789',
-            type: 'idempotent',
+            method: 'PUT',
             descriptors: {# from data - should probably just be called data
               links: {
                 self: 'http://alps.io/schema.org/DRDs#update',

@@ -236,6 +236,59 @@ module Representors
           puts subject.to_media_type(:hale)
         end
       end
+      
+      context 'Reconstructing the Complex Hash Fixture with Builder' do
+        describe '.new' do
+          it 'accepts basic attributes' do
+            def add_attributes(builder)
+              builder.add_attribute('total_count', 2, { #semantic key
+                  doc: 'The total count of DRDs.', # Descriptor semantic doc
+                  type: 'semantic', # Descriptor semantic type
+                  profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file
+                  sample: 1, 
+                  links: {
+                    self: 'www.example.com/drds/show/DRDs',
+                    help: 'http://alps.io/schema.org/DRDs'
+                  },
+                  # same as sample in descriptor
+                },
+              )
+              builder
+            end
+            
+            def add_transitions(builder)
+              builder.add_attribute('total_count', 2, { #semantic key
+                  doc: 'The total count of DRDs.', # Descriptor semantic doc
+                  type: 'semantic', # Descriptor semantic type
+                  profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file
+                  sample: 1, 
+                  links: {
+                    self: 'www.example.com/drds/show/DRDs',
+                    help: 'http://alps.io/schema.org/DRDs'
+                  },
+                  # same as sample in descriptor
+                },
+              )
+              builder
+            end             
+            
+            rep = Representor.new({
+              protocol: 'http', # The protocol we're using
+              href: 'www.example.com/drds', # Crichton needs to say where we are
+              id: 'DRDs', # ID from desrciptor
+              doc: 'Describes the semantics, states and state transitions associated with DRDs.'
+              }) { |builder| 
+                builder.add_attribute('total_count', 2, { #semantic key
+                  doc: 'The total count of DRDs.', # Descriptor semantic doc
+                  type: 'semantic', # Descriptor semantic type
+                  profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file
+                  sample: 1, # same as sample in descriptor
+                },)
+              } # Doc from descriptor
+            puts rep.to_hash
+          end
+        end
+      end
     end
   end
 end
