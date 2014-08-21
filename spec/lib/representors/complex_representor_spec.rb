@@ -55,7 +55,7 @@ module Representors
 
       describe '#properties' do
         it 'returns a hash of attributes associated with the represented resource' do
-          semantic_elements_present =  %w(total_count items).all? do |key|
+          semantic_elements_present =  %w(total_count).all? do |key|
             subject.properties[key.to_sym] == @representor_hash[:attributes][key.to_sym][:value]
           end
           expect(semantic_elements_present).to be_true

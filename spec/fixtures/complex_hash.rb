@@ -16,13 +16,6 @@ COMPLEX_REPRESENTOR = {
       sample: 1, # same as sample in descriptor
       value: 2, # value from service interating crichton
     },
-    items: {
-      doc: 'An array of embedded DRD resources.',
-      profile: 'http://alps.io/schema.org/Array',
-      #embed: multiple-optional -- Not used, should already be embedded where it will be embedded
-      sample: "DRDs#drds",
-      value: [],
-    },
   },
   transitions: [
     {
@@ -70,6 +63,7 @@ COMPLEX_REPRESENTOR = {
         help: 'help.example.com/Forms/update',
       },
       href: 'www.example.com/drds/create',
+      type: 'unsafe',
       descriptors: { 
         name: { #These should only show up under 'name' if they actually show up in the document body
           doc: 'The name of the DRD.',

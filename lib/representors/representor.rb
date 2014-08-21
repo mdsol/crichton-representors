@@ -105,9 +105,7 @@ module Representors
         attributes = transitions.map { |transition| transition.attributes }
         parameters = transitions.map { |transition| transition.parameters }
         fields = [attributes, parameters].flatten
-
         options = fields.map { |field| field.options }
-        print options
         options.select { |o| o.datalist? }
       end
     end
