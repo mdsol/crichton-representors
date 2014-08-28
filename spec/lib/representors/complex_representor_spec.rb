@@ -1,11 +1,15 @@
 require 'spec_helper'
 require 'yaml'
 require 'uri'
-require 'fixtures/complex_hash'
+require 'fixtures/drds_hash'
+require 'fixtures/single_drd'
 module Representors
   describe Representor do
     before do
-      @representor_hash = ComplexRepresentor::COMPLEX_REPRESENTOR
+      @single_drd = ComplexRepresentor::DRD_HASH
+      @representor_hash = ComplexRepresentor::DRDS_HASH
+      @representor_hash[:embedded] = {}
+      @representor_hash[:embedded][:items] = [@single_drd]
     end
     let(:representor_hash) { @representor_hash }
     
@@ -102,7 +106,9 @@ module Representors
       describe '#datalists' do
         let(:embedded_resource) {:items}
         it 'returns all paramters and attributes that are members of a datalist' do
-          has_data_list = expect(subject.embedded[embedded_resource].first.datalists.count).to eq(4)
+          first_datalist = subject.embedded[embedded_resource].first.datalists
+          expected_datalists = ["drd_status_options", "drd_status_options", "location_options", "location_detail_options"]
+          has_data_list = expect(first_datalist.map { |datalist| datalist.id }).to eq(expected_datalists)
         end
       end
       
@@ -174,13 +180,13 @@ module Representors
 
         describe '#uri' do
           it 'returns the bare link' do
-            expect(subject.transitions.first.uri).to eq('www.example.com/drds')
+            expect(subject.transitions.first.uri).to eq('http://example.com/drds')
           end
         end
 
         describe '#templated_uri' do
           it 'returns the link parameterized' do
-            expect(subject.transitions[2].templated_uri).to eq('www.example.com/drds/search{?search_term,name}')
+            expect(subject.transitions[2].templated_uri).to eq('http://example.com/drds/search{?search_term,name}')
           end
         end
 
@@ -193,38 +199,38 @@ module Representors
             expect(subject.transitions[2].templated?).to be_true
           end
         end
+        
         describe '.field' do
-          before do
-            @field = subject.transitions.last.attributes.first
-            @field_hash = {:name => representor_hash[:transitions].last[:descriptors][:name]}
-          end
+          
+          let(:field) { subject.transitions.last.attributes.first }
+          let(:field_hash) { {:name => representor_hash[:transitions].last[:descriptors][:name]} }
         
           it 'returns a Representors::Field instance' do
-            expect(@field).to be_an_instance_of(Representors::Field)
+            expect(field).to be_an_instance_of(Representors::Field)
           end
 
           describe '#to_hash' do
             it 'returns its constructor hash' do
-              expect(@field.to_hash).to eq(@field_hash)
+              expect(field.to_hash).to eq(field_hash)
             end
           end
 
           describe '#to_yaml' do
             it 'returns its constructor hash represented as a yaml document' do
-              expect(@field.to_yaml).to eq(YAML.dump(@field_hash))
+              expect(field.to_yaml).to eq(YAML.dump(field_hash))
             end
           end
 
           describe '#name' do
             it 'returns the key when requesting the name' do
-              expect(@field.name).to eq(@field_hash.keys.first)
+              expect(field.name).to eq(field_hash.keys.first)
             end
           end
 
           %w(value default description type data_type).map(&:to_sym).each do |key|
             describe "\##{key}" do
               it "returns it's hash value" do
-               expect(@field.send(key)).to eq(@field_hash.first[1][key])
+               expect(field.send(key)).to eq(field_hash.first[1][key])
               end
             end
           end
@@ -232,60 +238,18 @@ module Representors
       end
       
       describe '#to_media_type' do
-        it 'serializes to hale' do
-          puts subject.to_media_type(:hale)
-        end
-      end
-      
-      context 'Reconstructing the Complex Hash Fixture with Builder' do
-        describe '.new' do
-          it 'accepts basic attributes' do
-            def add_attributes(builder)
-              builder.add_attribute('total_count', 2, { #semantic key
-                  doc: 'The total count of DRDs.', # Descriptor semantic doc
-                  type: 'semantic', # Descriptor semantic type
-                  profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file
-                  sample: 1, 
-                  links: {
-                    self: 'www.example.com/drds/show/DRDs',
-                    help: 'http://alps.io/schema.org/DRDs'
-                  },
-                  # same as sample in descriptor
-                },
-              )
-              builder
-            end
-            
-            def add_transitions(builder)
-              builder.add_attribute('total_count', 2, { #semantic key
-                  doc: 'The total count of DRDs.', # Descriptor semantic doc
-                  type: 'semantic', # Descriptor semantic type
-                  profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file
-                  sample: 1, 
-                  links: {
-                    self: 'www.example.com/drds/show/DRDs',
-                    help: 'http://alps.io/schema.org/DRDs'
-                  },
-                  # same as sample in descriptor
-                },
-              )
-              builder
-            end             
-            
-            rep = Representor.new({
-              protocol: 'http', # The protocol we're using
-              href: 'www.example.com/drds', # Crichton needs to say where we are
-              id: 'DRDs', # ID from desrciptor
-              doc: 'Describes the semantics, states and state transitions associated with DRDs.'
-              }) { |builder| 
-                builder.add_attribute('total_count', 2, { #semantic key
-                  doc: 'The total count of DRDs.', # Descriptor semantic doc
-                  type: 'semantic', # Descriptor semantic type
-                  profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file
-                  sample: 1, # same as sample in descriptor
-                },)
-              } # Doc from descriptor
-            puts rep.to_hash
+        context 'when it serializes to hale' do
+          let (:hale_hash) { JSON.load(subject.to_media_type(:hale)) }
+          #TODO: Fix Hale Serializer - Complex objects not working
+
+          it 'has ths associated attributes' do
+            expect(hale_hash["total_count"]).to eq(subject.properties[:total_count])
+          end
+          it 'has transitions' do
+            expect(hale_hash["_links"]).to include("self","list","search","create")
+          end
+          it 'has embedded items' do
+           expect(hale_hash["_embedded"]["items"].count).to eq(1)
           end
         end
       end

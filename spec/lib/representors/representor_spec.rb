@@ -76,24 +76,6 @@ module Representors
         subject = Representor.new { |builder| builder.add_embedded('contains', @base_representor) }
         expect(subject.embedded['contains'].to_hash).to eq(@base_representor)
       end
-      
-      context 'Reconstructing the Complex Hash Fixture' do
-        it 'accepts basic attributes' do
-          rep = Representor.new({protocol: 'http', # The protocol we're using
-            href: 'www.example.com/drds', # Crichton needs to say where we are
-            id: 'DRDs', # ID from desrciptor
-            doc: 'Describes the semantics, states and state transitions associated with DRDs.'
-            }) { |builder| 
-              builder.add_attribute('total_count', 2, { #semantic key
-                doc: 'The total count of DRDs.', # Descriptor semantic doc
-                type: 'semantic', # Descriptor semantic type
-                profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file
-                sample: 1, # same as sample in descriptor
-              },)
-            } # Doc from descriptor
-          puts rep.to_hash
-        end
-      end
 
       it 'returns a Representors::Representor instance with a nil argument' do
         expect(Representor.new).to be_an_instance_of(Representor)
