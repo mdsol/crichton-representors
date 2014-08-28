@@ -1,16 +1,16 @@
 module ComplexRepresentor
 DRD_HASH = {
-  href: 'http://example.com/drd/1', # Crichton needs to say where we are
+  href: 'http://example.com/drd/1', 
   id: 'DRD',
   doc: 'Diagnostic Repair Drones or DRDs are small robots that move around Leviathans. They are built by a Leviathan as it grows.',
-  attributes: { #need to rename to data
+  attributes: {
     uuid: {
       doc: 'The UUID of the DRD.',
       profile: 'http://alps.io/schema.org/Text',
       sample: '007d8e12-babd-4f2c-b01e-8b5e2f749e1z',
       value: '007d8e12-babd-4f2c-b01e-8b5e2f749e1z',
     },
-    name: { #These should only show up under 'name' if they actually show up in the document body
+    name: { 
       doc: 'The name of the DRD.',
       profile: 'http://alps.io/schema.org/Text',
       sample: 'drdname',
@@ -110,16 +110,16 @@ DRD_HASH = {
     },
     {
       rel: 'leviathan-link',
-      name: 'leviathan', # I'm not sure representors is supporting this, but it should
+      name: 'leviathan',
       doc: 'A reference to the Leviathan the DRD works on.',
-      embed: true, #?
+      embed: true, 
       rt: 'http://alps.io/schema.org/Leviathan#leviathan',
       href: 'http://example.com/drds/Leviathan',
     },
     {
       rel: 'repair-history',
       doc: 'A reference to the list of historical repairs performed.',
-      embed: true, #?,
+      embed: true, ,
       rt: 'http://alps.io/schema.org/Repairs#history',
       href: 'http://example.com/drds/Repairs',
     },
@@ -140,7 +140,7 @@ DRD_HASH = {
     {
       rel: 'delete',
       doc: 'Drops a DRD out an air-lock.',
-      rt: 'none', # nil?  maybe don't even show it?
+      rt: 'none', 
       href: 'http://example.com/drds/show/173875983789',
       method: 'DELETE',
     },
@@ -148,16 +148,16 @@ DRD_HASH = {
       rel: 'update',
       doc: 'Updates a DRD.',
       rt: 'none',
-      profile: 'http://alps.io/schema.org/DRDs#update',#from links->self
+      profile: 'http://alps.io/schema.org/DRDs#update',
       href: 'http://example.com/drds/show/173875983789',
       method: 'PUT',
-      descriptors: {# from data - should probably just be called data
+      descriptors: {
         links: {
           self: 'http://alps.io/schema.org/DRDs#update',
           help: 'help.example.com/Forms/update',
         },
         status: {
-          doc: 'How is the DRD.', # Description also exists, but I don't know why... bug?
+          doc: 'How is the DRD.', 
           profile: 'http://alps.io/schema.org/Text',
           sample: 'renegade',
           value: 'renegade',
