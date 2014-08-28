@@ -32,18 +32,6 @@ module Representors
         end
       end
 
-      describe '#identifier' do
-        it 'when given an href returns a url' do
-          @representor_hash = RepresentorHash.new(protocol: 'http', href: 'www.example.com/drds')
-          expect(subject.identifier).to match(URI::regexp)
-        end
-
-        it 'when not given an href it returns ruby reference' do
-          @representor_hash = RepresentorHash.new
-          expect(subject.identifier).to eq("ruby_id://%s" % subject.object_id)
-        end
-      end
-
       describe '#to_hash' do
         it 'returns a hash that it can be reconstructed with' do
           expect(Representor.new(subject.to_hash).to_hash).to eq(@representor_hash)
