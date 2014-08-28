@@ -19,7 +19,7 @@ module Representors
       end
 
       describe '#to_s' do
-        it 'retuns a string representation' do
+        it 'returns a string representation' do
           expect(eval(subject.to_s)).to eq(representor_hash)
         end
       end
@@ -97,13 +97,13 @@ module Representors
       
       describe '.transitions' do
         describe '#to_s' do
-          it 'retuns a string representation' do
+          it 'returns a string representation' do
             expect(subject.transitions.first.to_s).to eq(representor_hash[:transitions].first.to_s)
           end
         end
 
         describe '#to_hash' do
-          it 'retuns a hash representation' do
+          it 'returns a hash representation' do
             hashed = Hash[subject.transitions.first.to_hash.map{|(k,v)| [k.to_sym,v]}]
             expect(hashed).to eq(representor_hash[:transitions].first)
           end
@@ -174,11 +174,11 @@ module Representors
         end
 
         describe '#templated?' do
-          it 'returns true if #templated_uri != uri' do
+          it 'returns false for the first element which has no parameters' do
             expect(subject.transitions.first.templated?).to be_false
           end
 
-          it 'returns false if #templated_uri == uri' do
+          it 'returns true for the second template which has parameters' do
             expect(subject.transitions[2].templated?).to be_true
           end
         end
