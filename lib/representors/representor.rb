@@ -20,7 +20,7 @@ module Representors
     #
     # @param [Hash] hash the abstract representor hash defining a resource
     def initialize(hash = {}, builder = nil)
-      builder = builder || RepresentorBuilder.new(hash)
+      builder ||= RepresentorBuilder.new(hash)
       yield builder if block_given?
       @representor_hash = builder.to_representor_hash
     end
