@@ -1,31 +1,31 @@
 module ComplexRepresentor
 DRDS_HASH = {
-  href: 'www.example.com/drds', # Crichton needs to say where we are
-  id: 'DRDs', # ID from desrciptor
-  doc: 'Describes the semantics, states and state transitions associated with DRDs.', # Doc from descriptor
+  href: 'www.example.com/drds',
+  id: 'DRDs',
+  doc: 'Describes the semantics, states and state transitions associated with DRDs.', 
   links: {
     self: 'www.example.com/drds/show/DRDs',
     help: 'http://alps.io/schema.org/DRDs'
   },
-  attributes: { #Data, also Semantics, Should probably rename to Data
-    total_count: { #semantic key
-      doc: 'The total count of DRDs.', # Descriptor semantic doc
-      type: 'semantic', # Descriptor semantic type
-      profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file
-      sample: 1, # same as sample in descriptor
-      value: 2, # value from service interating crichton
+  attributes: { 
+    "total_count" => { 
+      doc: 'The total count of DRDs.', 
+      type: 'semantic', 
+      profile: 'http://alps.io/schema.org/Integer', 
+      sample: 1, 
+      value: 2, 
     },
   },
   transitions: [
     {
-      rel: 'self', # same as Descriptor File
-      href: 'http://example.com/drds', # Crichton needs to give the actual link
-      method: 'GET', # When it's in Descriptor 'links' or 'safe' section
+      rel: 'self', 
+      href: 'http://example.com/drds', 
+      method: 'GET', 
     },
     {
       rel: 'list',
-      doc: 'Returns a list of DRDs.', # Same as descriptor file
-      rt: 'drds', # This should actually be a link right? #Profile?
+      doc: 'Returns a list of DRDs.', 
+      rt: 'drds', 
       href: 'http://example.com/drds/list',
     },
     {
@@ -33,7 +33,7 @@ DRDS_HASH = {
       doc: 'Returns a list of DRDs that satisfy the search term.',
       href: 'http://example.com/drds/search',
       rt: 'drds',
-      descriptors: {# parameters - This should probably be change is representors to just be "data"
+      descriptors: {
         search_term: {
           doc: 'The terms to search.',
           profile: 'http://alps.io/schema.org/Text',
@@ -41,13 +41,13 @@ DRDS_HASH = {
           multiple: true,
           scope: 'href',
         },
-        name: { #These should only show up under 'name' if they actually show up in the document body
+        name: { 
           doc: 'The name of the DRD.',
           profile: 'http://alps.io/schema.org/Text',
           sample: 'drdname',
           value: 'drdname',
           scope: 'href',
-          field_type: 'text', # I'm not sure representors is supporting this, but it should
+          field_type: 'text', 
         },
       },
     },        
@@ -62,7 +62,7 @@ DRDS_HASH = {
       href: 'www.example.com/drds/create',
       method: 'POST',
       descriptors: { 
-        name: { #These should only show up under 'name' if they actually show up in the document body
+        name: { 
           doc: 'The name of the DRD.',
           profile: 'http://alps.io/schema.org/Text',
           sample: 'drdname',
@@ -75,17 +75,16 @@ DRDS_HASH = {
         leviathan: {
           doc: 'The associated Leviathan resource.',
           profile: 'http://alps.io/schema.org/Thing/Leviathan',
-          #embed: 'single-optional'
           sample: 'http://alps.io/schema.org/Thing/Leviathan',
           value: 'http://alps.io/schema.org/Thing/Leviathan',
-          type: 'object', #not yet supported in Representors
+          type: 'object', #TODO Embedded Objects
           descriptors: {
             leviathan_uuid: {
               doc: 'The UUID of the creator Leviathan.',
               profile: 'http://alps.io/schema.org/Text',
               sample: '007d8e12-babd-4f2c-b01e-8b5e2f749e1b',
               type: 'text',
-              field_type: 'text', #not actually supported
+              field_type: 'text', 
             },
             leviathan_health_points: {
               doc: 'The health points of Leviathan.',
@@ -115,7 +114,7 @@ DRDS_HASH = {
       },
     },
   ],
-  #embedded: { itemd: [ See: single_drd.rb ] }  
+  #To put embedded items in the hash please see: single_drd.rb
 }
 end
     

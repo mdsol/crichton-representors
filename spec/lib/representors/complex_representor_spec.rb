@@ -8,8 +8,7 @@ module Representors
     before do
       @single_drd = ComplexRepresentor::DRD_HASH
       @representor_hash = ComplexRepresentor::DRDS_HASH
-      @representor_hash[:embedded] = {}
-      @representor_hash[:embedded][:items] = [@single_drd]
+      @representor_hash[:embedded] = {items: [ComplexRepresentor::DRD_HASH]}
     end
     let(:representor_hash) { @representor_hash }
     
@@ -60,7 +59,7 @@ module Representors
       describe '#properties' do
         it 'returns a hash of attributes associated with the represented resource' do
           semantic_elements_present =  %w(total_count).all? do |key|
-            subject.properties[key.to_sym] == @representor_hash[:attributes][key.to_sym][:value]
+            subject.properties[key] == @representor_hash[:attributes][key][:value]
           end
           expect(semantic_elements_present).to be_true
          end
@@ -68,10 +67,7 @@ module Representors
 
       describe '#embedded' do
         let(:embedded_resource) {:items}
-        before do
-          @count = 1
-        end
-
+        
         it 'returns a set of Representor objects' do
           expect(subject.embedded[embedded_resource].first).to be_an_instance_of(Representors::Representor)
         end
@@ -83,7 +79,7 @@ module Representors
         end
 
         it 'returns the all the Representors' do
-          expect(subject.embedded[embedded_resource].count).to eq(@count)
+          expect(subject.embedded[embedded_resource].count).to eq(@representor_hash[:embedded].count)
         end
       end
 
@@ -129,7 +125,7 @@ module Representors
         describe '#[]' do
           let(:key)  {'href'}
           let(:value) {representor_hash[:transitions].first[key.to_sym]}
-          it 'retuns the value for the keys' do
+          it 'returns the value for the keys' do
             expect(subject.transitions.first[key]).to eq(value)
           end
 
@@ -137,7 +133,7 @@ module Representors
             expect(subject.transitions.first['Ido not exists']).to be_nil
           end
 
-          it 'has indiferent access to the hash' do
+          it 'has indifferent access to the hash' do
             expect(subject.transitions.first[key.to_sym]).to eq(value)
             expect(subject.transitions.first[key.to_s]).to eq(value)
           end
@@ -243,13 +239,13 @@ module Representors
           #TODO: Fix Hale Serializer - Complex objects not working
 
           it 'has ths associated attributes' do
-            expect(hale_hash["total_count"]).to eq(subject.properties[:total_count])
+            expect(hale_hash["total_count"]).to eq(subject.properties["total_count"])
           end
           it 'has transitions' do
             expect(hale_hash["_links"]).to include("self","list","search","create")
           end
           it 'has embedded items' do
-           expect(hale_hash["_embedded"]["items"].count).to eq(1)
+            expect(hale_hash["_embedded"]["items"].count).to eq(@representor_hash[:embedded].count)
           end
         end
       end
