@@ -198,5 +198,23 @@ RSpec.describe Representors::RepresentorBuilder do
     end
   end
 
+  context 'Reconstructing the Complex Hash Fixture' do
+    #TODO: Reconstructing the Complex Hash Fixture with Builder - Builder Needs Work
+    it 'accepts basic attributes' do
+      representor = Representors::Representor.new({protocol: 'http', # The protocol we're using
+        href: 'www.example.com/drds', # Crichton needs to say where we are
+        id: 'DRDs', # ID from desrciptor
+        doc: 'Describes the semantics, states and state transitions associated with DRDs.'
+        }) do |builder| 
+          builder.add_attribute('total_count', 2, { #semantic key
+            doc: 'The total count of DRDs.', # Descriptor semantic doc
+            type: 'semantic', # Descriptor semantic type
+            profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file
+            sample: 1, # same as sample in descriptor
+          },)
+        end # Doc from descriptor
+        expect(representor.properties["total_count"]).to eq(2)
+    end
+  end
 
 end
