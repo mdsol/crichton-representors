@@ -6,7 +6,6 @@ require 'fixtures/single_drd'
 module Representors
   describe Representor do
     before do
-      @single_drd = ComplexRepresentor::DRD_HASH
       @representor_hash = ComplexRepresentor::DRDS_HASH
       @representor_hash[:embedded] = {items: [ComplexRepresentor::DRD_HASH]}
     end
