@@ -119,7 +119,7 @@ DRD_HASH = {
     {
       rel: 'repair-history',
       doc: 'A reference to the list of historical repairs performed.',
-      embed: true, ,
+      embed: true,
       rt: 'http://alps.io/schema.org/Repairs#history',
       href: 'http://example.com/drds/Repairs',
     },
