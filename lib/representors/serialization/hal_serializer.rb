@@ -7,7 +7,7 @@ module Representors
       EMBEDDED_KEY = "_embedded"
       LINKS_ONLY_OPTION = :embed_links_only
 
-      media_symbol :hal
+      media_symbol :hal_json
       media_type 'application/hal+json'
 
       # This is public and returning a hash to be able to implement embedded resources

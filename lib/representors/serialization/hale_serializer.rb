@@ -3,7 +3,7 @@ require 'representors/serialization/hal_serializer'
 module Representors
   module Serialization
     class HaleSerializer < HalSerializer
-      media_symbol :hale
+      media_symbol :hale_json
       media_type 'application/vnd.hale+json'
 
       # This is public and returning a hash to be able to implement embedded resources
