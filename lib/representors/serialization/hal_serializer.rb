@@ -60,7 +60,7 @@ module Representors
 
       # Lambda used in this case to DRY code.  Allows 'is array' functionality to be handled elsewhere
       def build_embedded_links(key, embedded)
-        find_embedded_links = ->(obj) { obj.transitions.select { |transition| transition.rel == :self } }
+        find_embedded_links = ->(obj) { obj.transitions.select { |transition| transition.rel == "self" } }
         embedded_self = map_or_apply(find_embedded_links, embedded)
         links = embedded_self.flatten.map { |embed| { href: embed.uri } }
         { key =>  links }
@@ -100,7 +100,12 @@ module Representors
         else
           { href: transition.uri }
         end
-        link[:method] = transition.interface_method
+        #link[:method] = transition.interface_method
+        [:name, :profile].map do |key|
+          if transition.has_key?(key)
+            link[key] = transition[key]
+          end
+        end
         link
       end
     end

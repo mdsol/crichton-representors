@@ -48,6 +48,12 @@ module Representors
       retrieve(key)
     end
 
+    # @param [String] key on the transitions hash to retrieve
+    # @return [Bool] false if there is no key
+    def has_key?(key)
+      not retrieve(key).nil?
+    end
+
     # TODO: Figure out how to scope differently
     # @return [String] The URI for the object templated against #parameters
     def templated_uri

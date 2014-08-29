@@ -48,6 +48,7 @@ module Representors
           results.merge( get_data_element(element) )
         end
         link[:data] = data_elements unless data_elements.empty?
+        link[:method] = transition.interface_method
         link
       end
     end
