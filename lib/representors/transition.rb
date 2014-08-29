@@ -51,7 +51,7 @@ module Representors
     # @param [String] key on the transitions hash to retrieve
     # @return [Bool] false if there is no key
     def has_key?(key)
-      not retrieve(key).nil?
+      !retrieve(key).nil?
     end
 
     # TODO: Figure out how to scope differently

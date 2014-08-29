@@ -100,7 +100,7 @@ module Representors
         else
           { href: transition.uri }
         end
-        [:name, :profile].map do |key|
+        [:name, :profile].each do |key|
           if transition.has_key?(key)
             link[key] = transition[key]
           end
