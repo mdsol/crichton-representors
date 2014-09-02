@@ -19,7 +19,13 @@
             {
                 "href": "www.example.com/drds/show/173875983789"
             }
-        ]
+        ],
+        "profile": {
+            "href": "http://www.example.com/drds/show/DRDs"
+        },
+        "help": {
+            "href": "http://alps.io/schema.org/DRDs"
+        }
     },
     "_embedded": {
         "items": [
@@ -74,6 +80,12 @@
                     "update": {
                         "href": "http://example.com/drds/show/173875983789",
                         "profile": "http://alps.io/schema.org/DRDs#update"
+                    },
+                    "profile": {
+                        "href": "http://www.example.com/drds/show/DRD"
+                    },
+                    "help": {
+                        "href": "http://alps.io/schema.org/DRD"
                     }
                 }
             }

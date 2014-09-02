@@ -4,7 +4,7 @@ DRDS_HASH = {
   id: 'DRDs',
   doc: 'Describes the semantics, states and state transitions associated with DRDs.', 
   links: {
-    self: 'www.example.com/drds/show/DRDs',
+    profile: 'http://www.example.com/drds/show/DRDs',
     help: 'http://alps.io/schema.org/DRDs'
   },
   attributes: { 
@@ -56,8 +56,8 @@ DRDS_HASH = {
       doc: 'Creates a DRD.',
       rt: 'drd',
       links: {
-        self: 'http://alps.io/schema.org/DRDs#update',
-        help: 'help.example.com/Forms/update',
+        profile: 'http://alps.io/schema.org/DRDs#update',
+        help: 'http://help.example.com/Forms/update',
       },
       href: 'www.example.com/drds/create',
       method: 'POST',

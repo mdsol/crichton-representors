@@ -4,7 +4,7 @@ DRD_HASH = {
   id: 'DRD',
   doc: 'Diagnostic Repair Drones or DRDs are small robots that move around Leviathans. They are built by a Leviathan as it grows.',
   links: {
-    self: 'www.example.com/drds/show/DRD',
+    profile: 'http://www.example.com/drds/show/DRD',
     help: 'http://alps.io/schema.org/DRD'
   },
   attributes: {
@@ -162,7 +162,7 @@ DRD_HASH = {
       descriptors: {
         links: {
           self: 'http://alps.io/schema.org/DRDs#update',
-          help: 'help.example.com/Forms/update',
+          help: 'http://help.example.com/Forms/update',
         },
         status: {
           doc: 'How is the DRD.', 
