@@ -228,13 +228,40 @@ module Representors
           it 'has ths associated attributes' do
             expect(hale_hash["total_count"]).to eq(subject.properties["total_count"])
           end
+          
           it 'has transitions' do
             expect(hale_hash["_links"]).to include("self","list","search","create")
           end
+          
           it 'has embedded items' do
             expect(hale_hash["_embedded"]["items"].count).to eq(@representor_hash[:embedded].count)
           end
+          
         end
+        
+        context 'when it serializes to hal' do
+          let (:hal_hash) { JSON.load(subject.to_media_type(:hal)) }
+          
+          it 'has ths associated attributes' do
+            expect(hal_hash["total_count"]).to eq(subject.properties["total_count"])
+          end
+          
+          it 'has transitions' do
+            subject.transitions.each do |link|
+              expect(hal_hash["_links"][link.rel]["href"]).to eq(link.templated_uri)
+            end
+          end
+          
+          it 'has embedded items' do
+           expect(hal_hash["_embedded"]["items"].count).to eq(1)
+          end
+          
+          it 'renders a proper Hal document' do
+            expect(hal_hash).to eq(JSON.load(File.open(fixture_path('complex_hal.json'))))
+          end
+          
+        end
+        
       end
     end
   end

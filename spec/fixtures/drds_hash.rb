@@ -25,7 +25,7 @@ DRDS_HASH = {
     {
       rel: 'list',
       doc: 'Returns a list of DRDs.', 
-      rt: 'drds', 
+      profile: 'http://alps.io/schema.org/DRDs', 
       href: 'http://example.com/drds/list',
     },
     {

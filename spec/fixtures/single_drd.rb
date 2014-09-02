@@ -3,6 +3,10 @@ DRD_HASH = {
   href: 'http://example.com/drd/1', 
   id: 'DRD',
   doc: 'Diagnostic Repair Drones or DRDs are small robots that move around Leviathans. They are built by a Leviathan as it grows.',
+  links: {
+    self: 'www.example.com/drds/show/DRD',
+    help: 'http://alps.io/schema.org/DRD'
+  },
   attributes: {
     uuid: {
       doc: 'The UUID of the DRD.',
@@ -103,9 +107,15 @@ DRD_HASH = {
   },
   transitions: [
     {
+      rel: 'self',
+      doc: 'Shows a particular DRD.',
+      profile: 'http://alps.io/schema.org/DRD', 
+      href: 'www.example.com/drds/show/173875983789',
+    },
+    {
       rel: 'show',
       doc: 'Shows a particular DRD.',
-      rt: 'drd',
+      profile: 'http://alps.io/schema.org/DRD', 
       href: 'www.example.com/drds/show/173875983789',
     },
     {
@@ -113,41 +123,39 @@ DRD_HASH = {
       name: 'leviathan',
       doc: 'A reference to the Leviathan the DRD works on.',
       embed: true, 
-      rt: 'http://alps.io/schema.org/Leviathan#leviathan',
+      profile: 'http://alps.io/schema.org/Leviathan#leviathan',
       href: 'http://example.com/drds/Leviathan',
     },
     {
       rel: 'repair-history',
       doc: 'A reference to the list of historical repairs performed.',
       embed: true,
-      rt: 'http://alps.io/schema.org/Repairs#history',
+      profile: 'http://alps.io/schema.org/Repairs#history',
       href: 'http://example.com/drds/Repairs',
     },
     {
       rel: 'activate',
       doc: 'Activates a DRD if it is deactivated.',
-      rt: 'drd',
+      profile: 'http://alps.io/schema.org/DRD',
       href: 'http://example.com/drds/activate/173875983789',
       method: 'PUT',
     },
     {
       rel: 'deactivate',
       doc: 'Deactivates a DRD if it is activated.',
-      rt: 'drd',
+      profile: 'http://alps.io/schema.org/DRD',
       href: 'http://example.com/drds/show/173875983789',
       method: 'PUT',
     },
     {
       rel: 'delete',
       doc: 'Drops a DRD out an air-lock.',
-      rt: 'none', 
       href: 'http://example.com/drds/show/173875983789',
       method: 'DELETE',
     },
     {
       rel: 'update',
       doc: 'Updates a DRD.',
-      rt: 'none',
       profile: 'http://alps.io/schema.org/DRDs#update',
       href: 'http://example.com/drds/show/173875983789',
       method: 'PUT',
