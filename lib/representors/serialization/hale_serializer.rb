@@ -56,7 +56,7 @@ module Representors
           scope: ->(element) { element.scope unless element.scope == 'attribute' },
           value: ->(element) { element.value unless element.value.nil? },
           multi: ->(element) { true if element.cardinality == "multiple" },
-          #data: ->(element) { render_data_elements(element.descriptors) if element.type == 'object' },
+          data: ->(element) { render_data_elements(element.descriptors) if element.type == 'object' },
         }[etype]
       end
       
@@ -67,8 +67,8 @@ module Representors
       end
       
       def get_data_properties(element)
-        %w(type scope value multi).map(&:to_sym).reduce({}) do |result, symbol|
-          elemental = elemental_renderer(symbol).(element) 
+        [:type, :scope, :value, :multi, :data].reduce({}) do |result, symbol|
+          elemental = elemental_renderer(symbol).call(element) 
           result.merge( elemental.nil? ? {} : {symbol => elemental} )
         end
       end
@@ -78,7 +78,6 @@ module Representors
         element_data = get_data_validators(element)
         elementals = get_data_properties(element)
         elementals[:options] = options unless options.empty?
-        elementals[:data] = render_data_elements(element.descriptors) if element.type == 'object'
         { element.name => element_data.merge(elementals) }
       end
 
