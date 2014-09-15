@@ -150,7 +150,6 @@ module Representors
         it_behaves_like 'a hale documents links', representor_hash, @options
         let(:document) { representor_hash.merge(@base_representor) }
         it 'has the expected Hale output' do
-          print result["_links"]["orders"]
           link_data = result["_links"]["orders"]["data"]
           expect(link_data["order_status"]["scope"]).to eq("href")
           expect(link_data["order_status"]["in"]).to eq(true)
@@ -539,7 +538,6 @@ module Representors
         let(:document) { representor_hash.merge(@base_representor) }
         it 'has the expected Hale output' do
           link_data = result["_links"]["multi_order"]["data"]["orders"]["data"]
-          print link_data
           expect(link_data["drink_type"]["in"]).to eq(true)
           expect(link_data["drink_type"]["required"]).to eq(true)
           expect(link_data["drink_type"]["options"]).to eq([
@@ -576,70 +574,65 @@ module Representors
         
       end
       
-      # context 'Document has a link data objects' do
-      #   representor_hash = begin
-      #     {
-      #       transitions: [
-      #         {
-      #         href: '/mike',
-      #         rel: 'author',
-      #         method: 'post',
-      #         descriptors: {
-      #           'name' => {
-      #             'type' => 'text',
-      #             'scope' => 'href',
-      #             'value' => 'Bob',
-      #             :options => {'list' => ['Bob', 'Jane', 'Mike'], 'id' => 'names'},
-      #             'required' => 'True'
-      #             }
-      #           }
-      #         }
-      #       ]
-      #     }
-      #   end
-      #
-      #   let(:document) { representor_hash.merge(@base_representor) }
-      #   let(:serialized_result) { JSON.parse(serializer.to_media_type) }
-      #
-      #   after do
-      #     expect(@result_element).to eq(@document_element)
-      #   end
-      #
-      #   it 'returns the correct link method' do
-      #     @result_element = serialized_result["_links"]['author']['method']
-      #     @document_element = document[:transitions].first[:method]
-      #   end
-      #
-      #   it 'returns the correct type keyword in link data' do
-      #     @result_element = serialized_result["_links"]['author']['data']['name']['type']
-      #     @document_element = document[:transitions].first[:descriptors]['name']['type']
-      #   end
-      #
-      #   it 'returns the correct scope keyword in link data' do
-      #     @result_element = serialized_result["_links"]['author']['data']['name']['scope']
-      #     @document_element = document[:transitions].first[:descriptors]['name']['scope']
-      #   end
-      #
-      #   it 'returns the correct value keyword in link data' do
-      #     @result_element = serialized_result["_links"]['author']['data']['name']['value']
-      #     @document_element = document[:transitions].first[:descriptors]['name']['value']
-      #   end
-      #
-      #   it 'returns the correct datalists' do
-      #     @result_element = serialized_result["_meta"]['names']
-      #     @document_element = document[:transitions].first[:descriptors]['name'][:options]['list']
-      #   end
-      #
-      #   it 'returns the correct required in link data' do
-      #     @result_element = serialized_result["_links"]['author']['data']['name']['required']
-      #     @document_element = document[:transitions].first[:descriptors]['name']['required']
-      #   end
-      #
-      #   it 'properly references the datalists' do
-      #     @result_element = serialized_result["_links"]['author']['data']['name']['options']['_ref']
-      #     @document_element = ['names']
-      #   end
-      # end
+      context 'Document has a link data objects' do
+        representor_hash = begin
+          {
+            transitions: [
+              {
+              href: '/mike',
+              rel: 'author',
+              method: 'post',
+              descriptors: {
+                'name' => {
+                  type: 'text',
+                  scope: 'href',
+                  value: 'Bob',
+                  options: {'list' => ['Bob', 'Jane', 'Mike'], 'id' => 'names'},
+                  validators: [ "required" ]
+                  }
+                }
+              }
+            ]
+          }
+        end
+
+        let(:document) { representor_hash.merge(@base_representor) }
+        let(:serialized_result) { JSON.parse(serializer.to_media_type) }
+
+        after do
+          expect(@result_element).to eq(@document_element)
+        end
+
+        it 'returns the correct link method' do
+          @result_element = serialized_result["_links"]['author']['method']
+          @document_element = document[:transitions].first[:method]
+        end
+
+        it 'returns the correct type keyword in link data' do
+          @result_element = serialized_result["_links"]['author']['data']['name']['type']
+          @document_element = document[:transitions].first[:descriptors]['name'][:type]
+        end
+
+        it 'returns the correct scope keyword in link data' do
+          @result_element = serialized_result["_links"]['author']['data']['name']['scope']
+          @document_element = document[:transitions].first[:descriptors]['name'][:scope]
+        end
+
+        it 'returns the correct value keyword in link data' do
+          @result_element = serialized_result["_links"]['author']['data']['name']['value']
+          @document_element = document[:transitions].first[:descriptors]['name'][:value]
+        end
+
+        it 'returns the correct datalists' do
+          @result_element = serialized_result["_meta"]['names']
+          @document_element = document[:transitions].first[:descriptors]['name'][:options]['list']
+        end
+
+        it 'properly references the datalists' do
+          @result_element = serialized_result["_links"]['author']['data']['name']['options']['_ref']
+          @document_element = ['names']
+        end
+      end
     end
   end
 end

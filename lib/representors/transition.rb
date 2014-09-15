@@ -77,7 +77,7 @@ module Representors
 
     # @return [String] representing the Uniform Interface Method
     def interface_method
-      retrieve(METHOD_KEY) ||DEFAULT_METHOD
+      retrieve(METHOD_KEY) || DEFAULT_METHOD
     end
 
     # The Parameters (i.e. GET variables)
@@ -98,7 +98,7 @@ module Representors
     #
     # @return [Array] who's elements are all <Crichton:Field> objects
     def descriptors
-      @descriptors ||= attributes+parameters
+      @descriptions ||= (attributes + parameters)
     end
 
 
