@@ -81,7 +81,7 @@ module Representors
     #
     # @return [Array] who's elements are all <Crichton:Field> objects
     def descriptors
-      @descriptors ||= attributes+parameters
+      @descriptors ||= (attributes + parameters)
     end
     
     private

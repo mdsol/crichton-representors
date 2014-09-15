@@ -97,8 +97,7 @@ module Representors
         link
       end
       
-      def render_type(field_type, type)
-        type ||= SEMANTIC_TYPES[field_type.to_sym]
+      def render_type(field_type, type = SEMANTIC_TYPES[field_type.to_sym])
         field_type ? "#{type}:#{field_type}" : "#{type}"
       end
     end
