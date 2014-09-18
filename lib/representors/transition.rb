@@ -77,7 +77,7 @@ module Representors
 
     # @return [String] representing the Uniform Interface Method
     def interface_method
-      retrieve(METHOD_KEY) ||DEFAULT_METHOD
+      retrieve(METHOD_KEY) || DEFAULT_METHOD
     end
 
     # The Parameters (i.e. GET variables)
@@ -93,6 +93,14 @@ module Representors
     def attributes
       @attributes ||= get_field_by_type(ATTRIBUTE_FIELDS)
     end
+    
+    # The Parameters (i.e. GET variables)
+    #
+    # @return [Array] who's elements are all <Crichton:Field> objects
+    def descriptors
+      @descriptions ||= (attributes + parameters)
+    end
+
 
     def data
       retrieve('data') || {}
@@ -114,7 +122,7 @@ module Representors
     end
 
     def get_field_by_type(field_type)
-      fields = @transition_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@transition_hash): []
+      fields = @transition_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@transition_hash) : []
       filtered_fields(fields, field_type)
     end
   end

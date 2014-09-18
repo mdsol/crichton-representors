@@ -5,7 +5,10 @@ module Representors
   ##
   # Manages the respresentation of hypermedia fields for different media-types.
   class Field
-    SIMPLE_METHODS = %w(name value default description type data_type).map(&:to_sym)
+    SIMPLE_METHODS = %w(name value default description field_type type data_type cardinality).map(&:to_sym)
+    DESCRIPTORS_KEY = :descriptors
+    ATTRIBUTE_FIELDS = 'attribute'
+    PARAMETER_FIELDS = 'href'
     VALIDATORS_KEY = :validators
     OPTIONS_KEY = :options
     SCOPE_KEY = :scope
@@ -60,6 +63,41 @@ module Representors
     def call
       value
     end
+    
+    # The Parameters (i.e. GET variables)
+    #
+    # @return [Array] who's elements are all <Crichton:Field> objects
+    def parameters
+      @parameters ||= get_field_by_type(PARAMETER_FIELDS)
+    end
 
+    # The Parameters (i.e. POST variables)
+    #
+    # @return [Array] who's elements are all <Crichton:Field> objects
+    def attributes
+      @attributes ||= get_field_by_type(ATTRIBUTE_FIELDS)
+    end
+    # The Parameters (i.e. GET variables)
+    #
+    # @return [Array] who's elements are all <Crichton:Field> objects
+    def descriptors
+      @descriptors ||= (attributes + parameters)
+    end
+    
+    private
+    
+    def filtered_fields(fields, scope)
+      fields.select { |field| field.scope == scope }
+    end
+    
+    def descriptor_fields(hash)
+      hash[DESCRIPTORS_KEY].map { |k, v| Field.new({k => v }) }
+    end
+    
+    def get_field_by_type(field_type)
+      fields = @field_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@field_hash) : []
+      filtered_fields(fields, field_type)
+    end
+    
   end
 end
