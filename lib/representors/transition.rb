@@ -48,6 +48,12 @@ module Representors
       retrieve(key)
     end
 
+    # @param [String] key on the transitions hash to retrieve
+    # @return [Bool] false if there is no key
+    def has_key?(key)
+      !retrieve(key).nil?
+    end
+
     # TODO: Figure out how to scope differently
     # @return [String] The URI for the object templated against #parameters
     def templated_uri
@@ -71,7 +77,7 @@ module Representors
 
     # @return [String] representing the Uniform Interface Method
     def interface_method
-      retrieve(METHOD_KEY) ||DEFAULT_METHOD
+      retrieve(METHOD_KEY) || DEFAULT_METHOD
     end
 
     # The Parameters (i.e. GET variables)
@@ -87,6 +93,14 @@ module Representors
     def attributes
       @attributes ||= get_field_by_type(ATTRIBUTE_FIELDS)
     end
+    
+    # The Parameters (i.e. GET variables)
+    #
+    # @return [Array] who's elements are all <Crichton:Field> objects
+    def descriptors
+      @descriptions ||= (attributes + parameters)
+    end
+
 
     def data
       retrieve('data') || {}
@@ -108,7 +122,7 @@ module Representors
     end
 
     def get_field_by_type(field_type)
-      fields = @transition_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@transition_hash): []
+      fields = @transition_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@transition_hash) : []
       filtered_fields(fields, field_type)
     end
   end

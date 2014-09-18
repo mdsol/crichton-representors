@@ -36,7 +36,7 @@ module Representors
         # rel name. This will become an array in the output. For instance an items array
         # with links to each item
         grouped_transitions = representor.transitions.group_by{|transition| transition[:rel]}
-        links = build_links(grouped_transitions) + embedded_links
+        links = build_links(grouped_transitions) + embedded_links + representor.meta_links
         links = links.empty? ? {} : { LINKS_KEY => links.reduce({}, :merge) }
         [base_hash, links, embedded_hals]
       end
@@ -60,7 +60,7 @@ module Representors
 
       # Lambda used in this case to DRY code.  Allows 'is array' functionality to be handled elsewhere
       def build_embedded_links(key, embedded)
-        find_embedded_links = ->(obj) { obj.transitions.select { |transition| transition.rel == :self } }
+        find_embedded_links = ->(obj) { obj.transitions.select { |transition| transition.rel == "self" } }
         embedded_self = map_or_apply(find_embedded_links, embedded)
         links = embedded_self.flatten.map { |embed| { href: embed.uri } }
         { key =>  links }
@@ -100,7 +100,7 @@ module Representors
         else
           { href: transition.uri }
         end
-        link[:method] = transition.interface_method
+        [:name, :profile].each { |key| link[key] = transition[key] if transition.has_key?(key) }
         link
       end
     end

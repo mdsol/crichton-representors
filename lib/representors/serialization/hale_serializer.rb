@@ -6,6 +6,22 @@ module Representors
       media_symbol :hale_json
       media_type 'application/vnd.hale+json'
 
+      SEMANTIC_TYPES = {
+        select: "text", #No way in Crichton to distinguish [Int] and [String]
+        search:"text",
+        text: "text",
+        boolean: "bool", #a Server should accept ?cat&dog or ?cat=cat&dog=dog
+        number: "number",
+        email: "text",
+        tel: "text",
+        datetime: "text",
+        time: "text",
+        date: "text",
+        month: "text",
+        week: "text",
+        object: "object",
+        :"datetime-local" => "text"
+      }
       # This is public and returning a hash to be able to implement embedded resources
       # serialization
       # TODO: make this private and merge with to_media_type
@@ -34,21 +50,54 @@ module Representors
         meta.empty? ? {} : {'_meta' => meta }
       end
 
+      def elemental_renderer(etype)
+        {
+          type: ->(element) { render_type(element.field_type,element.type) if element.field_type || element.type },
+          scope: ->(element) { element.scope unless element.scope == 'attribute' },
+          value: ->(element) { element.value unless element.value.nil? },
+          multi: ->(element) { true if element.cardinality == "multiple" },
+          data: ->(element) { render_data_elements(element.descriptors) if element.type == 'object' },
+        }[etype]
+      end
+      
+      def get_data_validators(element)
+        element.validators.reduce({}) do |results, validator| 
+          results.merge( validator.is_a?(Hash) ? validator : {validator => true} )
+        end
+      end
+      
+      def get_data_properties(element)
+        [:type, :scope, :value, :multi, :data].reduce({}) do |result, symbol|
+          elemental = elemental_renderer(symbol).call(element) 
+          result.merge( elemental.nil? ? {} : {symbol => elemental} )
+        end
+      end
+
       def get_data_element(element)
-        options = element.options.datalist? ? { '_ref' => [element.options.id] } : element.options
-        element_data = element.to_hash[element.name]
-        element_data[:options] = options unless options.empty?
-        { element.name => element_data }
+        options = element.options.datalist? ? { '_ref' => [element.options.id] } : element.options.to_data
+        element_data = get_data_validators(element)
+        elementals = get_data_properties(element)
+        elementals[:options] = options unless options.empty?
+        { element.name => element_data.merge(elementals) }
+      end
+
+      def render_data_elements(elements)
+        elements.reduce({}) do |results, element|
+          results.merge( get_data_element(element) )
+        end
       end
 
       def build_links_for_this_media_type(transition)
         link = super(transition) #default Hal serialization
         # below add fields specific for Hale
-        data_elements = transition.attributes.reduce({}) do |results, element|
-          results.merge( get_data_element(element) )
-        end
+        data_elements = render_data_elements(transition.descriptors)
         link[:data] = data_elements unless data_elements.empty?
+        link[:method] = transition.interface_method unless transition.interface_method == "GET"
         link
+      end
+      
+      def render_type(field_type, type = SEMANTIC_TYPES[field_type.to_sym])
+        field_type ? "#{type}:#{field_type}" : "#{type}"
       end
     end
   end
