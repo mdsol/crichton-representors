@@ -222,7 +222,7 @@ module Representors
       
       describe '#to_media_type' do
         context 'when it serializes to hale' do
-          let (:hale_hash) { JSON.load(subject.to_media_type(:hale)) }
+          let (:hale_hash) { JSON.load(subject.to_media_type(:hale_json)) }
           #TODO: Fix Hale Serializer - Complex objects not working
 
           it 'has ths associated attributes' do
@@ -240,7 +240,7 @@ module Representors
         end
         
         context 'when it serializes to hal' do
-          let (:hal_hash) { JSON.load(subject.to_media_type(:hal)) }
+          let (:hal_hash) { JSON.load(subject.to_media_type(:hal_json)) }
           
           it 'has ths associated attributes' do
             expect(hal_hash["total_count"]).to eq(subject.properties["total_count"])

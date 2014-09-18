@@ -5,7 +5,7 @@ require 'uri'
 module Representors
   describe Serialization::HalSerializer do
 
-    subject(:serializer) { SerializerFactory.build(:hal, Representor.new(document)) }
+    subject(:serializer) { SerializerFactory.build(:hal_json, Representor.new(document)) }
     let(:result) {JSON.parse(serializer.to_media_type)}
     let(:base_representor) do
       {

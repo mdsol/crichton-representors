@@ -62,7 +62,7 @@ module Representors
     end
 
     context 'with hal+json media type as a symbol' do
-      let(:media_type) { :hal }
+      let(:media_type) { :hal_json }
 
       it_behaves_like 'a hal serializer'
     end
@@ -82,7 +82,7 @@ module Representors
     end
 
     context 'with hale+json media type as a symbol' do
-      let(:media_type) { :hale }
+      let(:media_type) { :hale_json }
 
       it_behaves_like 'a hale serializer'
     end
