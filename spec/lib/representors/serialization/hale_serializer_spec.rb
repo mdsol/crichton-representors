@@ -15,7 +15,7 @@ module Representors
       @options = {}
     end
 
-    subject(:serializer) { SerializerFactory.build(:hale, Representor.new(document)) }
+    subject(:serializer) { SerializerFactory.build(:hale_json, Representor.new(document)) }
     let(:result) {JSON.parse(serializer.to_media_type(@options))}
 
     shared_examples "a hale documents attributes" do |representor_hash, media|
