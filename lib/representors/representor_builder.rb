@@ -1,3 +1,4 @@
+require 'representors/representor_hash'
 module Representors
 
   ##
