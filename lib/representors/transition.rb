@@ -13,10 +13,9 @@ module Representors
     URL_TEMPLATE = "%s{?%s}"
 
     # @example
-    #   hash =  {rel: {link_property: property_name}}
+    #   hash =  {rel: "self", href: "http://example.org"}
     #   Transition.new(hash)
-    #  It must only have one key/vale pair where the value is a hash
-    #  Must contain at least the property :href
+    # Must contain at least the property :href
     # @param [Hash] the abstract representor hash defining a transition
     def initialize(transition_hash)
       @transition_hash = transition_hash
@@ -71,7 +70,7 @@ module Representors
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
       meta_links ||= (retrieve(LINKS_KEY) || []).map do |link_key, link_href|
-        Transition.new( { link_key => { href: link_href } } )
+        Transition.new({rel: link_key, href: link_href})
       end
     end
 
