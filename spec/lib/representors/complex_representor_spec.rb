@@ -232,6 +232,12 @@ module Representors
           it 'has transitions' do
             expect(hale_hash["_links"]).to include("self","list","search","create")
           end
+
+          it 'has meta links' do
+            subject.meta_links.each do |link|
+              expect(hale_hash["_links"][link.rel.to_s]["href"]).to eq(link.templated_uri)
+            end
+          end
           
           it 'has embedded items' do
             expect(hale_hash["_embedded"]["items"].count).to eq(@representor_hash[:embedded].count)
@@ -252,6 +258,12 @@ module Representors
             end
           end
           
+          it 'has meta links' do
+            subject.meta_links.each do |link|
+              expect(hal_hash["_links"][link.rel.to_s]["href"]).to eq(link.templated_uri)
+            end
+          end
+
           it 'has embedded items' do
            expect(hal_hash["_embedded"]["items"].count).to eq(1)
           end
