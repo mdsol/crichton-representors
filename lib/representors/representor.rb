@@ -90,7 +90,7 @@ module Representors
     # @return [Array] who's elements are all <Representors:Transition> objects
     def meta_links
       @meta_links ||= (@representor_hash.links || []).map do |k, v|
-        Representors::Transition.new( { k => { href: v } } )
+        Representors::Transition.new({rel: k, href: v})
       end
     end
 
