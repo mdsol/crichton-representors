@@ -30,10 +30,17 @@ module Representors
 
     shared_examples "a hale documents links" do |representor_hash, media|
       let(:document) { representor_hash.merge(@base_representor) }
-      
-      Representor.new(representor_hash).transitions.each do |item|
+      representor = Representor.new(representor_hash)
+
+      representor.transitions.each do |item|
         it "includes the document transition #{item}" do
           expect(result["_links"][item[:rel]]['href']).to eq(item.templated_uri)
+        end
+      end
+
+      representor.meta_links.each do |transition|
+        it "includes meta link #{transition}" do
+          expect(result["_links"][transition.rel.to_s]['href']).to eq(transition.templated_uri)
         end
       end
     end
