@@ -101,11 +101,6 @@ module Representors
       @descriptions ||= (attributes + parameters)
     end
 
-
-    def data
-      retrieve('data') || {}
-    end
-
     private
 
     # accept retrieving keys by symbol or string
