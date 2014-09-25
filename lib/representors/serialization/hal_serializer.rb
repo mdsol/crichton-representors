@@ -35,8 +35,8 @@ module Representors
         # we want to group by rel name because it is possible to have several transitions with the same
         # rel name. This will become an array in the output. For instance an items array
         # with links to each item
-        grouped_transitions = representor.transitions.group_by{|transition| transition[:rel]}
-        links = build_links(grouped_transitions) + embedded_links + representor.meta_links
+        grouped_transitions = (representor.transitions + representor.meta_links).group_by { |transition| transition[:rel] }
+        links = build_links(grouped_transitions) + embedded_links
         links = links.empty? ? {} : { LINKS_KEY => links.reduce({}, :merge) }
         [base_hash, links, embedded_hals]
       end
