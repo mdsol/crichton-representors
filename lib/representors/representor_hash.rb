@@ -12,13 +12,21 @@ module Representors
   # transitions: [array of hashes]
   # embedded: [hash] where each value can be recursively defined by this same structure
   RepresentorHash  = Struct.new(:id, :doc, :href, :protocol, :attributes, :embedded, :links, :transitions) do
+    DEFAULT_HASH_VALUES = {
+      id: nil,
+      doc: nil,
+      href: nil,
+      protocol: nil,
+      attributes: {},
+      links: [],
+      transitions: [],
+      embedded: {}
+    }.each_value(&:freeze).freeze
+
 
     # be able to create from a hash
     def initialize(hash = {})
-      hash ||= {}
-      hash.each_pair do |key, value|
-        self[key] = value
-      end
+      DEFAULT_HASH_VALUES.each { |k, v| self[k] = hash[k] || (v.is_a?(Enumerable) ? v.dup : v) }
     end
 
     # Be able to generate a new structure with myself and a hash
@@ -32,9 +40,7 @@ module Representors
 
     # to_h does not exists in Ruby < 2.0
     def to_h
-      members.each_with_object({}) { |member, hash| hash[member] = self[member] if self[member] }
+      members.each_with_object({}) { |member, hash| hash[member] = self[member] }
     end
-
   end
-
 end
