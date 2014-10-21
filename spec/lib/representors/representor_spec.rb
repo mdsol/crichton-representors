@@ -10,7 +10,11 @@ module Representors
         protocol: 'http',
         href: 'www.example.com/drds',
         id: 'drds',
-        doc: doc
+        doc: doc,
+        attributes: {},
+        embedded: {},
+        links: [],
+        transitions: []
       }
 
       @semantic_elements = {
