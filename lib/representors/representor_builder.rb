@@ -10,7 +10,7 @@ module Representors
     DATA_KEY = 'data'
 
     def initialize(representor_hash = {})
-      @representor_hash = RepresentorHash.new(representor_hash || {})
+      @representor_hash = RepresentorHash.new(representor_hash)
     end
 
     # Returns a hash usable by the representor class
@@ -20,17 +20,13 @@ module Representors
 
     # Adds an attribute to the Representor. We are creating a hash where the keys are the
     # names of the attributes
-    def add_attribute(name, value, options=nil)
-      options ||= {}
-      @representor_hash.attributes ||= {}
+    def add_attribute(name, value, options={})
       @representor_hash.attributes[name] = options.merge({value: value})
     end
 
     # Adds a transition to the Representor, each transition is a hash of values
     # The transition collection is an Array
-    def add_transition(rel, href, options=nil)
-      options ||= {}
-      @representor_hash.transitions ||= []
+    def add_transition(rel, href, options={})
       link_values = options.merge({href: href, rel: rel})
       if options[DATA_KEY]
         link_values[Transition::DESCRIPTORS_KEY] = link_values.delete(DATA_KEY)
@@ -40,7 +36,6 @@ module Representors
 
     # Adds directly an array to our array of transitions
     def add_transition_array(rel, array_of_hashes)
-      @representor_hash.transitions ||= []
       @representor_hash.transitions += array_of_hashes.map do |link_values|
         link_values[:rel] = rel
         link_values[:href] = link_values.delete(HREF_KEY)
@@ -52,7 +47,6 @@ module Representors
     end
 
     def add_embedded(name, embedded_resource)
-      @representor_hash.embedded ||= {}
       @representor_hash.embedded[name] = embedded_resource
     end
 
