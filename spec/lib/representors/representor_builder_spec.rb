@@ -69,8 +69,8 @@ RSpec.describe Representors::RepresentorBuilder do
   let(:embedded_field) {builder.to_representor_hash.embedded}
 
   context 'empty builder' do
-    it "returns an empty hash" do
-      empty_hash = {}
+    it "returns an empty representor hash" do
+      empty_hash = {:id=>nil, :doc=>nil, :href=>nil, :protocol=>nil, :attributes=>{}, :embedded=>{}, :links=>[], :transitions=>[]}
       expect(builder.to_representor_hash.to_h).to eq(empty_hash)
     end
   end
@@ -87,9 +87,9 @@ RSpec.describe Representors::RepresentorBuilder do
       it_behaves_like 'one attribute added'
     end
 
-    context 'Added an attribute with nil extra options' do
+    context 'Added an attribute with no specified extra options' do
       before do
-        builder.add_attribute(attribute_name, attribute_value, nil)
+        builder.add_attribute(attribute_name, attribute_value)
       end
 
       it_behaves_like 'one attribute added'
