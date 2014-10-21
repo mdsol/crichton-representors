@@ -73,8 +73,7 @@ module Representors
       end
 
       it 'yields a builder' do
-        subject = Representor.new { |builder| builder.add_embedded('contains', @base_representor) }
-        expect(subject.embedded['contains'].to_hash).to eq(@base_representor)
+        expect { |probe| Representor.new(&probe) }.to yield_with_args(RepresentorBuilder)
       end
 
       it 'returns a Representors::Representor instance with a nil argument' do
