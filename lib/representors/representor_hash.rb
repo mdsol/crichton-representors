@@ -32,9 +32,7 @@ module Representors
     # Be able to generate a new structure with myself and a hash
     def merge(hash)
       new_representor_hash = RepresentorHash.new(to_h)
-      hash.each_pair do |key, value|
-        new_representor_hash[key] = value
-      end
+      hash.each_pair { |k, v| new_representor_hash[k] = v }
       new_representor_hash
     end
 
