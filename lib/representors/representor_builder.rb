@@ -21,33 +21,42 @@ module Representors
     # Adds an attribute to the Representor. We are creating a hash where the keys are the
     # names of the attributes
     def add_attribute(name, value, options={})
-      @representor_hash.attributes[name] = options.merge({value: value})
+      new_representor_hash = @representor_hash.dup
+      new_representor_hash.attributes[name] = options.merge({value: value})
+      RepresentorBuilder.new(new_representor_hash)
     end
 
     # Adds a transition to the Representor, each transition is a hash of values
     # The transition collection is an Array
     def add_transition(rel, href, options={})
+      new_representor_hash = @representor_hash.dup
       link_values = options.merge({href: href, rel: rel})
       if options[DATA_KEY]
         link_values[Transition::DESCRIPTORS_KEY] = link_values.delete(DATA_KEY)
       end
-      @representor_hash.transitions.push(link_values)
+      new_representor_hash.transitions.push(link_values)
+      RepresentorBuilder.new(new_representor_hash)
     end
 
     # Adds directly an array to our array of transitions
     def add_transition_array(rel, array_of_hashes)
-      @representor_hash.transitions += array_of_hashes.map do |link_values|
-        link_values[:rel] = rel
-        link_values[:href] = link_values.delete(HREF_KEY)
-        if link_values[DATA_KEY]
-          link_values[Transition::DESCRIPTORS_KEY] = link_values.delete(DATA_KEY)
-        end
-        link_values
+      array_of_hashes.reduce(RepresentorBuilder.new(@representor_hash)) do |memo, transition| 
+        href = transition.delete(:href)
+        binding.pry if href.is_a?(Hash)
+        memo = memo.add_transition(rel, href, transition)
       end
     end
 
     def add_embedded(name, embedded_resource)
-      @representor_hash.embedded[name] = embedded_resource
+      new_representor_hash = @representor_hash.dup
+      new_representor_hash.embedded[name] = embedded_resource
+      embedded_resource = [embedded_resource] unless embedded_resource.is_a?(Array)
+
+      transitions = embedded_resource.map do |resource|
+        resource[:transitions].find { |transition| transition[:rel] == "self" } if resource[:transitions]
+      end.compact
+
+      RepresentorBuilder.new(new_representor_hash).add_transition_array(name, transitions)
     end
 
   end
