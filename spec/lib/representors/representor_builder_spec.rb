@@ -167,7 +167,7 @@ RSpec.describe Representors::RepresentorBuilder do
   describe '#add_transition_array' do
     let(:transition_name) {'mumismo'}
     let(:transition_href) {'/path_to_there'}
-    let(:transition_array) { [{hello: 'world', 'href' => transition_href}, {count: 10}]}
+    let(:transition_array) { [{hello: 'world', :href => transition_href}, {count: 10, href: '/another_path'}]}
 
     before do
       builder.add_transition_array(transition_name, transition_array)
