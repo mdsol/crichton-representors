@@ -142,7 +142,7 @@ RSpec.describe Representors::RepresentorBuilder do
     end
 
     context 'Added a transition with extra options' do
-      let(:extra_key) {'doc'}
+      let(:extra_key) {:doc}
       let(:extra_value) {'Some documentation'}
       let(:extra_options) { {extra_key => extra_value} }
 
