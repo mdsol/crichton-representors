@@ -54,8 +54,6 @@ module Representors
     def add_embedded(name, embedded_resource)
       new_representor_hash = @representor_hash.dup
       new_representor_hash.embedded[name] = embedded_resource
-      embedded_resource = [embedded_resource] unless embedded_resource.is_a?(Array)
-
       RepresentorBuilder.new(new_representor_hash)
     end
 
