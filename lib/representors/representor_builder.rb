@@ -6,8 +6,8 @@ module Representors
   # In the present implementation it will create a hash of a specific format to
   # Initialize the Representor with, this will create classess with it.
   class RepresentorBuilder
-    HREF_KEY = 'href'
-    DATA_KEY = 'data'
+    HREF_KEY = :href
+    DATA_KEY = :data
 
     def initialize(representor_hash = {})
       @representor_hash = RepresentorHash.new(representor_hash)
@@ -30,19 +30,23 @@ module Representors
     # The transition collection is an Array
     def add_transition(rel, href, options={})
       new_representor_hash = @representor_hash.dup
+      options = symbolize_keys(options)
+      options.delete(:method) if options[:method] == Transition::DEFAULT_METHOD
       link_values = options.merge({href: href, rel: rel})
+
       if options[DATA_KEY]
         link_values[Transition::DESCRIPTORS_KEY] = link_values.delete(DATA_KEY)
       end
+
       new_representor_hash.transitions.push(link_values)
       RepresentorBuilder.new(new_representor_hash)
     end
 
     # Adds directly an array to our array of transitions
     def add_transition_array(rel, array_of_hashes)
-      array_of_hashes.reduce(RepresentorBuilder.new(@representor_hash)) do |memo, transition| 
+      array_of_hashes.reduce(RepresentorBuilder.new(@representor_hash)) do |memo, transition|
+        transition = symbolize_keys(transition)
         href = transition.delete(:href)
-        binding.pry if href.is_a?(Hash)
         memo = memo.add_transition(rel, href, transition)
       end
     end
@@ -52,12 +56,16 @@ module Representors
       new_representor_hash.embedded[name] = embedded_resource
       embedded_resource = [embedded_resource] unless embedded_resource.is_a?(Array)
 
-      transitions = embedded_resource.map do |resource|
-        resource[:transitions].find { |transition| transition[:rel] == "self" } if resource[:transitions]
-      end.compact
-
-      RepresentorBuilder.new(new_representor_hash).add_transition_array(name, transitions)
+      RepresentorBuilder.new(new_representor_hash)
     end
+
+    private
+
+    #TODO move into utility module, possibly make recursive
+    def symbolize_keys(hash)
+      Hash[hash.map{|(k,v)| [k.to_sym,v]}]
+    end
+
 
   end
 end
