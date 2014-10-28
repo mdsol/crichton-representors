@@ -61,14 +61,18 @@ module Representors
       # Lambda used in this case to DRY code.  Allows 'is array' functionality to be handled elsewhere
       def build_embedded_links(key, embedded)
         find_embedded_links = ->(obj) { obj.transitions.select { |transition| transition.rel == "self" } }
-        embedded_self = map_or_apply(find_embedded_links, embedded)
-        links = embedded_self.flatten.map { |embed| { href: embed.uri } }
+        if embedded.is_a?(Array)
+          embedded_links = embedded.flat_map { |embed| find_embedded_links.call(embed) }
+          links = embedded_links.map { |embed| build_links_for_this_media_type(embed) }
+        else
+          links = build_links_for_this_media_type(find_embedded_links.call(embedded).first)
+        end
         { key =>  links }
       end
 
       # Lambda used in this case to DRY code.  Allows 'is array' functionality to be handled elsewhere
       def build_embedded_objects(key, embedded)
-        make_media_type = ->(obj) { HalSerializer.new(obj).to_hash }
+        make_media_type = ->(obj) { self.class.new(obj).to_hash }
         embed = map_or_apply(make_media_type, embedded)
         { key =>  embed}
       end
