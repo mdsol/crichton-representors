@@ -31,7 +31,7 @@ module Representors
       SerializerFactory.build(format, self).to_media_type(options)
     end
 
-    # Returns the documentfor the representor
+    # Returns the document for the representor
     #
     # @return [String] the document for the representor
     def doc
@@ -40,7 +40,7 @@ module Representors
 
     # The URI for the object
     #
-    # @note If the URI can't be made from the provided information it constructs one fromt the Ruby ID
+    # @note If the URI can't be made from the provided information it constructs one from the Ruby ID
     # @return [String]
     def identifier
       @identifier ||= begin
@@ -89,14 +89,24 @@ module Representors
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def meta_links
-      @meta_links ||= (@representor_hash.links || []).map do |k, v|
+      @meta_links ||= @representor_hash.links.map do |k, v|
         Representors::Transition.new({rel: k, href: v})
       end
     end
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
-      @transitions ||= (@representor_hash.transitions || []).map { |t| Transition.new(t) }
+      @transitions ||= begin
+        transition_links = @representor_hash.transitions.map { |t| Transition.new(t) }
+        transition_links + @representor_hash.embedded.flat_map do |k,v| 
+          v = v.is_a?(Array) ? v : [v]
+          v.flatten.map do |item|
+            merge_if_exists = ->(x,y) { x.nil? ? {} : x.merge(y) }
+            transition_hash = merge_if_exists.call(item[:transitions].find { |t| t[:rel] == "self" }, {rel: k})
+            Transition.new(transition_hash)
+          end
+        end
+      end
     end
 
     # @return [Array] who's elements are all <Representors:Option> objects
