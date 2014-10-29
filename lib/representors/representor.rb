@@ -97,11 +97,10 @@ module Representors
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
       @transitions ||= begin
+        merge_if_exists = ->(x,y) { x.nil? ? {} : x.merge(y) }
         transition_links = @representor_hash.transitions.map { |t| Transition.new(t) }
-        transition_links + @representor_hash.embedded.flat_map do |k,v| 
-          v = v.is_a?(Array) ? v : [v]
+        transition_links + @representor_hash.embedded.flat_map do |k,*v| 
           v.flatten.map do |item|
-            merge_if_exists = ->(x,y) { x.nil? ? {} : x.merge(y) }
             transition_hash = merge_if_exists.call(item[:transitions].find { |t| t[:rel] == "self" }, {rel: k})
             Transition.new(transition_hash)
           end
