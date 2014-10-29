@@ -21,8 +21,7 @@ module Representors
     end
 
     def deserialize_links(builder, media)
-      links = media[LINKS_KEY] || {}
-      links.each do |link_rel, link_values|
+      (media[LINKS_KEY] || {}).each do |link_rel, link_values|
         link_values = [link_values] unless link_values.is_a?(Array)
         ensure_valid_links!(link_rel, link_values)
         link_values = parse_validators(link_values)
