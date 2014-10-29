@@ -66,20 +66,13 @@ module Representors
     # contain an array or a single embedded resource. An embedded resource is a full document so
     # we create a new HalDeserializer for each.
     def deserialize_embedded(builder, media)
-      embedded = media[EMBEDDED_KEY] || {}
-      embedded.each do |name, value|
-        if value.is_a?(Array)
-          resources = value.map do |one_embedded_resource|
-            self.class.new(one_embedded_resource).to_representor_hash.to_h
-          end
-          builder = builder.add_embedded(name, resources)
-        else
-          resource_hash = self.class.new(value).to_representor_hash.to_h
-          builder = builder.add_embedded(name, resource_hash)
-        end
+      make_embedded_resource = ->(x) { self.class.new(x).to_representor_hash.to_h }
+      (media[EMBEDDED_KEY] || {}).each do |name, value|
+        resource_hash = map_or_apply(make_embedded_resource, value)
+        builder = builder.add_embedded(name, resource_hash)
       end
-
       builder
     end
+
   end
 end

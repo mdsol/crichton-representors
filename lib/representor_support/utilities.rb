@@ -33,5 +33,9 @@ module RepresentorSupport
       end
     end
 
+    def map_or_apply(proc, obj)
+      obj.is_a?(Array) ? obj.map { |sub| proc.(sub) } : proc.(obj)
+    end
+
   end
 end

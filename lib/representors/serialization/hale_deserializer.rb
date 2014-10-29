@@ -3,8 +3,6 @@ require 'representors/serialization/hal_deserializer'
 
 module Representors
   class HaleDeserializer < HalDeserializer
-    include RepresentorSupport::Utilities
-
     media_symbol :hale
     media_type 'application/vnd.hale+json'
 
