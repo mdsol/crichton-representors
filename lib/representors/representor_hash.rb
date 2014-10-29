@@ -26,7 +26,7 @@ module Representors
 
     # be able to create from a hash
     def initialize(hash = {})
-      DEFAULT_HASH_VALUES.each { |k, v| self[k] = hash[k] || (v.is_a?(Enumerable) ? v.dup : v) }
+      DEFAULT_HASH_VALUES.each { |k, v| self[k] = dup_or_self(hash[k] || v) }
     end
 
     # Be able to generate a new structure with myself and a hash
@@ -39,6 +39,16 @@ module Representors
     # to_h does not exists in Ruby < 2.0
     def to_h
       members.each_with_object({}) { |member, hash| hash[member] = self[member] }
+    end
+
+    private
+
+    def dup_or_self(obj)
+      begin
+        obj.dup
+      rescue TypeError
+        obj
+      end
     end
   end
 end
