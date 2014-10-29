@@ -1,3 +1,5 @@
+require 'representor_support/utilities'
+
 module Representors
   # This is the structure shared between the builder and the representor.
   # This class allows to pass all the data to the representor without polluting it with methods
@@ -12,6 +14,8 @@ module Representors
   # transitions: [array of hashes]
   # embedded: [hash] where each value can be recursively defined by this same structure
   RepresentorHash  = Struct.new(:id, :doc, :href, :protocol, :attributes, :embedded, :links, :transitions) do
+    include RepresentorSupport::Utilities
+
     DEFAULT_HASH_VALUES = {
       id: nil,
       doc: nil,
