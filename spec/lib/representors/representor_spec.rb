@@ -77,7 +77,10 @@ module Representors
       end
 
       it 'yields a builder' do
-        expect { |probe| Representor.new(&probe) }.to yield_with_args(RepresentorBuilder)
+        Representor.new do |builder|
+          expect(builder).to be_an_instance_of(RepresentorBuilder)
+          builder
+        end
       end
 
       it 'returns a Representors::Representor instance with a nil argument' do
