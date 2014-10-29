@@ -67,13 +67,13 @@ module Representors
 
     # @return [Hash] the resource attributes inferred from representor[:semantics]
     def properties
-      @properties ||= Hash[(@representor_hash.attributes).map { |k, v| [ k, v[VALUE_KEY]] }]
+      @properties ||= Hash[@representor_hash.attributes.map { |k, v| [ k, v[VALUE_KEY]] }]
     end
 
     # @return [Enumerable] who's elements are all <Representors:Representor> objects
     def embedded
       @embedded ||= begin
-        embedded_representors = (@representor_hash.embedded).map do |name, values|
+        embedded_representors = @representor_hash.embedded.map do |name, values|
           if values.is_a?(Array)
             several_representors = values.map do |value|
               Representor.new(value)
