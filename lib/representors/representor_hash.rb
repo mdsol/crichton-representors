@@ -41,14 +41,5 @@ module Representors
       members.each_with_object({}) { |member, hash| hash[member] = self[member] }
     end
 
-    private
-
-    def dup_or_self(obj)
-      begin
-        obj.dup
-      rescue TypeError
-        obj
-      end
-    end
   end
 end
