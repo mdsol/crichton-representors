@@ -1,10 +1,13 @@
 require 'yaml'
 require 'representors/options'
+require 'representor_support/utilities'
 
 module Representors
   ##
   # Manages the respresentation of hypermedia fields for different media-types.
   class Field
+    include RepresentorSupport::Utilities
+
     SIMPLE_METHODS = %w(name value default description field_type type data_type cardinality).map(&:to_sym)
     DESCRIPTORS_KEY = :descriptors
     ATTRIBUTE_FIELDS = 'attribute'
@@ -22,7 +25,7 @@ module Representors
     # @param [Hash] the abstract representation of a Field
     def initialize(field_hash)
       name = field_hash.keys.first
-      field_hash[name] = Hash[field_hash[name].map{|(k,v)| [k.to_sym,v]}]
+      field_hash[name] = symbolize_keys(field_hash[name])
       @field_hash = field_hash[name].clone
       @field_hash[NAME_KEY] = name
     end
