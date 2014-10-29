@@ -1,13 +1,17 @@
+require 'representor_support/utilities'
 require 'representors/serialization/hal_deserializer'
 
 module Representors
   class HaleDeserializer < HalDeserializer
+    include RepresentorSupport::Utilities
+
     media_symbol :hale
     media_type 'application/vnd.hale+json'
 
     META_KEY = '_meta'.freeze
     REF_KEY = '_ref'.freeze
     DATA_KEY = 'data'.freeze
+    OPTIONS_KEY = 'options'.freeze
     RESERVED_KEYS = HalDeserializer::RESERVED_KEYS +  [META_KEY, REF_KEY]
     RESERVED_FIELD_VALUES = Field::SIMPLE_METHODS + [Field::NAME_KEY, Field::SCOPE_KEY, Field::OPTIONS_KEY, Field::VALIDATORS_KEY, Field::DESCRIPTORS_KEY]
 
@@ -27,7 +31,6 @@ module Representors
         link_values = parse_options(link_values)
         builder = builder.add_transition_array(link_rel, link_values)
       end
-
       builder
     end
 
@@ -43,53 +46,53 @@ module Representors
 
     def deep_find_and_transform!(obj, target_key, &blk)
       if obj.respond_to?(:key) && obj.key?(target_key)
-        yield obj, target_key
+        yield obj
       elsif [Array, Hash].include?(obj.class)
         obj.each { |*el| deep_find_and_transform!(el.last, target_key, &blk) }
       end
     end
 
     def dereference_meta_media(media)
-      media = media.dup
+      media = deep_dup(media)
       # Remove _meta from media to prevent serialization as property
       meta_info = media.delete(META_KEY)
-      deep_find_and_transform!(media, REF_KEY) do |media, ref_key|
-        media.delete(ref_key).each { |ref| media[ref] = meta_info[ref] }
+      deep_find_and_transform!(media, REF_KEY) do |media|
+        media.delete(REF_KEY).each { |ref| media[ref] = meta_info[ref] }
       end
       media
     end
 
     def parse_options(media)
-      media = media.dup
-
-      deep_find_and_transform!(media, 'options') do |media, opt_key|
-        if !media[opt_key].is_a?(Hash) && media[opt_key].first.is_a?(Hash)
-          new_options = media[opt_key].reduce({}) do |memo, hash|
-            memo.merge!(hash)
-          end
-          media[opt_key] = { 'hash' => new_options }
-        elsif !media[opt_key].is_a?(Hash)
-          media['options'] = { 'list' => media[opt_key].dup }
-        end
-      end
-
+      media = deep_dup(media)
+      deep_find_and_transform!(media, OPTIONS_KEY) { |media| parse_options!(media) }
       media
     end
 
-    def parse_validators(media)
-      media = media.dup
-
-      deep_find_and_transform!(media, 'data') do |media, data_key|
-        media[data_key].each do |field_key, field_value|
-          arr = []
-          field_value.each do |k,v|
-            arr << {k => media[data_key][field_key].delete(k)} unless RESERVED_FIELD_VALUES.include?(k.to_sym)
-          end
-          media[data_key][field_key][Field::VALIDATORS_KEY] = arr unless arr.empty?
+    def parse_options!(media)
+      if media[OPTIONS_KEY].is_a?(Array) && media[OPTIONS_KEY].first.is_a?(Hash)
+        new_options = media[OPTIONS_KEY].reduce({}) do |memo, hash|
+          memo.merge!(hash)
         end
+        media[OPTIONS_KEY] = { 'hash' => new_options }
+      elsif !media[OPTIONS_KEY].is_a?(Hash)
+        media[OPTIONS_KEY] = { 'list' => media[OPTIONS_KEY].dup }
       end
+    end
 
+    def parse_validators(media)
+      media = deep_dup(media)
+      deep_find_and_transform!(media, DATA_KEY) { |media| parse_data!(media) }
       media
+    end
+
+    def parse_data!(media)
+      media[DATA_KEY].each do |field_key, field_value|
+        arr = []
+        field_value.each do |k,v|
+          arr << {k => media[DATA_KEY][field_key].delete(k)} unless RESERVED_FIELD_VALUES.include?(k.to_sym)
+        end
+        media[DATA_KEY][field_key][Field::VALIDATORS_KEY] = arr unless arr.empty?
+      end
     end
 
   end
