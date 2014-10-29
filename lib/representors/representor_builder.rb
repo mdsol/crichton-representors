@@ -21,7 +21,7 @@ module Representors
     # Adds an attribute to the Representor. We are creating a hash where the keys are the
     # names of the attributes
     def add_attribute(name, value, options={})
-      new_representor_hash = @representor_hash.dup
+      new_representor_hash = RepresentorHash.new(@representor_hash.to_h)
       new_representor_hash.attributes[name] = options.merge({value: value})
       RepresentorBuilder.new(new_representor_hash)
     end
@@ -29,7 +29,7 @@ module Representors
     # Adds a transition to the Representor, each transition is a hash of values
     # The transition collection is an Array
     def add_transition(rel, href, options={})
-      new_representor_hash = @representor_hash.dup
+      new_representor_hash = RepresentorHash.new(@representor_hash.to_h)
       options = symbolize_keys(options)
       options.delete(:method) if options[:method] == Transition::DEFAULT_METHOD
       link_values = options.merge({href: href, rel: rel})
@@ -52,7 +52,7 @@ module Representors
     end
 
     def add_embedded(name, embedded_resource)
-      new_representor_hash = @representor_hash.dup
+      new_representor_hash = RepresentorHash.new(@representor_hash.to_h)
       new_representor_hash.embedded[name] = embedded_resource
       RepresentorBuilder.new(new_representor_hash)
     end
