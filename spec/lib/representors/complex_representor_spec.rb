@@ -253,7 +253,7 @@ module Representors
           end
           
           it 'has transitions' do
-            subject.transitions.reject { |transition| transition.rel == :items }.each do |link|
+            subject.transitions.select { |transition| transition.rel != :items }.each do |link|
               expect(hal_hash["_links"][link.rel]["href"]).to eq(link.templated_uri)
             end
           end
