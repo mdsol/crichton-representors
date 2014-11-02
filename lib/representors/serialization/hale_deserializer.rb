@@ -11,7 +11,7 @@ module Representors
     DATA_KEY = 'data'.freeze
     OPTIONS_KEY = 'options'.freeze
     RESERVED_KEYS = HalDeserializer::RESERVED_KEYS +  [META_KEY, REF_KEY]
-    RESERVED_FIELD_VALUES = Field::SIMPLE_METHODS + [Field::NAME_KEY, Field::SCOPE_KEY, Field::OPTIONS_KEY, Field::VALIDATORS_KEY, Field::DESCRIPTORS_KEY]
+    RESERVED_FIELD_VALUES = Field::SIMPLE_METHODS + [Field::NAME_KEY, Field::SCOPE_KEY, Field::OPTIONS_KEY, Field::VALIDATORS_KEY, Field::DESCRIPTORS_KEY, DATA_KEY]
 
     #TODO Make this not terrible (refactor hal deserializer to inherit from hale deserializer)
     # move all logic here
@@ -43,6 +43,7 @@ module Representors
 
     def deep_find_and_transform!(obj, target_key, &blk)
       if obj.respond_to?(:key) && obj.key?(target_key)
+        deep_find_and_transform!(obj[target_key], target_key, &blk)
         yield obj
       elsif [Array, Hash].include?(obj.class)
         obj.each { |*el| deep_find_and_transform!(el.last, target_key, &blk) }
@@ -52,9 +53,10 @@ module Representors
     def dereference_meta_media(media)
       media = deep_dup(media)
       # Remove _meta from media to prevent serialization as property
-      meta_info = media.delete(META_KEY)
-      deep_find_and_transform!(media, REF_KEY) do |media|
-        media.delete(REF_KEY).each { |ref| media[ref] = meta_info[ref] }
+      if meta_info = media.delete(META_KEY)
+        deep_find_and_transform!(media, REF_KEY) do |media|
+          media.delete(REF_KEY).each { |ref| media[ref] = meta_info[ref] }
+        end
       end
       media
     end
@@ -67,12 +69,10 @@ module Representors
 
     def parse_options!(media)
       if media[OPTIONS_KEY].is_a?(Array) && media[OPTIONS_KEY].first.is_a?(Hash)
-        new_options = media[OPTIONS_KEY].reduce({}) do |memo, hash|
-          memo.merge!(hash)
-        end
+        new_options = media[OPTIONS_KEY].reduce({}) { |memo, hash| memo.merge!(hash) }
         media[OPTIONS_KEY] = { 'hash' => new_options }
       elsif !media[OPTIONS_KEY].is_a?(Hash)
-        media[OPTIONS_KEY] = { 'list' => media[OPTIONS_KEY].dup }
+        media[OPTIONS_KEY] = { 'list' => deep_dup(media[OPTIONS_KEY]) }
       end
     end
 
