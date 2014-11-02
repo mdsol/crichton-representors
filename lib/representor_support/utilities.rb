@@ -15,9 +15,7 @@ module RepresentorSupport
         obj.each { |k,v| result[k] = deep_dup(v) }
         result
       elsif obj.is_a?(Array)
-        result = []
-        obj.each { |el| result << deep_dup(el) }
-        result
+        obj.map { |el| deep_dup(el) }
       else
         dup_or_self(obj)
       end
