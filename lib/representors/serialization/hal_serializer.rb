@@ -77,10 +77,6 @@ module Representors
         { key =>  embed}
       end
 
-      def map_or_apply(proc, obj)
-        obj.is_a?(Array) ? obj.map { |sub| proc.(sub) } : proc.(obj)
-      end
-
       # @param [Hash] transitions. A hash on the shape "rel_name" => [Transition]
       # The value for the rel_name usually will have only one transition but when we are building an
       # array of transitions will have many.
