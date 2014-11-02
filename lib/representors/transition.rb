@@ -38,6 +38,9 @@ module Representors
 
     # @return [String] The URI for the object
     def uri
+      #TODO we are splitting here in case the URL is already templated.  In the
+      # future, this should be replaced with something like Addressable::Template,
+      # as should templated_uri
       retrieve(HREF_KEY).split('{').first
     end
 
