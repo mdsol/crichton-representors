@@ -92,7 +92,7 @@ module Representors
         # below add fields specific for Hale
         data_elements = render_data_elements(transition.descriptors)
         link[:data] = data_elements unless data_elements.empty?
-        link[:method] = transition.interface_method unless transition.interface_method == "GET"
+        link[:method] = transition.interface_method unless transition.interface_method == Transition::DEFAULT_METHOD
         link
       end
       

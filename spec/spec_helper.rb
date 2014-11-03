@@ -8,6 +8,7 @@ require 'rspec'
 require 'debugger'
 require 'bundler'
 require 'simplecov'
+require 'pry'
 
 Debugger.start
 Bundler.setup

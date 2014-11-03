@@ -21,7 +21,7 @@ module Representors
     # @param [Hash] hash the abstract representor hash defining a resource
     def initialize(hash = {}, builder = nil)
       builder ||= RepresentorBuilder.new(hash)
-      yield builder if block_given?
+      builder = yield builder if block_given?
       @representor_hash = builder.to_representor_hash
     end
 
@@ -31,7 +31,7 @@ module Representors
       SerializerFactory.build(format, self).to_media_type(options)
     end
 
-    # Returns the documentfor the representor
+    # Returns the document for the representor
     #
     # @return [String] the document for the representor
     def doc
@@ -40,7 +40,7 @@ module Representors
 
     # The URI for the object
     #
-    # @note If the URI can't be made from the provided information it constructs one fromt the Ruby ID
+    # @note If the URI can't be made from the provided information it constructs one from the Ruby ID
     # @return [String]
     def identifier
       @identifier ||= begin
@@ -67,13 +67,13 @@ module Representors
 
     # @return [Hash] the resource attributes inferred from representor[:semantics]
     def properties
-      @properties ||= Hash[(@representor_hash.attributes || {}).map { |k, v| [ k, v[VALUE_KEY]] }]
+      @properties ||= Hash[@representor_hash.attributes.map { |k, v| [ k, v[VALUE_KEY]] }]
     end
 
     # @return [Enumerable] who's elements are all <Representors:Representor> objects
     def embedded
       @embedded ||= begin
-        embedded_representors = (@representor_hash.embedded || {}).map do |name, values|
+        embedded_representors = @representor_hash.embedded.map do |name, values|
           if values.is_a?(Array)
             several_representors = values.map do |value|
               Representor.new(value)
@@ -89,14 +89,28 @@ module Representors
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def meta_links
-      @meta_links ||= (@representor_hash.links || []).map do |k, v|
+      @meta_links ||= @representor_hash.links.map do |k, v|
         Representors::Transition.new({rel: k, href: v})
       end
     end
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
-      @transitions ||= (@representor_hash.transitions || []).map { |t| Transition.new(t) }
+      @transitions ||= begin
+        @representor_hash.transitions.map { |t| Transition.new(t) } + embedded_transitions
+      end
+    end
+
+   # @return [Array] who's elements are all <Representors:Transition> objects from the self links of
+   # embedded items, updating the rel to reflect the embedded items key
+    def embedded_transitions
+      merge_if_exists = ->(x,y) { x.nil? ? {} : x.merge(y) }
+      @representor_hash.embedded.flat_map do |k,*v|
+        v.flatten.map do |item|
+          transition_hash = merge_if_exists.call(item[:transitions].find { |t| t[:rel] == "self" }, {rel: k})
+          Transition.new(transition_hash)
+        end
+      end
     end
 
     # @return [Array] who's elements are all <Representors:Option> objects

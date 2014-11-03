@@ -38,7 +38,10 @@ module Representors
 
     # @return [String] The URI for the object
     def uri
-      retrieve(HREF_KEY)
+      #TODO we are splitting here in case the URL is already templated.  In the
+      # future, this should be replaced with something like Addressable::Template,
+      # as should templated_uri
+      retrieve(HREF_KEY).split('{').first
     end
 
     # @param [String] key on the transitions hash to retrieve
@@ -59,6 +62,7 @@ module Representors
       @templated_uri ||= if parameters.empty?
         uri
       else
+        #TODO replace with something like Addressable::Template
         URL_TEMPLATE % [uri, parameters.map { |p| p.name }.join(",")]
       end
     end

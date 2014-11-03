@@ -10,7 +10,11 @@ module Representors
         protocol: 'http',
         href: 'www.example.com/drds',
         id: 'drds',
-        doc: doc
+        doc: doc,
+        attributes: {},
+        embedded: {},
+        links: [],
+        transitions: []
       }
 
       @semantic_elements = {
@@ -73,8 +77,10 @@ module Representors
       end
 
       it 'yields a builder' do
-        subject = Representor.new { |builder| builder.add_embedded('contains', @base_representor) }
-        expect(subject.embedded['contains'].to_hash).to eq(@base_representor)
+        Representor.new do |builder|
+          expect(builder).to be_an_instance_of(RepresentorBuilder)
+          builder
+        end
       end
 
       it 'returns a Representors::Representor instance with a nil argument' do
