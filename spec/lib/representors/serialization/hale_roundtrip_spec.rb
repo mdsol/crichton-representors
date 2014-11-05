@@ -19,8 +19,14 @@ module Representors
       @file = File.read("#{SPEC_DIR}/fixtures/complex_hale_document.json")
     end
 
-    Dir["#{SPEC_DIR}/fixtures/hale_spec_*.json"].each do |path|
-      it "round trips the hale spec #{path[/hale_spec_(.*?)_example/, 1]} document" do
+    Dir["#{SPEC_DIR}/fixtures/hale_spec_examples/*.json"].each do |path|
+      it "round trips the hale spec #{path[/hale_spec_examples\/(.*?)\.json/, 1]} document" do
+        @file = File.read(path)
+      end
+    end
+
+    Dir["#{SPEC_DIR}/fixtures/hale_tutorial_examples/*.json"].each do |path|
+      it "round trips the hale tutorial #{path[/hale_tutorial_examples\/(.*?)\.json/, 1]} document" do
         @file = File.read(path)
       end
     end

@@ -268,12 +268,12 @@ module Representors
           expect(link_data["size"]["type"]).to eq("integer:number")
           expect(link_data["size"]["in"]).to eq(true)
           expect(link_data["size"]["required"]).to eq(true)
-          expect(link_data["size"]["options"]).to eq({
-                            "small" => 8,
-                            "medium" => 12,
-                            "large" => 16,
-                            "extra-large" => 20
-                    })          
+          expect(link_data["size"]["options"]).to eq([
+                            {"small" => 8},
+                            {"medium" => 12},
+                            {"large" => 16},
+                            {"extra-large" => 20}
+                    ])
           
           expect(link_data["shots"]["type"]).to eq("integer:range")
           expect(link_data["shots"]["min"]).to eq(0)
@@ -563,12 +563,12 @@ module Representors
           expect(link_data["size"]["type"]).to eq("integer:number")
           expect(link_data["size"]["in"]).to eq(true)
           expect(link_data["size"]["required"]).to eq(true)
-          expect(link_data["size"]["options"]).to eq({
-                            "small" => 8,
-                            "medium" => 12,
-                            "large" => 16,
-                            "extra-large" => 20
-                    })          
+          expect(link_data["size"]["options"]).to eq([
+                            {"small" => 8},
+                            {"medium" => 12},
+                            {"large" => 16},
+                            {"extra-large" => 20}
+                    ])
         
           expect(link_data["shots"]["type"]).to eq("integer:range")
           expect(link_data["shots"]["min"]).to eq(0)
