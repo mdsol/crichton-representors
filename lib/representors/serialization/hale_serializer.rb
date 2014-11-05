@@ -74,7 +74,15 @@ module Representors
       end
 
       def get_data_element(element)
-        options = element.options.datalist? ? { '_ref' => [element.options.id] } : element.options.to_data
+        options = if element.options.datalist?
+          { '_ref' => [element.options.id] }
+        else
+          if element.options.type == Representors::Options::HASH_TYPE
+            element.options.to_hash.map { |option| Hash[*option] }
+          else
+            element.options.to_list
+          end
+        end
         element_data = get_data_validators(element)
         elementals = get_data_properties(element)
         elementals[:options] = options unless options.empty?
