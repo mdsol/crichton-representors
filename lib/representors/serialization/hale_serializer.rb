@@ -76,12 +76,10 @@ module Representors
       def get_data_element(element)
         options = if element.options.datalist?
           { '_ref' => [element.options.id] }
+        elsif element.options.type == Representors::Options::HASH_TYPE
+          element.options.to_hash.map { |option| Hash[*option] }
         else
-          if element.options.type == Representors::Options::HASH_TYPE
-            element.options.to_hash.map { |option| Hash[*option] }
-          else
-            element.options.to_list
-          end
+          element.options.to_list
         end
         element_data = get_data_validators(element)
         elementals = get_data_properties(element)
