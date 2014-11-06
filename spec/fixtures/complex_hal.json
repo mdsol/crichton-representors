@@ -1,0 +1,95 @@
+{
+    "total_count": 2,
+    "_links": {
+        "self": {
+            "href": "http://example.com/drds"
+        },
+        "list": {
+            "href": "http://example.com/drds/list",
+            "profile": "http://alps.io/schema.org/DRDs"
+        },
+        "search": {
+            "href": "http://example.com/drds/search{?search_term,name}",
+            "templated": true
+        },
+        "create": {
+            "href": "www.example.com/drds/create"
+        },
+        "items": [
+            {
+                "href": "www.example.com/drds/show/173875983789",
+                "profile": "http://alps.io/schema.org/DRD"
+            }
+        ],
+        "profile": {
+            "href": "http://www.example.com/drds/show/DRDs"
+        },
+        "help": {
+            "href": "http://alps.io/schema.org/DRDs"
+        }
+    },
+    "_embedded": {
+        "items": [
+            {
+                "uuid": "007d8e12-babd-4f2c-b01e-8b5e2f749e1z",
+                "name": "drdname",
+                "status": "compliant",
+                "old_status": "compliant",
+                "kind": "nonstandard",
+                "size": "medium",
+                "leviathan_uuid": "1234-9abc-5678-def1",
+                "built_at": "2013-03-20T00:00:00+00:01",
+                "leviathan": "http://alps.io/schema.org/Thing/Leviathan",
+                "location": [
+                    "moya",
+                    "japan"
+                ],
+                "location_detail": "inside",
+                "leviathan_email": "joe@grumpycat.org",
+                "destroyed": "destroyed",
+                "leviathan_health_points": 32,
+                "term": "blunderbus",
+                "_links": {
+                    "self": {
+                        "href": "www.example.com/drds/show/173875983789",
+                        "profile": "http://alps.io/schema.org/DRD"
+                    },
+                    "show": {
+                        "href": "www.example.com/drds/show/173875983789",
+                        "profile": "http://alps.io/schema.org/DRD"
+                    },
+                    "leviathan-link": {
+                        "href": "http://example.com/drds/Leviathan",
+                        "name": "leviathan",
+                        "profile": "http://alps.io/schema.org/Leviathan#leviathan"
+                    },
+                    "repair-history": {
+                        "href": "http://example.com/drds/Repairs",
+                        "profile": "http://alps.io/schema.org/Repairs#history"
+                    },
+                    "activate": {
+                        "href": "http://example.com/drds/activate/173875983789",
+                        "profile": "http://alps.io/schema.org/DRD"
+                    },
+                    "deactivate": {
+                        "href": "http://example.com/drds/show/173875983789",
+                        "profile": "http://alps.io/schema.org/DRD"
+                    },
+                    "delete": {
+                        "href": "http://example.com/drds/show/173875983789"
+                    },
+                    "update": {
+                        "href": "http://example.com/drds/show/173875983789",
+                        "profile": "http://alps.io/schema.org/DRDs#update"
+                    },
+                    "profile": {
+                        "href": "http://www.example.com/drds/show/DRD"
+                    },
+                    "help": {
+                        "href": "http://alps.io/schema.org/DRD"
+                    }
+                }
+            }
+        ]
+    }
+}
