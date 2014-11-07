@@ -97,20 +97,17 @@ module Representors
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
       @transitions ||= begin
-        @representor_hash.transitions.map { |t| Transition.new(t) } + embedded_transitions
+        transition_hashes = (@representor_hash.transitions + embedded_transitions_hashes).uniq do |hash|
+          [hash[:rel], hash[:href]]
+        end
+        transition_hashes.map { |hash| Transition.new(hash) }
       end
     end
 
    # @return [Array] who's elements are all <Representors:Transition> objects from the self links of
    # embedded items, updating the rel to reflect the embedded items key
     def embedded_transitions
-      merge_if_exists = ->(x,y) { x.nil? ? {} : x.merge(y) }
-      @representor_hash.embedded.flat_map do |k,*v|
-        v.flatten.map do |item|
-          transition_hash = merge_if_exists.call(item[:transitions].find { |t| t[:rel] == "self" }, {rel: k})
-          Transition.new(transition_hash)
-        end
-      end
+      embedded_transitions_hashes.map { |hash| Transition.new(hash) }
     end
 
     # @return [Array] who's elements are all <Representors:Option> objects
@@ -123,6 +120,18 @@ module Representors
         options.select { |o| o.datalist? }
       end
     end
+
+    private
+
+    def embedded_transitions_hashes
+      merge_if_exists = ->(x,y) { x.nil? ? {} : x.merge(y) }
+      @representor_hash.embedded.flat_map do |k,*v|
+        v.flatten.map do |item|
+          transition_hash = merge_if_exists.call(item[:transitions].find { |t| t[:rel] == "self" }, {rel: k})
+        end
+      end
+    end
+
 
   end
 end
