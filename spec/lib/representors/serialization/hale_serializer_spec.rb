@@ -457,6 +457,20 @@ module Representors
           }
         end
 
+        let(:embedded_transitions) { {transitions: [
+              {:href=>"www.example.com/coffeebucks/1", :rel=>"order_list"},
+              {:href=>"www.example.com/coffeebucks/2", :rel=>"order_list"},
+              {:href=>"www.example.com/coffeebucks/3", :rel=>"order_list"}
+            ]
+          } 
+        }
+
+        it 'does not add embedded links if they already exist' do
+          representor = Representor.new(representor_hash.merge(@base_representor).merge(embedded_transitions))
+          serialized_hale = JSON.parse(Serialization::HaleSerializer.new(representor).to_media_type)
+          expect(serialized_hale["_links"]["order_list"].count).to eq(3)
+        end
+
         it_behaves_like 'a hale documents embedded collection', representor_hash, @options
       end
 
