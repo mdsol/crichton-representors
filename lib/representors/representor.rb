@@ -124,10 +124,14 @@ module Representors
     private
 
     def embedded_transitions_hashes
-      merge_if_exists = ->(x,y) { x.nil? ? {} : x.merge(y) }
       @representor_hash.embedded.flat_map do |k,*v|
         v.flatten.map do |item|
-          merge_if_exists.call(item[:transitions].find { |t| t[:rel] == "self" }, {rel: k})
+          if trans_hash = item[:transitions].find { |t| t[:rel] == "self" }
+            trans_hash.merge(prop_hash) if prop_hash = item[:transitions].find { |t| t[:rel] == "profile" }
+            trans_hash.merge(rel: k)
+          else
+            {}
+          end
         end
       end
     end

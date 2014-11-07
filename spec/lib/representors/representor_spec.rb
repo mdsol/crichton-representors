@@ -137,10 +137,31 @@ module Representors
 
       describe '#embedded' do
         let(:embedded_resource) {'embedded_resource'}
+        let(:profile_link) { "http://alps.io/schema.org/Thing" }
+
         before do
           @count = 3
           @representor_hash = RepresentorHash.new(@base_representor).merge(@semantic_elements)
-          @representor_hash.embedded = { embedded_resource => [@representor_hash.clone]*@count}
+          embedded_resources = []
+
+          @transitions_hash = { 
+              transitions: [
+                  { doc: 'Returns a list of DRDs',
+                    type: 'safe',
+                    rel: 'self'
+                  }
+              ]
+            }
+
+          @count.times do |i|
+            transitions_hash = deep_dup(@transitions_hash)
+            transitions_hash[:transitions][0][:profile] = profile_link if i == 0
+            transitions_hash[:transitions][0][:href] = "some.example.com/list/#{i}"
+
+            embedded_resources << deep_dup(@representor_hash).merge(transitions_hash)
+          end
+
+          @representor_hash.embedded = { embedded_resource => embedded_resources }
         end
 
         it 'returns a set of Representor objects' do
@@ -159,6 +180,12 @@ module Representors
         it 'doesn\'t blow up even if nothing is embedded' do
           @representor_hash = @base_representor
           expect(subject.embedded.count).to eq(0)
+        end
+
+        it 'includes appropriate profile links if it exists' do
+          expect(subject.transitions.first[:profile]).to eq(profile_link)
+          expect(subject.transitions[1][:profile]).to be_nil
+          expect(subject.transitions.last[:profile]).to be_nil
         end
       end
 
