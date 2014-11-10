@@ -2,6 +2,8 @@ require 'representor_support/utilities'
 require 'representors/serialization/hal_deserializer'
 
 module Representors
+  # Class for a Hale document deserializer.  Built against Hale version 0.0.1
+  # @since 0.0.2
   class HaleDeserializer < HalDeserializer
     media_symbol :hale
     media_type 'application/vnd.hale+json'
