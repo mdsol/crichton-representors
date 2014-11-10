@@ -139,7 +139,7 @@ module Representors
         v.flatten.map do |item|
           trans_hash = item[:transitions].find { |t| t[:rel] == "self" }
           if trans_hash
-            profile_href = item[:links][:profile] if item[:links]
+            profile_href = item[:links]["profile"] if item[:links]
             trans_hash = trans_hash.merge(profile: profile_href) if profile_href
             trans_hash.merge(rel: k)
           else

@@ -184,7 +184,7 @@ module Representors
         end
 
         it 'includes appropriate profile links if it exists' do
-          expect(subject.transitions.first[:profile]).to eq(profile_link[:profile])
+          expect(subject.transitions.first[:profile]).to eq(profile_link["profile"])
           expect(subject.transitions[1][:profile]).to be_nil
           expect(subject.transitions.last[:profile]).to be_nil
         end
