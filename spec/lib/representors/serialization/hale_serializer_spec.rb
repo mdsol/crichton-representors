@@ -19,7 +19,7 @@ module Representors
     let(:result) {JSON.parse(serializer.to_media_type(@options))}
 
     shared_examples "a hale documents attributes" do |representor_hash, media|
-      let(:document) { representor_hash.merge(@base_representor) }
+      let(:document) { RepresentorHash.new(representor_hash).merge(@base_representor) }
 
       representor_hash[:attributes].each do |k, v|
         it "includes the document attribute #{k} and associated value" do
