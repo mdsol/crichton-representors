@@ -12,6 +12,7 @@ module Representors
     PROTOCOL_TEMPLATE = "%s://%s"
     UNKNOWN_PROTOCOL = 'ruby_id'
     VALUE_KEY = :value
+    META_LINK_FIELDS = ['profile', 'help', 'type', 'self']
 
     # @example
     #  representor = Representors::Representor.new do |builder|
@@ -89,8 +90,18 @@ module Representors
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def meta_links
-      @meta_links ||= @representor_hash.links.map do |k, v|
-        Representors::Transition.new({rel: k, href: v})
+      @meta_links ||= begin
+        links_from_transitions = {}
+
+        transitions.each do |transition|
+          if META_LINK_FIELDS.include?(transition.rel)
+            links_from_transitions[transition.rel.to_sym] = transition.uri
+          end
+        end
+
+        @representor_hash.links.merge(links_from_transitions).map do |k, v|
+          Representors::Transition.new({rel: k, href: v})
+        end.uniq { |transition| [transition.rel, transition.uri] }
       end
     end
 
@@ -128,8 +139,8 @@ module Representors
         v.flatten.map do |item|
           trans_hash = item[:transitions].find { |t| t[:rel] == "self" }
           if trans_hash
-            prop_hash = item[:transitions].find { |t| t[:rel] == "profile" }
-            trans_hash.merge(prop_hash) if prop_hash
+            profile_href = item[:links]["profile"] if item[:links]
+            trans_hash = trans_hash.merge(profile: profile_href) if profile_href
             trans_hash.merge(rel: k)
           else
             {}

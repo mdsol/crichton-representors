@@ -13,7 +13,7 @@ module Representors
         doc: doc,
         attributes: {},
         embedded: {},
-        links: [],
+        links: {},
         transitions: []
       }
 
@@ -137,7 +137,7 @@ module Representors
 
       describe '#embedded' do
         let(:embedded_resource) {'embedded_resource'}
-        let(:profile_link) { "http://alps.io/schema.org/Thing" }
+        let(:profile_link) { {profile: "http://alps.io/schema.org/Thing"} }
 
         before do
           @count = 3
@@ -155,13 +155,14 @@ module Representors
 
           @count.times do |i|
             transitions_hash = deep_dup(@transitions_hash)
-            transitions_hash[:transitions][0][:profile] = profile_link if i == 0
             transitions_hash[:transitions][0][:href] = "some.example.com/list/#{i}"
-
-            embedded_resources << deep_dup(@representor_hash).merge(transitions_hash)
+            embedded_item = deep_dup(@representor_hash).merge(transitions_hash)
+            embedded_item[:links] = profile_link if i == 0
+            embedded_resources << embedded_item
           end
 
-          @representor_hash.embedded = { embedded_resource => embedded_resources }
+
+          @representor_hash[:embedded] = { embedded_resource => embedded_resources }
         end
 
         it 'returns a set of Representor objects' do
@@ -183,7 +184,7 @@ module Representors
         end
 
         it 'includes appropriate profile links if it exists' do
-          expect(subject.transitions.first[:profile]).to eq(profile_link)
+          expect(subject.transitions.first[:profile]).to eq(profile_link["profile"])
           expect(subject.transitions[1][:profile]).to be_nil
           expect(subject.transitions.last[:profile]).to be_nil
         end

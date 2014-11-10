@@ -80,7 +80,7 @@ module Representors
 
       describe '#meta_links' do
         it 'should return a list of transitions representing those links' do
-          expect(subject.meta_links.size).to eq(2)
+          expect(subject.meta_links.size).to eq(3)
           has_meta_link = subject.meta_links.all? { |trans| trans.instance_of?(Transition) }
           expect(has_meta_link).to be_true
         end

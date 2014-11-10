@@ -20,9 +20,11 @@ module Representors
       id: nil,
       doc: nil,
       href: nil,
+      #TODO protocol doesnt belong in representors, remove it
       protocol: nil,
+      #TODO fix this, make it the same interface as transitions
+      links: {},
       attributes: {},
-      links: [],
       transitions: [],
       embedded: {}
     }.each_value(&:freeze).freeze
