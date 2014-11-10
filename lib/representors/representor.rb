@@ -126,8 +126,10 @@ module Representors
     def embedded_transitions_hashes
       @representor_hash.embedded.flat_map do |k,*v|
         v.flatten.map do |item|
-          if trans_hash = item[:transitions].find { |t| t[:rel] == "self" }
-            trans_hash.merge(prop_hash) if prop_hash = item[:transitions].find { |t| t[:rel] == "profile" }
+          trans_hash = item[:transitions].find { |t| t[:rel] == "self" }
+          if trans_hash
+            prop_hash = item[:transitions].find { |t| t[:rel] == "profile" }
+            trans_hash.merge(prop_hash) if prop_hash
             trans_hash.merge(rel: k)
           else
             {}
