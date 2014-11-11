@@ -20,7 +20,7 @@ module Representors
     EMBEDDED_KEY = '_embedded'.freeze
     CURIE_KEY = 'curies'.freeze
     HREF = 'href'.freeze
-    RESERVED_KEYS = [LINKS_KEY, EMBEDDED_KEY, META_KEY, REF_KEY]
+    @reserved_keys = [LINKS_KEY, EMBEDDED_KEY, META_KEY, REF_KEY]
     
     RESERVED_FIELD_VALUES = Field::SIMPLE_METHODS + [Field::NAME_KEY, Field::SCOPE_KEY, Field::OPTIONS_KEY, Field::VALIDATORS_KEY, Field::DESCRIPTORS_KEY, DATA_KEY]
    
@@ -33,6 +33,10 @@ module Representors
     
     private
     
+    def self.reserved_keys
+      @reserved_keys
+    end
+    
     def builder_add_from_deserialized(builder, media)
       media = dereference_meta_media(media)
       builder = deserialize_properties(builder, media)
@@ -43,7 +47,7 @@ module Representors
     # Properties are normal JSON keys in the Hale document. Create properties in the resulting object
     def deserialize_properties(builder, media)
       media.each do |k,v|
-        builder = builder.add_attribute(k, v) unless (RESERVED_KEYS.include?(k))
+        builder = builder.add_attribute(k, v) unless (self.class.reserved_keys.include?(k))
       end
       builder
     end

@@ -11,7 +11,7 @@ module Representors
     media_type 'application/hal+json', 'application/json'
     
     HAL_LINK_KEYS = %w(href templated type deprecation name profile title hreflang)
-    RESERVED_KEYS = [LINKS_KEY, EMBEDDED_KEY]
+    @reserved_keys = [LINKS_KEY, EMBEDDED_KEY]
     
     private
     
@@ -35,7 +35,7 @@ module Representors
     
     def deserialize_properties(builder, media)
       media.each do |k,v|
-        builder = builder.add_attribute(k, v) unless (self.class::RESERVED_KEYS.include?(k))
+        builder = builder.add_attribute(k, v) unless (self.class.reserved_keys.include?(k))
       end
       builder
     end
