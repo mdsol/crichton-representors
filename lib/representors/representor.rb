@@ -12,6 +12,7 @@ module Representors
     PROTOCOL_TEMPLATE = "%s://%s"
     UNKNOWN_PROTOCOL = 'ruby_id'
     VALUE_KEY = :value
+    META_LINK_FIELDS = ['profile', 'help', 'type', 'self']
 
     # @example
     #  representor = Representors::Representor.new do |builder|
@@ -89,28 +90,35 @@ module Representors
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def meta_links
-      @meta_links ||= @representor_hash.links.map do |k, v|
-        Representors::Transition.new({rel: k, href: v})
+      @meta_links ||= begin
+        links_from_transitions = {}
+
+        transitions.each do |transition|
+          if META_LINK_FIELDS.include?(transition.rel)
+            links_from_transitions[transition.rel.to_sym] = transition.uri
+          end
+        end
+
+        @representor_hash.links.merge(links_from_transitions).map do |k, v|
+          Representors::Transition.new({rel: k, href: v})
+        end.uniq { |transition| [transition.rel, transition.uri] }
       end
     end
 
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
       @transitions ||= begin
-        @representor_hash.transitions.map { |t| Transition.new(t) } + embedded_transitions
+        transition_hashes = (@representor_hash.transitions + embedded_transitions_hashes).uniq do |hash|
+          [hash[:rel], hash[:href]]
+        end
+        transition_hashes.map { |hash| Transition.new(hash) }
       end
     end
 
    # @return [Array] who's elements are all <Representors:Transition> objects from the self links of
    # embedded items, updating the rel to reflect the embedded items key
     def embedded_transitions
-      merge_if_exists = ->(x,y) { x.nil? ? {} : x.merge(y) }
-      @representor_hash.embedded.flat_map do |k,*v|
-        v.flatten.map do |item|
-          transition_hash = merge_if_exists.call(item[:transitions].find { |t| t[:rel] == "self" }, {rel: k})
-          Transition.new(transition_hash)
-        end
-      end
+      embedded_transitions_hashes.map { |hash| Transition.new(hash) }
     end
 
     # @return [Array] who's elements are all <Representors:Option> objects
@@ -123,6 +131,24 @@ module Representors
         options.select { |o| o.datalist? }
       end
     end
+
+    private
+
+    def embedded_transitions_hashes
+      @representor_hash.embedded.flat_map do |k,*v|
+        v.flatten.map do |item|
+          trans_hash = item[:transitions].find { |t| t[:rel] == "self" }
+          if trans_hash
+            profile_href = item[:links]["profile"] if item[:links]
+            trans_hash = trans_hash.merge(profile: profile_href) if profile_href
+            trans_hash.merge(rel: k)
+          else
+            {}
+          end
+        end
+      end
+    end
+
 
   end
 end
