@@ -23,13 +23,7 @@ module Representors
     RESERVED_KEYS = [LINKS_KEY, EMBEDDED_KEY, META_KEY, REF_KEY]
     
     RESERVED_FIELD_VALUES = Field::SIMPLE_METHODS + [Field::NAME_KEY, Field::SCOPE_KEY, Field::OPTIONS_KEY, Field::VALIDATORS_KEY, Field::DESCRIPTORS_KEY, DATA_KEY]
-
-    #TODO Make this not terrible (refactor hal deserializer to inherit from hale deserializer)
-    # move all logic here
-
-
-
-    
+   
     # This need to be public to support embedded data
     # TODO: make this private
     def to_representor_hash
@@ -56,13 +50,14 @@ module Representors
     
     # links are under '_links' in the original document. Links always have a key (its name) but
     # the value can be a hash with its properties or an array with several links.
+    # TODO: Figure out error handling for malformed documents
     def deserialize_links(builder, media)
       links = media[LINKS_KEY] || {}
       
       links.each do |link_rel,link_values|
         raise(DeserializationError, 'CURIE support not implemented for HAL') if link_rel.eql?(CURIE_KEY)
         if link_values.is_a?(Array)
-          if link_values.map{|link| link[HREF]}.any?(&:nil?)
+          if link_values.any? { |link| link[HREF].nil? }
             raise DeserializationError, 'All links must contain the href attribute'
           end
           builder = builder.add_transition_array(link_rel, link_values)
