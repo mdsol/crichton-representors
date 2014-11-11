@@ -24,7 +24,7 @@ describe Representors::HalDeserializer do
       it "deserializes as a Hal document and not a Hale document" do
         file = File.read("#{SPEC_DIR}/fixtures/hale_tutorial_examples/meta.json")
         hal_rep = Representors::HalDeserializer.new(file).to_representor
-        place_order_link_data = hal_rep.transitions.find { |t| t[:rel] == "place_order" }#["data"]
+        place_order_link_data = hal_rep.transitions.find { |t| t[:rel] == "place_order" }
         expect(hal_rep.properties.keys).to include('_meta')
         expect(place_order_link_data.interface_method).to eq('GET')
       end

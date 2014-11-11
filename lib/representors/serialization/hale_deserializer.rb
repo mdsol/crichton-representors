@@ -46,7 +46,7 @@ module Representors
       builder = deserialize_embedded(builder, media)
     end
     
-    # Properties are normal JSON keys in the HAL document. Create properties in the resulting object
+    # Properties are normal JSON keys in the Hale document. Create properties in the resulting object
     def deserialize_properties(builder, media)
       media.each do |k,v|
         builder = builder.add_attribute(k, v) unless (RESERVED_KEYS.include?(k))
@@ -78,7 +78,7 @@ module Representors
     
     # embedded resources are under '_embedded' in the original document, similarly to links they can
     # contain an array or a single embedded resource. An embedded resource is a full document so
-    # we create a new HalDeserializer for each.
+    # we create a new HaleDeserializer for each.
     def deserialize_embedded(builder, media)
       make_embedded_resource = ->(x) { self.class.new(x).to_representor_hash.to_h }
       (media[EMBEDDED_KEY] || {}).each do |name, value|

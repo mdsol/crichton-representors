@@ -23,7 +23,6 @@ module Representors
     
     def deserialize_links(builder, media)
       (media[LINKS_KEY] || {}).each do |link_rel, link_values|
-        
         link_values = [link_values] unless link_values.is_a?(Array)
         link_values = link_values.map do |hash| 
           hash.select { |k,_| HAL_LINK_KEYS.include?(k) }
