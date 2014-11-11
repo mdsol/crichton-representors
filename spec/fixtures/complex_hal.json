@@ -15,12 +15,10 @@
         "create": {
             "href": "www.example.com/drds/create"
         },
-        "items": [
-            {
+        "items": {
                 "href": "www.example.com/drds/show/173875983789",
                 "profile": "http://alps.io/schema.org/DRD"
-            }
-        ],
+            },
         "profile": {
             "href": "http://www.example.com/drds/show/DRDs"
         },
@@ -51,8 +49,7 @@
                 "term": "blunderbus",
                 "_links": {
                     "self": {
-                        "href": "www.example.com/drds/show/173875983789",
-                        "profile": "http://alps.io/schema.org/DRD"
+                        "href": "www.example.com/drds/show/173875983789"
                     },
                     "show": {
                         "href": "www.example.com/drds/show/173875983789",
