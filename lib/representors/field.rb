@@ -5,10 +5,10 @@ require 'representor_support/utilities'
 module Representors
   ##
   # Manages the respresentation of hypermedia fields for different media-types.
-  class Field
+  class Field < String
     include RepresentorSupport::Utilities
 
-    SIMPLE_METHODS = %w(name value default description field_type type data_type cardinality).map(&:to_sym)
+    SIMPLE_METHODS = %w(name value default description field_type type data_type cardinality doc).map(&:to_sym)
     DESCRIPTORS_KEY = :descriptors
     ATTRIBUTE_FIELDS = 'attribute'
     PARAMETER_FIELDS = 'href'
@@ -28,6 +28,7 @@ module Representors
       field_hash[name] = symbolize_keys(field_hash[name])
       @field_hash = field_hash[name].clone
       @field_hash[NAME_KEY] = name
+      super value.to_s
     end
 
     SIMPLE_METHODS.each do |meth|
@@ -68,7 +69,7 @@ module Representors
     def call
       value
     end
-    
+
     # The Parameters (i.e. GET variables)
     #
     # @return [Array] who's elements are all <Crichton:Field> objects
@@ -88,21 +89,21 @@ module Representors
     def descriptors
       @descriptors ||= (attributes + parameters)
     end
-    
+
     private
-    
+
     def filtered_fields(fields, scope)
       fields.select { |field| field.scope == scope }
     end
-    
+
     def descriptor_fields(hash)
       hash[DESCRIPTORS_KEY].map { |k, v| Field.new({k => v }) }
     end
-    
+
     def get_field_by_type(field_type)
       fields = @field_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@field_hash) : []
       filtered_fields(fields, field_type)
     end
-    
+
   end
 end
