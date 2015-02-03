@@ -47,5 +47,13 @@ module Representors
       members.each_with_object({}) { |member, hash| hash[member] = self[member] }
     end
 
+    def empty?
+      members.all? { |k| self[k].nil? || self[k].empty? }
+    end
+
+    def ==(other)
+      members.all? { |k| self[k] == other[k] }
+    end
+
   end
 end

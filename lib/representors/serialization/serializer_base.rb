@@ -3,6 +3,11 @@ require 'representors/serialization/serializer_factory'
 
 module Representors
   class SerializerBase < SerializationBase
+
+    def initialize(target)
+      @target = target.empty? ? Representor.new({}) : target
+    end
+
     def self.inherited(subclass)
       SerializerFactory.register_serializers(subclass)
     end

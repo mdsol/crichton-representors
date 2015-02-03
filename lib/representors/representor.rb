@@ -32,6 +32,14 @@ module Representors
       SerializerFactory.build(format, self).to_media_type(options)
     end
 
+    def empty?
+      @representor_hash.empty?
+    end
+
+    def ==(other)
+      other.is_a?(Hash) ? to_hash == other : to_hash == other.to_hash
+    end
+
     # Returns the document for the representor
     #
     # @return [String] the document for the representor
