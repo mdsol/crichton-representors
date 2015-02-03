@@ -44,7 +44,7 @@ module Representors
           expect(deserializer.to_representor_hash).to eq(RepresentorHash.new)
         end
       end
-      
+
       shared_examples_for 'a hal deserializer' do
         it 'returns a HalDeserializer' do
           expect(deserializer).to be_instance_of HalDeserializer
@@ -52,7 +52,18 @@ module Representors
 
         it_behaves_like 'a built deserializer'
       end
-      
+
+      context 'with an empty response body' do
+        [nil, '', '{}', ' '].each do |response_body|
+          context "when given a #{response_body.inspect}" do
+            let(:media_type) { 'application/hal+json' }
+            let(:document) { '' }
+
+            it_behaves_like 'a hal deserializer'
+          end
+        end
+      end
+
       context 'with hal+json media type as a string' do
         let(:media_type) { 'application/hal+json' }
 
@@ -84,7 +95,7 @@ module Representors
 
         it_behaves_like 'a hale deserializer'
       end
-      
+
       shared_examples_for 'an unknown media type' do
         it 'raises an unknown media type error' do
           expect { deserializer }.to raise_error(UnknownMediaTypeError, "Unknown media-type: #{media_type}.")
@@ -93,7 +104,7 @@ module Representors
 
       context 'unknown media type string' do
         let(:media_type) { 'unknown' }
-        
+
         it_behaves_like 'an unknown media type'
       end
 

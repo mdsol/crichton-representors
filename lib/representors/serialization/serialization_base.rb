@@ -6,10 +6,6 @@ module Representors
 
     attr_reader :target
 
-    def initialize(target)
-      @target = target
-    end
-
     def self.media_symbols
       @media_symbols ||= Set.new
     end
