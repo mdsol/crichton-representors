@@ -104,7 +104,6 @@ module Representors
         end.uniq { |transition| [transition.rel, transition.uri] }
       end
     end
-
     # @return [Array] who's elements are all <Representors:Transition> objects
     def transitions
       @transitions ||= begin

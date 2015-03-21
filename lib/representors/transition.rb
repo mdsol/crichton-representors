@@ -73,7 +73,7 @@ module Representors
 
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
-      meta_links ||= (retrieve(LINKS_KEY) || []).map do |link_key, link_href|
+      @meta_links ||= (retrieve(LINKS_KEY) || []).map do |link_key, link_href|
         Transition.new({rel: link_key, href: link_href})
       end
     end
@@ -96,7 +96,7 @@ module Representors
     def attributes
       @attributes ||= get_field_by_type(ATTRIBUTE_FIELDS)
     end
-    
+
     # The Parameters (i.e. GET variables)
     #
     # @return [Array] who's elements are all <Crichton:Field> objects

@@ -97,6 +97,20 @@ module Representors
 
     end
 
+    describe '#has_key?' do
+      let(:representor_hash) { {key => value}}
+      let(:value) { 'http://www.dontknow.com'}
+      let(:key)  {'href'}
+
+      it 'retuns the value for the keys' do
+        expect(subject.has_key?(key)).to eq(true)
+      end
+
+      it 'returns nil if the key is not in this transition' do
+        expect(subject.has_key?('Ido not exists')).to eq(false)
+      end
+    end
+
     describe '.new' do
       it 'returns a Representors::Transition instance' do
         expect(subject).to be_an_instance_of(Transition)
@@ -112,29 +126,78 @@ module Representors
         it 'returns the uniform interface method' do
           expect(subject.interface_method).to eq('GET')
         end
+        it 'retuns the interface_method provided by the hash' do
+          @representor_hash = @search_transition
+          expect(subject.interface_method).to eq('post')
+        end
       end
 
       describe '#parameters' do
         it 'returns a list of fields representing the link parameters' do
           @representor_hash = @search_transition
+          expect(subject.parameters.size).to eq(1)
           field = subject.parameters.first
           expect(field).to be_an_instance_of(Field)
+          expect(field.scope).to eq('href')
         end
       end
 
       describe '#attributes' do
         it 'returns a list of fields representing the link attributes' do
           @representor_hash = @search_transition
+          expect(subject.attributes.size).to eq(1)
           field = subject.attributes.first
           expect(field).to be_an_instance_of(Field)
+          expect(field.scope).to eq('attribute')
+        end
+      end
+
+      describe 'descriptors' do
+        it 'returns a list of fields representing the link attributes' do
+          @representor_hash = @search_transition
+          expect(subject.descriptors.size).to eq(2)
+          fields = subject.descriptors.all? { |item| item.instance_of?(Field) }
+          expect(fields).to eq(true)
+        end
+
+        it 'returns params as part of the descriptors' do
+          @representor_hash = @search_transition
+          field = subject.descriptors.first
+          expect(field).to be_an_instance_of(Field)
+          expect(field.scope).to eq('attribute')
+        end
+
+        it 'returns attributes as part of the descriptors' do
+          @representor_hash = @search_transition
+          field = subject.descriptors[1]
+          expect(field).to be_an_instance_of(Field)
+          expect(field.scope).to eq('href')
         end
       end
 
       describe '#meta_links' do
+        context 'no metalinks' do
+          it 'returns an empty array' do
+            expect(subject.meta_links).to eq([])
+          end
+        end
+
         it 'returns a list of Transitions' do
           @representor_hash = @search_transition
           links = subject.meta_links.all? { |item| item.instance_of?(Transition) }
           expect(links).to eq(true)
+        end
+        it 'returns self as the first meta link' do
+          @representor_hash = @search_transition
+          link = subject.meta_links[0]
+          expect(link.rel).to eq(:self)
+          expect(link.uri).to eq('DRDs#drds/create')
+        end
+        it 'returns self as the first meta link' do
+          @representor_hash = @search_transition
+          link = subject.meta_links[1]
+          expect(link.rel).to eq(:help)
+          expect(link.uri).to eq("Forms/create")
         end
       end
 
