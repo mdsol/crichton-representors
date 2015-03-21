@@ -10,7 +10,7 @@ module Representors
       @representor_hash[:embedded] = {items: [ComplexRepresentor::DRD_HASH]}
     end
     let(:representor_hash) { @representor_hash }
-    
+
     let(:subject) { Representor.new(representor_hash) }
 
     describe '.new' do
@@ -48,13 +48,13 @@ module Representors
           semantic_elements_present =  %w(total_count).all? do |key|
             subject.properties[key] == @representor_hash[:attributes][key][:value]
           end
-          expect(semantic_elements_present).to be_true
+          expect(semantic_elements_present).to eq(true)
          end
        end
 
       describe '#embedded' do
         let(:embedded_resource) {:items}
-        
+
         it 'returns a set of Representor objects' do
           expect(subject.embedded[embedded_resource].first).to be_an_instance_of(Representors::Representor)
         end
@@ -62,7 +62,7 @@ module Representors
         it 'returns a Representor objects that has its data' do
           doc = 'Diagnostic Repair Drones or DRDs are small robots that move around Leviathans. They are built by a Leviathan as it grows.'
           embedded_objects_valid = subject.embedded[embedded_resource].all? { |embed| embed.doc == doc }
-          expect(embedded_objects_valid).to be_true
+          expect(embedded_objects_valid).to eq(true)
         end
 
         it 'returns the all the Representors' do
@@ -74,7 +74,7 @@ module Representors
         it 'returns all transitions' do
           expect(subject.transitions.size).to eq(5)
           has_transitions = subject.transitions.all? { |trans| trans.instance_of?(Transition) }
-          expect(has_transitions).to be_true
+          expect(has_transitions).to eq(true)
         end
       end
 
@@ -82,7 +82,7 @@ module Representors
         it 'should return a list of transitions representing those links' do
           expect(subject.meta_links.size).to eq(3)
           has_meta_link = subject.meta_links.all? { |trans| trans.instance_of?(Transition) }
-          expect(has_meta_link).to be_true
+          expect(has_meta_link).to eq(true)
         end
       end
 
@@ -94,7 +94,7 @@ module Representors
           has_data_list = expect(first_datalist.map { |datalist| datalist.id }).to eq(expected_datalists)
         end
       end
-      
+
       describe '.transitions' do
         describe '#to_s' do
           it 'returns a string representation' do
@@ -157,7 +157,7 @@ module Representors
         describe '#meta_links' do
           it 'returns a list of Transitions' do
             links = subject.transitions.first.meta_links.all? { |item| item.instance_of?(Transition) }
-            expect(links).to be_true
+            expect(links).to eq(true)
           end
         end
 
@@ -175,19 +175,19 @@ module Representors
 
         describe '#templated?' do
           it 'returns false for the first element which has no parameters' do
-            expect(subject.transitions.first.templated?).to be_false
+            expect(subject.transitions.first).not_to be_templated
           end
 
           it 'returns true for the second template which has parameters' do
-            expect(subject.transitions[2].templated?).to be_true
+            expect(subject.transitions[2].templated?).to eq(true)
           end
         end
-        
+
         describe '.field' do
-          
+
           let(:field) { subject.transitions[3].attributes.first }
           let(:field_hash) { {:name => representor_hash[:transitions].last[:descriptors][:name]} }
-        
+
           it 'returns a Representors::Field instance' do
             expect(field).to be_an_instance_of(Representors::Field)
           end
@@ -219,7 +219,7 @@ module Representors
           end
         end
       end
-      
+
       describe '#to_media_type' do
         context 'when it serializes to hale' do
           let (:hale_hash) { JSON.load(subject.to_media_type(:hale_json)) }
@@ -228,7 +228,7 @@ module Representors
           it 'has ths associated attributes' do
             expect(hale_hash["total_count"]).to eq(subject.properties["total_count"])
           end
-          
+
           it 'has transitions' do
             expect(hale_hash["_links"]).to include("self","list","search","create")
           end
@@ -238,20 +238,20 @@ module Representors
               expect(hale_hash["_links"][link.rel.to_s]["href"]).to eq(link.templated_uri)
             end
           end
-          
+
           it 'has embedded items' do
             expect(hale_hash["_embedded"]["items"].count).to eq(@representor_hash[:embedded].count)
           end
-          
+
         end
-        
+
         context 'when it serializes to hal' do
           let (:hal_hash) { JSON.load(subject.to_media_type(:hal_json)) }
-          
+
           it 'has ths associated attributes' do
             expect(hal_hash["total_count"]).to eq(subject.properties["total_count"])
           end
-          
+
           it 'has transitions' do
             subject.transitions.select { |transition| transition.rel != :items }.each do |link|
               expect(hal_hash["_links"][link.rel]["href"]).to eq(link.templated_uri)
@@ -264,7 +264,7 @@ module Representors
               expect(embedded_links).to include(link.templated_uri)
             end
           end
-          
+
           it 'has meta links' do
             subject.meta_links.each do |link|
               expect(hal_hash["_links"][link.rel.to_s]["href"]).to eq(link.templated_uri)
@@ -274,17 +274,17 @@ module Representors
           it 'has embedded items' do
            expect(hal_hash["_embedded"]["items"].count).to eq(1)
           end
-          
+
           #TODO this will be fixed by shea during the update of the hal deserializer, it currently
           # fails for a trivial reason.
           xit 'renders a proper Hal document' do
             expect(hal_hash).to eq(JSON.load(File.open(fixture_path('complex_hal.json'))))
           end
-          
+
         end
-        
+
       end
     end
   end
 end
-    
+

@@ -131,7 +131,7 @@ module Representors
           semantic_elements_present =  %w(total_count uptime brackreference).all? do |key|
             subject.properties[key.to_sym] == @semantic_elements[:attributes][key.to_sym][:value]
           end
-          expect(semantic_elements_present).to be_true
+          expect(semantic_elements_present).to eq(true)
          end
        end
 
@@ -144,7 +144,7 @@ module Representors
           @representor_hash = RepresentorHash.new(@base_representor).merge(@semantic_elements)
           embedded_resources = []
 
-          @transitions_hash = { 
+          @transitions_hash = {
               transitions: [
                   { doc: 'Returns a list of DRDs',
                     type: 'safe',
@@ -171,7 +171,7 @@ module Representors
 
         it 'returns a Representor objects that has its data' do
           embedded_objects_valid = subject.embedded[embedded_resource].all? { |embed| embed.doc == doc }
-          expect(embedded_objects_valid).to be_true
+          expect(embedded_objects_valid).to eq(true)
         end
 
         it 'returns the all the Representors' do
@@ -195,7 +195,7 @@ module Representors
           @representor_hash =  @base_representor.merge(@transition_elements)
           expect(subject.transitions.size).to eq(2)
           has_transitions = subject.transitions.all? { |trans| trans.instance_of?(Transition) }
-          expect(has_transitions).to be_true
+          expect(has_transitions).to eq(true)
         end
       end
 
@@ -207,7 +207,7 @@ module Representors
           }
           expect(subject.meta_links.size).to eq(2)
           has_meta_link = subject.meta_links.all? { |trans| trans.instance_of?(Transition) }
-          expect(has_meta_link).to be_true
+          expect(has_meta_link).to eq(true)
         end
       end
 
