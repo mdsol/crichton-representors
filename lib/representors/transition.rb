@@ -1,3 +1,5 @@
+require 'addressable/template'
+
 module Representors
   ##
   # Manages the respresentation of link elements for hypermedia messages.
@@ -37,11 +39,9 @@ module Representors
     end
 
     # @return [String] The URI for the object
-    def uri
-      #TODO we are splitting here in case the URL is already templated.  In the
-      # future, this should be replaced with something like Addressable::Template,
-      # as should templated_uri
-      retrieve(HREF_KEY).split('{').first
+    def uri(data={})
+      template = Addressable::Template.new(retrieve(HREF_KEY))
+      template.expand(data).to_str
     end
 
     # @param [String] key on the transitions hash to retrieve
@@ -59,16 +59,13 @@ module Representors
     # TODO: Figure out how to scope differently
     # @return [String] The URI for the object templated against #parameters
     def templated_uri
-      @templated_uri ||= if parameters.empty?
-        uri
-      else
-        #TODO replace with something like Addressable::Template
-        URL_TEMPLATE % [uri, parameters.map { |p| p.name }.join(",")]
-      end
+      #URL as it is, it will be the templated URL of the document if it was templated
+      retrieve(HREF_KEY)
     end
 
     def templated?
-      templated_uri != uri
+      # if we have any variable then it is not a templated url
+      !Addressable::Template.new(retrieve(HREF_KEY)).variables.empty?
     end
 
     # @return [Array] who's elements are all <Crichton:Transition> objects

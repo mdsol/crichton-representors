@@ -3,36 +3,36 @@ DRDS_HASH = {
   href: 'www.example.com/drds',
   id: 'DRDs',
   protocol: 'http',
-  doc: 'Describes the semantics, states and state transitions associated with DRDs.', 
+  doc: 'Describes the semantics, states and state transitions associated with DRDs.',
   links: {
     profile: 'http://www.example.com/drds/show/DRDs',
     help: 'http://alps.io/schema.org/DRDs'
   },
-  attributes: { 
-    "total_count" => { 
-      doc: 'The total count of DRDs.', 
-      type: 'semantic', 
-      profile: 'http://alps.io/schema.org/Integer', 
-      sample: 1, 
-      value: 2, 
+  attributes: {
+    "total_count" => {
+      doc: 'The total count of DRDs.',
+      type: 'semantic',
+      profile: 'http://alps.io/schema.org/Integer',
+      sample: 1,
+      value: 2,
     },
   },
   transitions: [
     {
-      rel: 'self', 
-      href: 'http://example.com/drds', 
-      method: 'GET', 
+      rel: 'self',
+      href: 'http://example.com/drds',
+      method: 'GET',
     },
     {
       rel: 'list',
-      doc: 'Returns a list of DRDs.', 
-      profile: 'http://alps.io/schema.org/DRDs', 
+      doc: 'Returns a list of DRDs.',
+      profile: 'http://alps.io/schema.org/DRDs',
       href: 'http://example.com/drds/list',
     },
     {
       rel: 'search',
       doc: 'Returns a list of DRDs that satisfy the search term.',
-      href: 'http://example.com/drds/search',
+      href: 'http://example.com/drds/search{?search_term,name}',
       rt: 'drds',
       descriptors: {
         search_term: {
@@ -42,16 +42,16 @@ DRDS_HASH = {
           multiple: true,
           scope: 'href',
         },
-        name: { 
+        name: {
           doc: 'The name of the DRD.',
           profile: 'http://alps.io/schema.org/Text',
           sample: 'drdname',
           value: 'drdname',
           scope: 'href',
-          field_type: 'text', 
+          field_type: 'text',
         },
       },
-    },        
+    },
     {
       rel: 'create',
       doc: 'Creates a DRD.',
@@ -62,8 +62,8 @@ DRDS_HASH = {
       },
       href: 'www.example.com/drds/create',
       method: 'POST',
-      descriptors: { 
-        name: { 
+      descriptors: {
+        name: {
           doc: 'The name of the DRD.',
           profile: 'http://alps.io/schema.org/Text',
           sample: 'drdname',
@@ -85,7 +85,7 @@ DRDS_HASH = {
               profile: 'http://alps.io/schema.org/Text',
               sample: '007d8e12-babd-4f2c-b01e-8b5e2f749e1b',
               type: 'text',
-              field_type: 'text', 
+              field_type: 'text',
             },
             leviathan_health_points: {
               doc: 'The health points of Leviathan.',
@@ -118,4 +118,3 @@ DRDS_HASH = {
   #To put embedded items in the hash please see: single_drd.rb
 }
 end
-    

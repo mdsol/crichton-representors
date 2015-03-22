@@ -140,6 +140,17 @@ module Representors
           expect(field).to be_an_instance_of(Field)
           expect(field.scope).to eq('href')
         end
+        context 'there are no params' do
+          let(:transition) do
+            {
+            href: 'some.example.com',
+            rel: 'filter'
+            }
+          end
+          it 'returns an empty array' do
+            expect(Transition.new(transition).parameters).to eq([])
+          end
+        end
       end
 
       describe '#attributes' do
@@ -202,28 +213,96 @@ module Representors
       end
 
       describe '#uri' do
-        it 'returns the bare link' do
-          @representor_hash = @search_transition
-          expect(subject.uri).to eq('/')
+        context 'the url does not have a template variable in the url' do
+          let(:transition) do
+            {
+            href: 'some.example.com',
+            rel: 'filter'
+            }
+          end
+          context 'params provided' do
+            it 'returns the url as it is' do
+              expect(Transition.new(transition).uri(uuid: 'uuid')).to eq(transition[:href])
+            end
+          end
+          context 'params not provided' do
+            it 'returns the url as it is' do
+              expect(Transition.new(transition).uri).to eq(transition[:href])
+            end
+          end
+        end
+
+        context 'the url has template variables in the base url and the query parameters' do
+          let(:transition) do
+            {
+            href: 'some.example.com/{uuid}?first_param=goodstuff{&filter}',
+            rel: 'filter'
+            }
+          end
+          let(:uuid) { SecureRandom.uuid}
+          let(:filter) {'cows'}
+          let(:full_url) {"some.example.com/#{uuid}?first_param=goodstuff&filter=cows"}
+          let(:not_templated_url) {'some.example.com/?first_param=goodstuff'}
+
+          it 'allows to create the url with the correct parameters' do
+            expect(Transition.new(transition).uri(uuid: uuid, filter: filter)).to eq(full_url)
+          end
+          it 'returns the url without template variables when there are no params' do
+            expect(Transition.new(transition).uri).to eq(not_templated_url)
+          end
+          it 'returns the url without template variables when the params does not match the template variable' do
+            expect(Transition.new(transition).uri(stuff: filter)).to eq(not_templated_url)
+          end
         end
       end
 
       describe '#templated_uri' do
-        it 'returns the link parameterized' do
-          @representor_hash = @search_transition
-          expect(subject.templated_uri).to eq('/{?name}')
+        context 'the transition has a templated url' do
+          let(:transition) do
+            {
+            href: 'some.example.com/{uuid}?first_param=goodstuff{&filter}',
+            rel: 'filter'
+            }
+          end
+          it 'returns the templated url' do
+            expect(Transition.new(transition).templated_uri).to eq(transition[:href])
+          end
+        end
+        context 'the transition has a non-templated url' do
+          let(:transition) do
+            {
+            href: 'some.example.com',
+            rel: 'filter'
+            }
+          end
+          it 'returns the url' do
+            expect(Transition.new(transition).templated_uri).to eq(transition[:href])
+          end
         end
       end
 
       describe '#templated?' do
-        it 'returns true if #templated_uri != uri' do
-          @representor_hash = @search_transition
-          expect(subject).to be_templated
+        context 'the transition has a templated url' do
+          let(:transition) do
+            {
+            href: 'some.example.com/{uuid}?first_param=goodstuff{&filter}',
+            rel: 'filter'
+            }
+          end
+          it 'returns true' do
+            expect(Transition.new(transition)).to be_templated
+          end
         end
-
-        it 'returns false if #templated_uri == uri' do
-          @representor_hash = @self_transition
-          expect(subject).not_to be_templated
+        context 'the transition has a non-templated url' do
+          let(:transition) do
+            {
+            href: 'some.example.com',
+            rel: 'filter'
+            }
+          end
+          it 'returns false' do
+            expect(Transition.new(transition)).not_to be_templated
+          end
         end
       end
     end
