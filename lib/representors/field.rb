@@ -1,7 +1,6 @@
 require 'yaml'
 require 'representors/options'
 require 'representor_support/utilities'
-
 module Representors
   ##
   # Manages the respresentation of hypermedia fields for different media-types.
@@ -68,7 +67,7 @@ module Representors
     def call
       value
     end
-    
+
     # The Parameters (i.e. GET variables)
     #
     # @return [Array] who's elements are all <Crichton:Field> objects
@@ -88,21 +87,21 @@ module Representors
     def descriptors
       @descriptors ||= (attributes + parameters)
     end
-    
+
     private
-    
+
     def filtered_fields(fields, scope)
       fields.select { |field| field.scope == scope }
     end
-    
+
     def descriptor_fields(hash)
       hash[DESCRIPTORS_KEY].map { |k, v| Field.new({k => v }) }
     end
-    
+
     def get_field_by_type(field_type)
       fields = @field_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@field_hash) : []
       filtered_fields(fields, field_type)
     end
-    
+
   end
 end

@@ -56,7 +56,6 @@ module Representors
       !retrieve(key).nil?
     end
 
-    # TODO: Figure out how to scope differently
     # @return [String] The URI for the object templated against #parameters
     def templated_uri
       #URL as it is, it will be the templated URL of the document if it was templated
@@ -79,19 +78,30 @@ module Representors
     def interface_method
       retrieve(METHOD_KEY) || DEFAULT_METHOD
     end
-
     # The Parameters (i.e. GET variables)
     #
     # @return [Array] who's elements are all <Crichton:Field> objects
+    # Variables in the URI template rules this method, we are going to return a field for each of them
+    # if we find a field inside the 'data' of the document describing that variable, we use that information
+    # else we return a field with default information about a variable.
     def parameters
-      @parameters ||= get_field_by_type(PARAMETER_FIELDS)
+      data_fields = descriptors_fields.select{|field| field.scope == PARAMETER_FIELDS }
+      Addressable::Template.new(retrieve(HREF_KEY)).variables.map do |template_variable_name|
+        field_specified = data_fields.find{|field| field.name.to_s == template_variable_name.to_s}
+        if field_specified
+          field_specified
+        else
+          Field.new({template_variable_name.to_sym => {type: 'string', scope: 'href'}})
+        end
+      end
+     # descriptors_fields.select{|field| field.scope == PARAMETER_FIELDS }
     end
 
     # The Parameters (i.e. POST variables)
     #
     # @return [Array] who's elements are all <Crichton:Field> objects
     def attributes
-      @attributes ||= get_field_by_type(ATTRIBUTE_FIELDS)
+      @attributes ||= descriptors_fields.select{|field| field.scope == ATTRIBUTE_FIELDS }
     end
 
     # The Parameters (i.e. GET variables)
@@ -103,22 +113,18 @@ module Representors
 
     private
 
+    def descriptors_fields
+      @fields_hash ||= descriptors_hash.map { |k, v| Field.new({k => v }) }
+    end
+
+    def descriptors_hash
+      @transition_hash[DESCRIPTORS_KEY] || []
+    end
+
     # accept retrieving keys by symbol or string
     def retrieve(key)
       @transition_hash[key.to_sym] || @transition_hash[key.to_s]
     end
 
-    def descriptor_fields(hash)
-      hash[DESCRIPTORS_KEY].map { |k, v| Field.new({k => v }) }
-    end
-
-    def filtered_fields(fields, scope)
-      fields.select { |field| field.scope == scope }
-    end
-
-    def get_field_by_type(field_type)
-      fields = @transition_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@transition_hash) : []
-      filtered_fields(fields, field_type)
-    end
   end
 end

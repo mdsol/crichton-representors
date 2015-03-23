@@ -17,7 +17,7 @@ module Representors
           rt: 'drds',
           type: 'safe',
           method: 'post',
-          href: '/',
+          href: '/{?name}',
           rel: 'search',
           links: {
             self: 'DRDs#drds/create',
@@ -139,6 +139,7 @@ module Representors
           field = subject.parameters.first
           expect(field).to be_an_instance_of(Field)
           expect(field.scope).to eq('href')
+          expect(field.name).to eq(:name)
         end
         context 'there are no params' do
           let(:transition) do
@@ -151,6 +152,43 @@ module Representors
             expect(Transition.new(transition).parameters).to eq([])
           end
         end
+        context 'the uri template has information we do not have in data' do
+          let(:transition) do
+            {
+            href: 'some.place.com{?name,localization}',
+            rel: 'filter',
+            descriptors: {
+              name: {
+                doc: name_doc,
+                type: 'Integer',
+                profile: name_profile,
+                scope: 'href'
+                },
+              localization: {
+                doc: 'wrong scope',
+                type: 'Something crazy',
+                profile: 'Because this key has no scope should not be used'
+                }
+              }
+            }
+          end
+          let(:name_doc) {'di place of Trusmis'}
+          let(:name_profile) {'http://alps.io/schema.org/Text'}
+
+          it 'returns all the variables in the uri template' do
+            expect(Transition.new(transition).parameters.size).to eq(2)
+          end
+          it 'returns the information about the variable described by the document' do
+            param = Transition.new(transition).parameters.find{|param| param.name == :name}
+            expect(param.scope).to eq('href')
+            expect(param.type).to eq('Integer')
+          end
+          it 'returns default information for the variable not described by the document' do
+            param = Transition.new(transition).parameters.find{|param| param.name == :localization}
+            expect(param.scope).to eq('href')
+            expect(param.type).to eq('string')
+          end
+        end
       end
 
       describe '#attributes' do
@@ -160,6 +198,7 @@ module Representors
           field = subject.attributes.first
           expect(field).to be_an_instance_of(Field)
           expect(field.scope).to eq('attribute')
+          expect(field.name).to eq(:status)
         end
       end
 
