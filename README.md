@@ -2,7 +2,7 @@
 [Crichton][] Representors is a library to simplify Hypermedia message representation. It has the knowledge of Hypermedia
 media-types from the Ancients!
 
-The representors gem provides serializers and deserializers from/to known Hypermedia formats. It supports HAL and HALE.
+The representors gem provides serializers and deserializers from/to known Hypermedia formats. It currently supports HAL and HALE.
 It also provides a Representor class to hold the information from hypermedia responses, this class provides method to access properties, transitions, etc.
 
 ## Developing
