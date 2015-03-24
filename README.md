@@ -12,14 +12,14 @@ Write your tests, write your code and make sure all tests pass:
 bundle exec rspec
 ```
 
-Also make sure you wrote good test by running mutant on the classes you have woked on.
+Also, you can check your test coverage by running mutant on the classes you have worked on.
 For instance if you modified Representors::Representor, please execute:
 ```
-MUTANT=true mutant --include lib --require representors --use rspec Representors::Representor*
+MUTANT=true mutant --include lib --require representors --score 95 --use rspec Representors::Representor*
 ```
 
-And make sure you get a 100% coverage.
-
+Reaching 100% mutant coverage is not feasible sometimes as they may be some false positives.
+But please investigate any missing coverage, as it may indicate an actual problem with the tests.
 
 ## Copyright
 Copyright &copy; 2014 Medidata Solutions Worldwide. See [LICENSE][] for details.
