@@ -134,7 +134,7 @@ module Representors
         it 'returns a list of Transitions' do
           @representor_hash = @search_transition
           links = subject.meta_links.all? { |item| item.instance_of?(Transition) }
-          expect(links).to be_true
+          expect(links).to eq(true)
         end
       end
 
@@ -155,12 +155,12 @@ module Representors
       describe '#templated?' do
         it 'returns true if #templated_uri != uri' do
           @representor_hash = @search_transition
-          expect(subject.templated?).to be_true
+          expect(subject).to be_templated
         end
 
         it 'returns false if #templated_uri == uri' do
           @representor_hash = @self_transition
-          expect(subject.templated?).to be_false
+          expect(subject).not_to be_templated
         end
       end
     end

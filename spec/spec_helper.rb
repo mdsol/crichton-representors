@@ -5,12 +5,10 @@ $LOAD_PATH.unshift(lib_dir)
 $LOAD_PATH.uniq!
 
 require 'rspec'
-require 'debugger'
 require 'bundler'
 require 'simplecov'
 require 'pry'
 
-Debugger.start
 Bundler.setup
 
 require 'representors'
@@ -25,7 +23,6 @@ def create_serializer(name)
 end
 
 RSpec.configure do |config|
-  config.treat_symbols_as_metadata_keys_with_true_values = true
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end

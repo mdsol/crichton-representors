@@ -1,20 +1,28 @@
-# Crichton Representors
-[![Build Status](https://travis-ci.org/mdsol/crichton-representors.svg)](https://travis-ci.org/mdsol/crichton-representors)
+# Representors
 [Crichton][] Representors is a library to simplify Hypermedia message representation. It has the knowledge of Hypermedia
 media-types from the Ancients!
 
-NOTE: THIS IS UNDER HEAVY DEV AND IS NOT READY TO BE USED YET
+The representors gem provides serializers and deserializers from/to known Hypermedia formats. It currently supports HAL and HALE.
+It also provides a Representor class to hold the information from hypermedia responses, this class provides method to access properties, transitions, etc.
 
-A Crichton::Representor exposes a simple state-machine interface that simplifies generating, translating, introspecting
-and manipulating Hypermedia messages.
+## Developing
 
-## Contributing
-See [CONTRIBUTING][] for details.
+Write your tests, write your code and make sure all tests pass:
+```
+bundle exec rspec
+```
+
+Also, you can check your test coverage by running mutant on the classes you have worked on.
+For instance if you modified Representors::Representor, please execute:
+```
+MUTANT=true mutant --include lib --require representors --score 95 --use rspec Representors::Representor*
+```
+
+Reaching 100% mutant coverage is not feasible sometimes as they may be some false positives.
+But please investigate any missing coverage, as it may indicate an actual problem with the tests.
 
 ## Copyright
 Copyright &copy; 2014 Medidata Solutions Worldwide. See [LICENSE][] for details.
 
 [Crichton]: https://github.com/mdsol/crichton
-[CONTRIBUTING]: https://github.com/mdsol/crichton/blob/develop/CONTRIBUTING.md
-[Documentation]: http://rubydoc.info/github/mdsol/crichton-representors
 [LICENSE]: LICENSE.md

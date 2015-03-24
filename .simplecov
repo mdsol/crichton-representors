@@ -1,1 +1,1 @@
-SimpleCov.start
+SimpleCov.start unless ENV['MUTANT']

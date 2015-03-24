@@ -99,7 +99,7 @@ shared_examples_for 'can create a representor from a hal document' do
     end
 
     it 'Creates three embedded resources' do
-      expect(embedded_field['embedded_books']).to have(embedded_books.size).items
+      expect(embedded_field['embedded_books'].size).to eq(embedded_books.size)
     end
 
     it 'Creates embedded resources with its data' do
@@ -146,11 +146,11 @@ shared_examples_for 'can create a representor from a hal document' do
     end
 
     it 'The representor has two links' do
-      expect(transitions_field).to have(2).items
+      expect(transitions_field.size).to eq(2)
     end
 
     it 'The transitions have a rel properly set' do
-      expect(transitions_field.all?{|link| link.rel == 'items'}).to be_true
+      expect(transitions_field.all?{|link| link.rel == 'items'}).to eq(true)
     end
 
     it 'The transitions have a href properly set ' do
