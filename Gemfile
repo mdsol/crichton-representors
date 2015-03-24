@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'byebug',        '~> 3.2'
+gem 'byebug',        '~> 3.2', platforms: [:ruby_20, :ruby_21, :ruby_22] #update your Bundler if can not install
 gem 'yard',          '~> 0.8.7'
 gem 'redcarpet',     '~> 3.1.1'
 gem 'awesome_print', '~> 1.2.0'
