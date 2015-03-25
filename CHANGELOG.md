@@ -1,5 +1,10 @@
 # 0.0-stable
+Stable version with all the below changes
+
+# 0.0.3
 * Update to latest rspec and mutant
+* Implement URL templating
+* Change on behaviour of Representor::Transition#templated_uri. It only provides a template URL if the original URL followed the RFC 6570
 
 # 0.0.2
 

@@ -1,3 +1,5 @@
+require 'addressable/template'
+
 module Representors
   ##
   # Manages the respresentation of link elements for hypermedia messages.
@@ -37,11 +39,9 @@ module Representors
     end
 
     # @return [String] The URI for the object
-    def uri
-      #TODO we are splitting here in case the URL is already templated.  In the
-      # future, this should be replaced with something like Addressable::Template,
-      # as should templated_uri
-      retrieve(HREF_KEY).split('{').first
+    def uri(data={})
+      template = Addressable::Template.new(retrieve(HREF_KEY))
+      template.expand(data).to_str
     end
 
     # @param [String] key on the transitions hash to retrieve
@@ -56,24 +56,20 @@ module Representors
       !retrieve(key).nil?
     end
 
-    # TODO: Figure out how to scope differently
     # @return [String] The URI for the object templated against #parameters
     def templated_uri
-      @templated_uri ||= if parameters.empty?
-        uri
-      else
-        #TODO replace with something like Addressable::Template
-        URL_TEMPLATE % [uri, parameters.map { |p| p.name }.join(",")]
-      end
+      #URL as it is, it will be the templated URL of the document if it was templated
+      retrieve(HREF_KEY)
     end
 
     def templated?
-      templated_uri != uri
+      # if we have any variable then it is not a templated url
+      !Addressable::Template.new(retrieve(HREF_KEY)).variables.empty?
     end
 
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
-      meta_links ||= (retrieve(LINKS_KEY) || []).map do |link_key, link_href|
+      @meta_links ||= (retrieve(LINKS_KEY) || []).map do |link_key, link_href|
         Transition.new({rel: link_key, href: link_href})
       end
     end
@@ -82,21 +78,32 @@ module Representors
     def interface_method
       retrieve(METHOD_KEY) || DEFAULT_METHOD
     end
-
     # The Parameters (i.e. GET variables)
     #
     # @return [Array] who's elements are all <Crichton:Field> objects
+    # Variables in the URI template rules this method, we are going to return a field for each of them
+    # if we find a field inside the 'data' of the document describing that variable, we use that information
+    # else we return a field with default information about a variable.
     def parameters
-      @parameters ||= get_field_by_type(PARAMETER_FIELDS)
+      data_fields = descriptors_fields.select{|field| field.scope == PARAMETER_FIELDS }
+      Addressable::Template.new(retrieve(HREF_KEY)).variables.map do |template_variable_name|
+        field_specified = data_fields.find{|field| field.name.to_s == template_variable_name.to_s}
+        if field_specified
+          field_specified
+        else
+          Field.new({template_variable_name.to_sym => {type: 'string', scope: 'href'}})
+        end
+      end
+     # descriptors_fields.select{|field| field.scope == PARAMETER_FIELDS }
     end
 
     # The Parameters (i.e. POST variables)
     #
     # @return [Array] who's elements are all <Crichton:Field> objects
     def attributes
-      @attributes ||= get_field_by_type(ATTRIBUTE_FIELDS)
+      @attributes ||= descriptors_fields.select{|field| field.scope == ATTRIBUTE_FIELDS }
     end
-    
+
     # The Parameters (i.e. GET variables)
     #
     # @return [Array] who's elements are all <Crichton:Field> objects
@@ -106,22 +113,18 @@ module Representors
 
     private
 
+    def descriptors_fields
+      @fields_hash ||= descriptors_hash.map { |k, v| Field.new({k => v }) }
+    end
+
+    def descriptors_hash
+      @transition_hash[DESCRIPTORS_KEY] || []
+    end
+
     # accept retrieving keys by symbol or string
     def retrieve(key)
       @transition_hash[key.to_sym] || @transition_hash[key.to_s]
     end
 
-    def descriptor_fields(hash)
-      hash[DESCRIPTORS_KEY].map { |k, v| Field.new({k => v }) }
-    end
-
-    def filtered_fields(fields, scope)
-      fields.select { |field| field.scope == scope }
-    end
-
-    def get_field_by_type(field_type)
-      fields = @transition_hash.has_key?(DESCRIPTORS_KEY) ? descriptor_fields(@transition_hash) : []
-      filtered_fields(fields, field_type)
-    end
   end
 end

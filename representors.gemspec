@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency('enumerable-lazy', '~> 0.0.1') if RUBY_VERSION < '2.0'
   s.add_dependency('rake')
+  s.add_dependency('addressable', '~> 2.3')
 end
