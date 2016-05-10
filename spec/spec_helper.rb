@@ -1,16 +1,10 @@
+unless ENV['MUTANT']
+  require 'simplecov'
+  SimpleCov.start
+end
+
 SPEC_DIR = File.expand_path("..", __FILE__)
-lib_dir = File.expand_path("../lib", SPEC_DIR)
-
-$LOAD_PATH.unshift(lib_dir)
-$LOAD_PATH.uniq!
-
-require 'rspec'
-require 'bundler'
-require 'simplecov'
-require 'pry'
-
-Bundler.setup
-
+$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'representors'
 
 Dir["#{SPEC_DIR}/support/*.rb"].each { |f| require f }
