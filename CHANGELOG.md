@@ -1,3 +1,6 @@
+# 0.0.5
+* Sync changes from the develop branch that had not been ported back to 0-0-stable (see PR #52 and PR #53)
+
 # 0.0.4
 * Updates and clean ups
 * Remove support of Ruby < 2.1
