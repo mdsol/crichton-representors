@@ -1,7 +1,6 @@
 require 'yaml'
 require 'representors/options'
 require 'representor_support/utilities'
-
 module Representors
   ##
   # Manages the respresentation of hypermedia fields for different media-types.

@@ -7,7 +7,7 @@ RSpec.shared_examples_for 'one attribute added' do
   end
 
   it 'adds the attribute name as a key under "semantic" in the output hash' do
-    expect(semantic_field.has_key?(attribute_name)).to be_true
+    expect(semantic_field.has_key?(attribute_name)).to eq(true)
   end
 
   it 'adds the value under "value" in a hash which key is the attribute name' do
@@ -120,7 +120,7 @@ RSpec.describe Representors::RepresentorBuilder do
       it_behaves_like 'it can reconstruct itself'
 
       it 'adds any extra options as keys under the attribute name hash' do
-        expect(semantic_field[attribute_name].has_key?(extra_key)).to be_true
+        expect(semantic_field[attribute_name].has_key?(extra_key)).to eq(true)
       end
 
       it 'adds the correct value for the extra options' do
@@ -140,7 +140,7 @@ RSpec.describe Representors::RepresentorBuilder do
       end
 
       it_behaves_like 'one transition added'
-      
+
       it_behaves_like 'it can reconstruct itself'
     end
 
@@ -156,13 +156,13 @@ RSpec.describe Representors::RepresentorBuilder do
       it_behaves_like 'one transition added'
 
       it 'adds any extra options as keys under the attribute name hash' do
-        expect(transitions_field.first.has_key?(extra_key)).to be_true
+        expect(transitions_field.first.has_key?(extra_key)).to eq(true)
       end
 
       it 'adds the correct value for the extra options' do
         expect(transitions_field.first[extra_key]).to eq(extra_value)
       end
-      
+
       it_behaves_like 'it can reconstruct itself'
     end
   end
@@ -177,11 +177,11 @@ RSpec.describe Representors::RepresentorBuilder do
     end
 
     it 'creates two elements under transitions' do
-      expect(transitions_field).to have(2).items
+      expect(transitions_field.size).to eq(2)
     end
 
     it_behaves_like 'one transition added'
-    
+
     it_behaves_like 'it can reconstruct itself'
   end
 
@@ -196,7 +196,7 @@ RSpec.describe Representors::RepresentorBuilder do
       end
 
       it_behaves_like 'one embedded added'
-      
+
       it_behaves_like 'it can reconstruct itself'
     end
   end

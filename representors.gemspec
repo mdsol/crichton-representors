@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version = Representors::VERSION
   s.date = Time.now.strftime('%Y-%m-%d')
   s.summary = 'It has the knowledge of Hypermedia media-types from the Ancients!'
-  s.homepage = 'http://github.com/representors'
+  s.homepage = 'https://github.com/mdsol/representors'
   s.email = ''
   s.authors = ['Mark W. Foster', 'Shea Valentine']
   s.files = ['lib/**/*', 'spec/**/*', 'tasks/**/*', '[A-Z]*'].map { |glob| Dir[glob] }.inject([], &:+)
@@ -19,6 +19,13 @@ Gem::Specification.new do |s|
     This library also does not automatically decorates objects. Consider Crichton for that.
   DESC
 
-  s.add_dependency('enumerable-lazy', '~> 0.0.1') if RUBY_VERSION < '2.0'
-  s.add_dependency('rake')
+  s.add_dependency 'rake'
+  s.add_dependency 'addressable', '~> 2.3'
+
+  s.add_development_dependency 'byebug'
+  s.add_development_dependency 'mutant-rspec', '~> 0.8'
+  s.add_development_dependency 'redcarpet'
+  s.add_development_dependency 'rspec', '~> 3.4'
+  s.add_development_dependency 'simplecov', '~> 0.11'
+  s.add_development_dependency 'yard'
 end

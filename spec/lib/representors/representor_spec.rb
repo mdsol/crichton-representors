@@ -4,13 +4,15 @@ require 'uri'
 
 module Representors
   describe Representor do
-    let(:doc) {'A list of DRDs.'}
+    let(:base_doc) {'A list of DRDs.'}
+    let(:rel_first_transition) {'self'}
+    let(:rel_second_transition) {'search'}
     before do
       @base_representor = {
         protocol: 'http',
         href: 'www.example.com/drds',
         id: 'drds',
-        doc: doc,
+        doc: base_doc,
         attributes: {},
         embedded: {},
         links: {},
@@ -42,14 +44,14 @@ module Representors
             rt: 'drds',
             type: 'safe',
             href: 'some.example.com/list',
-            rel: 'self'
+            rel: rel_first_transition
           },
           {
             doc: 'Returns a list of DRDs that satisfy the search term.',
             rt: 'drds',
             type: 'safe',
             href: '/',
-            rel: 'search',
+            rel: rel_second_transition,
             descriptors: {
               name: {
                 doc: "Name to search",
@@ -94,23 +96,56 @@ module Representors
       end
 
       describe '#doc' do
-        it 'returns the same value specified under the doc element of the hash' do
-          @representor_hash = RepresentorHash.new
-          @representor_hash.doc = doc
-          expect(subject.doc).to eq(doc)
+        context 'the hash has a doc' do
+          let(:doc) {base_doc}
+          it 'returns the same value specified under the doc element of the hash' do
+            @representor_hash = RepresentorHash.new
+            @representor_hash.doc = doc
+            expect(subject.doc).to eq(doc)
+          end
+        end
+        context 'the hash has non doc' do
+          it 'returns an empty string' do
+            @representor_hash = RepresentorHash.new
+            expect(subject.doc).to eq('')
+          end
         end
       end
 
       describe '#identifier' do
-        it 'when given an href returns a url' do
-          @representor_hash = RepresentorHash.new(protocol: 'http', href: 'www.example.com/drds')
-          expect(subject.identifier).to match(URI::regexp)
+        context 'href and protocol are specified' do
+          let(:href) { 'www.example.com/drds'}
+          let(:protocol) {'http'}
+          it 'returns an url' do
+            @representor_hash = RepresentorHash.new(protocol: protocol, href: href)
+            expect(subject.identifier).to match(URI::regexp)
+          end
         end
 
-        it 'when not given an href it returns ruby reference' do
-          @representor_hash = RepresentorHash.new
-          expect(subject.identifier).to eq("ruby_id://%s" % subject.object_id)
+        context 'href is not specified and protocol is specified' do
+          let(:protocol) {'http'}
+          it 'returns an url with object id' do
+            @representor_hash = RepresentorHash.new(protocol: protocol)
+            expect(subject.identifier).to eq('http://%s' % subject.object_id)
+          end
         end
+
+        context 'href is specified and protocol is not specified' do
+          let(:href) { 'www.example.com/drds'}
+          it 'returns an url with default protocol' do
+            @representor_hash = RepresentorHash.new(href: href)
+            expect(subject.identifier).to eq('http://%s' % href)
+          end
+        end
+
+        context 'href is not specified and protocol is not specified' do
+          let(:href) { 'www.example.com/drds'}
+          it 'returns an unknown protocol object url' do
+            @representor_hash = RepresentorHash.new
+            expect(subject.identifier).to eq("ruby_id://%s" % subject.object_id)
+          end
+        end
+
       end
 
       describe '#to_hash' do
@@ -131,7 +166,7 @@ module Representors
           semantic_elements_present =  %w(total_count uptime brackreference).all? do |key|
             subject.properties[key.to_sym] == @semantic_elements[:attributes][key.to_sym][:value]
           end
-          expect(semantic_elements_present).to be_true
+          expect(semantic_elements_present).to eq(true)
          end
        end
 
@@ -144,7 +179,7 @@ module Representors
           @representor_hash = RepresentorHash.new(@base_representor).merge(@semantic_elements)
           embedded_resources = []
 
-          @transitions_hash = { 
+          @transitions_hash = {
               transitions: [
                   { doc: 'Returns a list of DRDs',
                     type: 'safe',
@@ -170,8 +205,8 @@ module Representors
         end
 
         it 'returns a Representor objects that has its data' do
-          embedded_objects_valid = subject.embedded[embedded_resource].all? { |embed| embed.doc == doc }
-          expect(embedded_objects_valid).to be_true
+          embedded_objects_valid = subject.embedded[embedded_resource].all? { |embed| embed.doc == base_doc }
+          expect(embedded_objects_valid).to eq(true)
         end
 
         it 'returns the all the Representors' do
@@ -195,7 +230,35 @@ module Representors
           @representor_hash =  @base_representor.merge(@transition_elements)
           expect(subject.transitions.size).to eq(2)
           has_transitions = subject.transitions.all? { |trans| trans.instance_of?(Transition) }
-          expect(has_transitions).to be_true
+          expect(has_transitions).to eq(true)
+          expect(subject.transitions[0].rel).to eq(rel_first_transition)
+          expect(subject.transitions[1].rel).to eq(rel_second_transition)
+        end
+        context 'with transitions which have the same rel and href' do
+          it 'returns only one transition' do
+            transitions = { transitions: [
+              {
+                doc: 'Returns a list of DRDs.',
+                rt: 'drds',
+                type: 'safe',
+                href: 'some.example.com/list',
+                rel: rel_first_transition
+              },
+              {
+                doc: 'Returns a list of trusmis.',
+                rt: 'trusmis',
+                type: 'unsafe',
+                href: 'some.example.com/list',
+                rel: rel_first_transition
+              }
+            ]
+            }
+          @representor_hash =  @base_representor.merge(transitions)
+          expect(subject.transitions.size).to eq(1)
+          has_transitions = subject.transitions.all? { |trans| trans.instance_of?(Transition) }
+          expect(has_transitions).to eq(true)
+          expect(subject.transitions[0].rel).to eq(rel_first_transition)
+          end
         end
       end
 
@@ -207,7 +270,7 @@ module Representors
           }
           expect(subject.meta_links.size).to eq(2)
           has_meta_link = subject.meta_links.all? { |trans| trans.instance_of?(Transition) }
-          expect(has_meta_link).to be_true
+          expect(has_meta_link).to eq(true)
         end
       end
 

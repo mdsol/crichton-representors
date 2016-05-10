@@ -99,10 +99,10 @@ module Representors
 
         it_behaves_like 'a hale documents links', representor_hash, @options
       end
-      
+
       context 'Document with only self and profile link' do
         representor_hash = begin
-          {  
+          {
             links: {
               profile: 'http://www.example.com/drds/show/DRDs',
             },
@@ -112,10 +112,10 @@ module Representors
 
         it_behaves_like 'a hale documents links', representor_hash, @options
       end
-      
+
       context 'Document with GET link' do
         representor_hash = begin
-          {  
+          {
             links: {
               profile: 'http://www.example.com/drds/show/DRDs',
             },
@@ -123,8 +123,8 @@ module Representors
               {rel: 'self', href: "www.example.com/coffeebucks/"},
               {rel: "next", href: "www.example.com/coffeebucks?page=2"},
               {
-                rel: 'orders', 
-                href: "www.example.com/coffeebucks",
+                rel: 'orders',
+                href: "www.example.com/coffeebucks{?order_status,page}",
                 descriptors: {
                   "order_status" => {
                     scope: "href",
@@ -177,7 +177,7 @@ module Representors
 
       context 'Document with POST link' do
         representor_hash = begin
-          {  
+          {
             links: {
               profile: 'http://www.example.com/drds/show/DRDs',
             },
@@ -185,7 +185,7 @@ module Representors
               {rel: 'self', href: "www.example.com/coffeebucks/"},
               {
                 rel: 'place_order',
-                method: 'POST', 
+                method: 'POST',
                 href: "www.example.com/coffeebucks/orders",
                 descriptors: {
                   "drink_type" => {
@@ -261,7 +261,7 @@ module Representors
                          "macchiato",
                          "espresso"
                     ])
-          
+
           expect(link_data["iced"]["type"]).to eq("boolean")
           expect(link_data["iced"]["value"]).to eq(false)
 
@@ -274,14 +274,14 @@ module Representors
                             {"large" => 16},
                             {"extra-large" => 20}
                     ])
-          
+
           expect(link_data["shots"]["type"]).to eq("integer:range")
           expect(link_data["shots"]["min"]).to eq(0)
-          expect(link_data["shots"]["max"]).to eq(16)          
-          
+          expect(link_data["shots"]["max"]).to eq(16)
+
           expect(link_data["decaf"]["type"]).to eq("integer:range")
           expect(link_data["decaf"]["min"]).to eq(0)
-          expect(link_data["decaf"]["max"]).to eq(16)            
+          expect(link_data["decaf"]["max"]).to eq(16)
         end
       end
 
@@ -296,7 +296,7 @@ module Representors
               {rel: 'self', href: "www.example.com/coffeebucks/"},
               {rel: "next", href: "www.example.com/coffeebucks?page=2"},
               {
-                rel: 'orders', 
+                rel: 'orders',
                 href: "www.example.com/coffeebucks",
                 descriptors: {
                   "order_status" => {
@@ -330,7 +330,7 @@ module Representors
         it_behaves_like 'a hale documents attributes', representor_hash, @options
         it_behaves_like 'a hale documents links', representor_hash, @options
       end
-      
+
       context 'Document with properties' do
         representor_hash = begin
           {
@@ -447,8 +447,8 @@ module Representors
             "cost" => {value: 495}
           }
         },]
-        
-        
+
+
         representor_hash = begin
           {
             embedded: {
@@ -462,7 +462,7 @@ module Representors
               {:href=>"www.example.com/coffeebucks/2", :rel=>"order_list"},
               {:href=>"www.example.com/coffeebucks/3", :rel=>"order_list"}
             ]
-          } 
+          }
         }
 
         it 'does not add embedded links if they already exist' do
@@ -552,7 +552,7 @@ module Representors
             }]
           }
         end
-        
+
         it_behaves_like 'a hale documents attributes', representor_hash, @options
         it_behaves_like 'a hale documents links', representor_hash, @options
 
@@ -570,7 +570,7 @@ module Representors
                          "macchiato",
                          "espresso"
                     ])
-        
+
           expect(link_data["iced"]["type"]).to eq("boolean")
           expect(link_data["iced"]["value"]).to eq(false)
 
@@ -583,24 +583,24 @@ module Representors
                             {"large" => 16},
                             {"extra-large" => 20}
                     ])
-        
+
           expect(link_data["shots"]["type"]).to eq("integer:range")
           expect(link_data["shots"]["min"]).to eq(0)
-          expect(link_data["shots"]["max"]).to eq(16)          
-        
+          expect(link_data["shots"]["max"]).to eq(16)
+
           expect(link_data["decaf"]["type"]).to eq("integer:range")
           expect(link_data["decaf"]["min"]).to eq(0)
-          expect(link_data["decaf"]["max"]).to eq(16)            
+          expect(link_data["decaf"]["max"]).to eq(16)
         end
-        
+
       end
-      
+
       context 'Document has a link data objects' do
         representor_hash = begin
           {
             transitions: [
               {
-              href: '/mike',
+              href: '/mike{?name}',
               rel: 'author',
               method: 'post',
               descriptors: {
