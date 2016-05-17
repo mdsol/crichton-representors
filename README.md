@@ -1,4 +1,5 @@
 # Representors
+[![Build Status](https://travis-ci.org/mdsol/representors.svg)](https://travis-ci.org/mdsol/representors)
 
 A library to simplify Hypermedia message representation. It has the knowledge of Hypermedia media-types from the Ancients!
 
@@ -19,8 +20,8 @@ For instance if you modified Representors::Representor, please execute:
 MUTANT=true mutant --include lib --require representors --score 95 --use rspec Representors::Representor*
 ```
 
-Reaching 100% mutant coverage is not feasible sometimes as they may be some false positives.
-But please investigate any missing coverage, as it may indicate an actual problem with the tests.
+Reaching 100% mutant coverage is not feasible sometimes as they may be some false positives
+but please investigate any missing coverage, as it may indicate an actual problem with the tests.
 
 
 ## Copyright
