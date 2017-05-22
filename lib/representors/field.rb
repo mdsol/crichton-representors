@@ -96,7 +96,7 @@ module Representors
     end
 
     def descriptor_fields(hash)
-      hash[DESCRIPTORS_KEY].map { |k, v| Field.new({k => v }) }
+      hash[DESCRIPTORS_KEY].map { |h| Field.new(h) }
     end
 
     def get_field_by_type(field_type)
