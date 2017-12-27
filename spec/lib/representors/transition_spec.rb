@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'yaml'
 require 'uri'
+require 'securerandom'
 
 module Representors
   describe Transition do
